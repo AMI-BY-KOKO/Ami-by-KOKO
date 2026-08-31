@@ -270,19 +270,14 @@ export function useWordBuilder() {
     const level = progress.current_level as 1 | 2 | 3 | 4 | 5;
     const levelConfig = LEVEL_CONFIGS[level];
 
-    if (hintsUsed >= levelConfig.hintsAvailable) return null;
+    // Only allow 1 hint per word
+    if (hintsUsed >= 1) return null;
 
     setHintsUsed(prev => prev + 1);
 
-    // Hint progression: encouragement → highlight first letter → audio
-    if (attemptCount === 0) {
-      return "encouragement";
-    } else if (attemptCount === 1) {
-      return `highlight:${currentChallenge.correctOrder[0]}`;
-    } else {
-      return `audio:${currentChallenge.correctOrder[0]}`;
-    }
-  }, [currentChallenge, hintsUsed, attemptCount, progress]);
+    // Always highlight the first correct letter
+    return `highlight:${currentChallenge.correctOrder[0]}`;
+  }, [currentChallenge, hintsUsed, progress]);
 
   // ─── Progress Updates ────────────────────────────────────────────────────
   const recordCompletion = useCallback(async (starsEarned: 1 | 2 | 3) => {
@@ -333,6 +328,50 @@ export function useWordBuilder() {
       console.error("[useWordBuilder] record completion error:", err);
     }
   }, [progress, currentChallenge, userId, selectedLanguage, supabase]);
+
+  // ─── Full Progress Reset ───────────────────────────────────────────────
+  const resetAllProgress = useCallback(async () => {
+    if (!progress || !userId || !selectedLanguage) return;
+
+    try {
+      const today = new Date().toISOString().split("T")[0];
+
+      const resetData: Partial<WordBuilderProgress> = {
+        current_level: 1,
+        current_word_index: 0,
+        words_completed: 0,
+        stars_earned: 0,
+        streak_count: 0,
+        last_streak_date: today,
+        word_garden_seeds: 0,
+        daily_word_completed_today: false,
+        last_daily_word_date: today,
+        mastered_words: [],
+        last_synced: new Date().toISOString(),
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: newData, error: err } = await (supabase as any)
+        .from("word_builder_progress")
+        .update(resetData)
+        .eq("user_id", userId)
+        .eq("language", selectedLanguage)
+        .select()
+        .single();
+
+      if (err) throw err;
+
+      setProgress(newData as WordBuilderProgress);
+      setCurrentChallenge(null);
+      setSelectedLetters([]);
+      setHintsUsed(0);
+      setAttemptCount(0);
+      
+      console.log("[useWordBuilder] progress reset successfully");
+    } catch (err) {
+      console.error("[useWordBuilder] reset progress error:", err);
+    }
+  }, [progress, userId, selectedLanguage, supabase]);
 
   // ─── Daily Word ─────────────────────────────────────────────────────────
   const getDailyWord = useCallback((): Word | null => {
@@ -407,6 +446,7 @@ export function useWordBuilder() {
     submitAnswer,
     getHint,
     recordCompletion,
+    resetAllProgress,
 
     // Daily word
     getDailyWord,

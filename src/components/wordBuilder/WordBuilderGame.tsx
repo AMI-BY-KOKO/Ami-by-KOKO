@@ -122,7 +122,7 @@ export default function WordBuilderGame({
     setCurrentHint(hint);
     setKokoReaction(dialogue.hint[Math.floor(Math.random() * dialogue.hint.length)]);
 
-    // Process hint
+    // Process hint - always highlight the first letter
     if (hint === "encouragement") {
       // Show encouragement for 1.5s
       setTimeout(() => {
@@ -131,11 +131,11 @@ export default function WordBuilderGame({
       }, 1500);
     } else if (hint.startsWith("highlight:")) {
       const letter = hint.split(":")[1];
-      // Highlight will be shown in the UI, visible for 2s
+      // Highlight will be shown in the UI, visible for 3s
       setTimeout(() => {
         setCurrentHint(null);
         setKokoReaction(null);
-      }, 2000);
+      }, 3000);
     }
   };
 
@@ -242,7 +242,7 @@ export default function WordBuilderGame({
           className="flex gap-2 md:gap-4 flex-wrap justify-center"
         >
           {challenge.correctOrder.map((letter, index) => {
-            const isSelected = selectedLetters[index];
+            const isSelected = selectedLetters[index] === letter;
             const isHighlighted = highlightedLetter === letter;
 
             return (

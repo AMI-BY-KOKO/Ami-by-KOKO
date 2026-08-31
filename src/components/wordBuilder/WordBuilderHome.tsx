@@ -31,6 +31,7 @@ interface WordBuilderHomeProps {
   onSelectLevel?: (level: 1 | 2 | 3 | 4 | 5) => void;
   onChangeLanguage: () => void;
   onDailyWord?: () => void;
+  onResetProgress?: () => Promise<void>;
 }
 
 export default function WordBuilderHome({
@@ -41,11 +42,13 @@ export default function WordBuilderHome({
   onSelectLevel,
   onChangeLanguage,
   onDailyWord,
+  onResetProgress,
 }: WordBuilderHomeProps) {
   const [showMap, setShowMap] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [gameMode, setGameMode] = useState<GameMode>("BUILD");
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   const languageConfig = LANGUAGE_OPTIONS[language];
   const currentLevel = progress?.current_level ?? 1;
@@ -101,6 +104,15 @@ export default function WordBuilderHome({
               aria-label="View achievements"
             >
               🏆 Badges
+            </motion.button>
+            <motion.button
+              onClick={() => setShowResetConfirm(true)}
+              className="text-sm font-bold px-3 py-2 rounded-full bg-red-100 text-red-800 hover:bg-red-200 transition-all focus-ring"
+              whileTap={{ scale: 0.95 }}
+              aria-label="Reset all progress"
+              title="Reset progress from the beginning"
+            >
+              ↻ Reset
             </motion.button>
             <div className="flex gap-3">
               <div className="text-center">
@@ -423,6 +435,79 @@ export default function WordBuilderHome({
                   []
                 }
               />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Reset Confirmation Modal */}
+      <AnimatePresence>
+        {showResetConfirm && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowResetConfirm(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            >
+              <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 ring-2 ring-red-200">
+                <div className="text-center">
+                  <div className="text-6xl mb-4">⚠️</div>
+                  <h2 className="text-2xl md:text-3xl font-black text-red-800 mb-3">
+                    Reset All Progress?
+                  </h2>
+                  <p className="text-stone-700 text-lg md:text-xl mb-2 font-semibold">
+                    This will:
+                  </p>
+                  <ul className="text-left text-stone-600 mb-8 space-y-2 bg-red-50 rounded-2xl p-4 text-sm md:text-base">
+                    <li>✗ Clear all levels (back to Level 1)</li>
+                    <li>✗ Reset stars and streak</li>
+                    <li>✗ Clear Word Garden</li>
+                    <li>✗ Delete mastered words</li>
+                  </ul>
+                  <p className="text-red-700 font-bold text-sm md:text-base mb-8">
+                    This action cannot be undone!
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  <motion.button
+                    onClick={() => setShowResetConfirm(false)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 py-3 md:py-4 px-4 bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold rounded-2xl transition-colors focus-ring text-base md:text-lg"
+                    aria-label="Cancel reset"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    onClick={async () => {
+                      if (onResetProgress) {
+                        await onResetProgress();
+                      }
+                      setShowResetConfirm(false);
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 py-3 md:py-4 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl transition-colors focus-ring text-base md:text-lg"
+                    aria-label="Confirm reset"
+                  >
+                    Reset
+                  </motion.button>
+                </div>
+              </div>
             </motion.div>
           </>
         )}

@@ -35,6 +35,7 @@ export default function WordBuilderPage() {
     submitAnswer,
     getHint,
     recordCompletion,
+    resetAllProgress,
     getDailyWord,
     completeDailyWord,
   } = useWordBuilder();
@@ -62,6 +63,12 @@ export default function WordBuilderPage() {
   const handleStartGame = () => {
     generateChallenge();
     setCurrentView("game");
+  };
+
+  const handleResetProgress = async () => {
+    await resetAllProgress();
+    generateChallenge();
+    setCurrentView("home");
   };
 
   const handleSelectLevel = (level: 1 | 2 | 3 | 4 | 5) => {
@@ -145,6 +152,7 @@ export default function WordBuilderPage() {
           onSelectLevel={handleSelectLevel}
           onChangeLanguage={handleChangeLanguage}
           onDailyWord={handleDailyWord}
+          onResetProgress={handleResetProgress}
         />
       )}
 
