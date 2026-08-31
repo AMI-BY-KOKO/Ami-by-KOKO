@@ -25,6 +25,7 @@ export default function WordBuilderPage() {
     selectLanguage,
     progress,
     isLoadingProgress,
+    error,
     currentChallenge,
     generateChallenge,
     selectedLetters,

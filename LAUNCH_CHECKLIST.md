@@ -7,7 +7,7 @@
   ```sql
   CREATE TABLE word_builder_progress (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    child_id UUID NOT NULL REFERENCES children(id),
+    user_id UUID NOT NULL REFERENCES auth.users(id),
     language TEXT NOT NULL,
     current_level INTEGER DEFAULT 1,
     current_word_index INTEGER DEFAULT 0,

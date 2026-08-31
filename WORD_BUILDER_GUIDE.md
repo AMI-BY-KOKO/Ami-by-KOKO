@@ -276,7 +276,7 @@ src/
 ```sql
 CREATE TABLE word_builder_progress (
   id UUID PRIMARY KEY,
-  child_id UUID NOT NULL REFERENCES children(id),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
   language TEXT NOT NULL,
   current_level INTEGER (1-5),
   current_word_index INTEGER,

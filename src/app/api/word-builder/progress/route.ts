@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const supabase = createClient();
 
     const {
-      childId,
+      userId,
       language,
       currentLevel,
       currentWordIndex,
@@ -23,9 +23,9 @@ export async function POST(request: NextRequest) {
       masteredWords,
     } = await request.json();
 
-    if (!childId || !language) {
+    if (!userId || !language) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields: userId, language" },
         { status: 400 }
       );
     }
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const { data: existing, error: fetchErr } = await (supabase as any)
       .from("word_builder_progress")
       .select("id")
-      .eq("child_id", childId)
+      .eq("user_id", userId)
       .eq("language", language)
       .single();
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     const progressData = {
-      child_id: childId,
+      user_id: userId,
       language,
       current_level: currentLevel ?? 1,
       current_word_index: currentWordIndex ?? 0,
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       word_garden_seeds: wordGardenSeeds ?? 0,
       daily_word_completed_today: dailyWordCompleted ?? false,
       mastered_words: masteredWords ?? [],
-      last_activity: new Date().toISOString(),
+      last_synced: new Date().toISOString(),
     };
 
     let result;
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       const { data, error } = await (supabase as any)
         .from("word_builder_progress")
         .update(progressData)
-        .eq("child_id", childId)
+        .eq("user_id", userId)
         .eq("language", language)
         .select()
         .single();

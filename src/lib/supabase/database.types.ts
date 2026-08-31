@@ -290,7 +290,7 @@ export interface Database {
       word_builder_progress: {
         Row: {
           id: string;
-          child_id: string;
+          user_id: string;
           language: "english" | "yoruba" | "french" | "igbo" | "hausa";
           current_level: number;
           current_word_index: number;
@@ -302,12 +302,20 @@ export interface Database {
           daily_word_completed_today: boolean;
           last_daily_word_date: string;
           mastered_words: string[];
-          last_activity: string;
+          achievements: string[];
+          achievements_unlocked_count: number;
+          last_achievement_unlock: string | null;
+          current_difficulty: string;
+          difficulty_changes: number;
+          best_streak: number;
+          last_activity_date: string | null;
+          last_synced: string;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
-          child_id: string;
+          user_id: string;
           language: "english" | "yoruba" | "french" | "igbo" | "hausa";
           current_level?: number;
           current_word_index?: number;
@@ -319,12 +327,20 @@ export interface Database {
           daily_word_completed_today?: boolean;
           last_daily_word_date?: string;
           mastered_words?: string[];
-          last_activity?: string;
+          achievements?: string[];
+          achievements_unlocked_count?: number;
+          last_achievement_unlock?: string | null;
+          current_difficulty?: string;
+          difficulty_changes?: number;
+          best_streak?: number;
+          last_activity_date?: string | null;
+          last_synced?: string;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
-          child_id?: string;
+          user_id?: string;
           language?: "english" | "yoruba" | "french" | "igbo" | "hausa";
           current_level?: number;
           current_word_index?: number;
@@ -336,8 +352,16 @@ export interface Database {
           daily_word_completed_today?: boolean;
           last_daily_word_date?: string;
           mastered_words?: string[];
-          last_activity?: string;
+          achievements?: string[];
+          achievements_unlocked_count?: number;
+          last_achievement_unlock?: string | null;
+          current_difficulty?: string;
+          difficulty_changes?: number;
+          best_streak?: number;
+          last_activity_date?: string | null;
+          last_synced?: string;
           created_at?: string;
+          updated_at?: string;
         };
       };
     };
