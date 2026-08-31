@@ -101,6 +101,26 @@ export default function WordBuilderPage() {
     );
   }
 
+  // ─── Show error if loading fails ────────────────────────────────────────
+  if (error && currentView !== "language-select") {
+    return (
+      <div className="min-h-screen w-full bg-cream-bg flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <p className="text-lg text-red-600 font-bold mb-4">Unable to Load Game</p>
+          <p className="text-stone-600 mb-6">{error}</p>
+          <button
+            onClick={() => {
+              setCurrentView("language-select");
+            }}
+            className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-bold"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ─── Render current view ───────────────────────────────────────────────
   return (
     <>

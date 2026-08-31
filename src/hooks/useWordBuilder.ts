@@ -29,12 +29,28 @@ const STORAGE_KEY_SESSION = "wordBuilder_session";
 export function useWordBuilder() {
   const supabase = createClient();
   const [userId, setUserId] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   // ─── Get Current User ───────────────────────────────────────────────────
   useEffect(() => {
     async function getUser() {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUserId(user?.id || null);
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error) {
+          console.error("[useWordBuilder] auth error:", error);
+          setAuthError(error.message);
+          return;
+        }
+        if (!user) {
+          console.warn("[useWordBuilder] no authenticated user");
+          return;
+        }
+        console.log("[useWordBuilder] authenticated user:", user.id);
+        setUserId(user.id);
+      } catch (err) {
+        console.error("[useWordBuilder] getUser exception:", err);
+        setAuthError(err instanceof Error ? err.message : "Unknown auth error");
+      }
     }
     getUser();
   }, [supabase]);
@@ -71,13 +87,18 @@ export function useWordBuilder() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!userId || !selectedLanguage) return;
+    if (!userId || !selectedLanguage) {
+      console.log("[useWordBuilder] skipping fetch - userId:", userId, "language:", selectedLanguage);
+      return;
+    }
 
     async function fetchProgress() {
       setIsLoadingProgress(true);
       setError(null);
 
       try {
+        console.log("[useWordBuilder] fetching progress for user:", userId, "language:", selectedLanguage);
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data, error: err } = await (supabase as any)
           .from("word_builder_progress")
@@ -86,15 +107,23 @@ export function useWordBuilder() {
           .eq("language", selectedLanguage)
           .single();
 
-        if (err && err.code !== "PGRST116") {
-          throw err; // PGRST116 = no rows (first time)
+        if (err) {
+          if (err.code === "PGRST116") {
+            // No rows found - first time
+            console.log("[useWordBuilder] first time user - creating initial progress");
+          } else {
+            throw err;
+          }
         }
 
         if (data) {
+          console.log("[useWordBuilder] loaded progress:", data);
           setProgress(data as WordBuilderProgress);
         } else {
           // First time — create initial progress
           if (!userId || !selectedLanguage) return;
+
+          console.log("[useWordBuilder] creating initial progress record");
 
           const initial: Partial<WordBuilderProgress> = {
             user_id: userId,
@@ -119,7 +148,11 @@ export function useWordBuilder() {
             .select()
             .single();
 
-          if (createErr) throw createErr;
+          if (createErr) {
+            console.error("[useWordBuilder] create error:", createErr);
+            throw createErr;
+          }
+          console.log("[useWordBuilder] created progress:", created);
           setProgress(created as WordBuilderProgress);
         }
       } catch (err) {
