@@ -112,6 +112,12 @@ export function useWordBuilder() {
             // No rows found - first time
             console.log("[useWordBuilder] first time user - creating initial progress");
           } else {
+            console.error("[useWordBuilder] fetch error details:", {
+              code: err.code,
+              message: err.message,
+              details: err.details,
+              hint: err.hint,
+            });
             throw err;
           }
         }
@@ -141,6 +147,8 @@ export function useWordBuilder() {
             last_synced: new Date().toISOString(),
           };
 
+          console.log("[useWordBuilder] insert payload:", initial);
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const { data: created, error: createErr } = await (supabase as any)
             .from("word_builder_progress")
@@ -149,15 +157,21 @@ export function useWordBuilder() {
             .single();
 
           if (createErr) {
-            console.error("[useWordBuilder] create error:", createErr);
+            console.error("[useWordBuilder] create error details:", {
+              code: createErr.code,
+              message: createErr.message,
+              details: createErr.details,
+              hint: createErr.hint,
+            });
             throw createErr;
           }
           console.log("[useWordBuilder] created progress:", created);
           setProgress(created as WordBuilderProgress);
         }
       } catch (err) {
-        console.error("[useWordBuilder] fetch error:", err);
-        setError(err instanceof Error ? err.message : "Failed to load progress");
+        console.error("[useWordBuilder] fetch exception:", err);
+        const errorMessage = err instanceof Error ? err.message : JSON.stringify(err);
+        setError(`Failed to load progress: ${errorMessage}`);
       } finally {
         setIsLoadingProgress(false);
       }
