@@ -242,7 +242,8 @@ export default function WordBuilderGame({
           className="flex gap-2 md:gap-4 flex-wrap justify-center"
         >
           {challenge.correctOrder.map((letter, index) => {
-            const isSelected = selectedLetters[index] === letter;
+            const selectedLetter = selectedLetters[index];
+            const isCorrect = selectedLetter === letter;
             const isHighlighted = highlightedLetter === letter;
 
             return (
@@ -257,22 +258,22 @@ export default function WordBuilderGame({
                   text-4xl md:text-5xl font-black
                   transition-all duration-200 shadow-md
                   ${
-                    isSelected
-                      ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg ring-2 ring-amber-600 scale-110"
+                    isCorrect
+                      ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg ring-2 ring-amber-600"
                       : isHighlighted
-                        ? "bg-gradient-to-br from-green-100 to-emerald-100 border-4 border-green-500 text-stone-800 scale-110"
+                        ? "bg-gradient-to-br from-green-100 to-emerald-100 border-4 border-green-500 text-stone-800"
                         : "bg-gradient-to-br from-stone-100 to-stone-200 border-4 border-stone-300 text-stone-300"
                   }
                 `}
               >
                 <motion.span
                   initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: isSelected ? 1 : 0, scale: isSelected ? 1 : 0.8 }}
+                  animate={{ opacity: selectedLetter ? 1 : 0, scale: selectedLetter ? 1 : 0.8 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {isSelected ? letter : ""}
+                  {selectedLetter || ""}
                 </motion.span>
-                {!isSelected && (
+                {!selectedLetter && (
                   <motion.span
                     animate={{ opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 2, repeat: Infinity }}
@@ -299,6 +300,7 @@ export default function WordBuilderGame({
               const isUsed = selectedLetters.includes(letter) &&
                 selectedLetters.indexOf(letter) < challenge.correctOrder.indexOf(letter);
               const isSelected = selectedLetters.includes(letter);
+              const isHintLetter = currentHint?.startsWith("highlight:") && currentHint.split(":")[1] === letter;
 
               return (
                 <motion.button
@@ -306,17 +308,21 @@ export default function WordBuilderGame({
                   onClick={() => handleLetterClick(letter)}
                   whileTap={{ scale: 0.88 }}
                   whileHover={gameState === "playing" && !isSelected ? { scale: 1.08, translateY: -4 } : {}}
+                  animate={isHintLetter ? { x: [-4, 4, -4, 4, 0], boxShadow: ["0 0 0 0 rgba(34, 197, 94, 0)", "0 0 0 8px rgba(34, 197, 94, 0.3)", "0 0 0 0 rgba(34, 197, 94, 0)"] } : {}}
+                  transition={isHintLetter ? { duration: 0.6, repeat: 2 } : {}}
                   disabled={gameState !== "playing"}
                   className={`
                     h-20 md:h-24 rounded-2xl md:rounded-3xl font-bold text-3xl md:text-4xl
                     transition-all duration-150 cursor-pointer
                     focus-ring shadow-md
                     ${
-                      isSelected
-                        ? "bg-gradient-to-br from-stone-400 to-stone-500 opacity-40 cursor-not-allowed shadow-sm"
-                        : gameState === "playing"
-                          ? "bg-gradient-to-br from-white to-stone-50 border-2 border-stone-300 hover:shadow-lg hover:border-amber-400 text-stone-900 active:shadow-sm active:translate-y-1"
-                          : "bg-gradient-to-br from-stone-100 to-stone-200 opacity-50 cursor-not-allowed text-stone-500 border-2 border-stone-300"
+                      isHintLetter
+                        ? "bg-gradient-to-br from-green-300 to-emerald-400 text-white shadow-lg ring-2 ring-green-500"
+                        : isSelected
+                          ? "bg-gradient-to-br from-stone-400 to-stone-500 opacity-40 cursor-not-allowed shadow-sm"
+                          : gameState === "playing"
+                            ? "bg-gradient-to-br from-white to-stone-50 border-2 border-stone-300 hover:shadow-lg hover:border-amber-400 text-stone-900 active:shadow-sm active:translate-y-1"
+                            : "bg-gradient-to-br from-stone-100 to-stone-200 opacity-50 cursor-not-allowed text-stone-500 border-2 border-stone-300"
                     }
                   `}
                   aria-label={`Letter ${letter}`}
