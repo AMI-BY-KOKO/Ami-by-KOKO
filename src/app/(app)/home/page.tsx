@@ -21,6 +21,7 @@ const MODES = [
   { href: "/literacy",  emoji: "🔤", title: "Literacy & Language",  description: "Letters, sounds and tracing",  gradient: "from-amber-400 to-orange-400", shadow: "shadow-amber-200", ring: "ring-amber-200" },
   { href: "/numeracy",  emoji: "🔢", title: "Numbers & Shapes",     description: "Count, trace and explore",     gradient: "from-violet-500 to-purple-400", shadow: "shadow-violet-200", ring: "ring-violet-200" },
   { href: "/world",     emoji: "🌍", title: "My World",             description: "Animals, colours and more",    gradient: "from-green-500 to-emerald-400", shadow: "shadow-green-200", ring: "ring-green-200" },
+  { href: "/word-builder", emoji: "🦜", title: "Kòkò's Word Adventure", description: "Mix it. Match it. Make a word!", gradient: "from-amber-500 to-orange-500",    shadow: "shadow-amber-200",  ring: "ring-amber-200"  },
   { href: "/dj-booth",  emoji: "🎵", title: "DJ Booth",             description: "Mix sounds and make music",    gradient: "from-sky-400 to-blue-500",      shadow: "shadow-sky-200",   ring: "ring-sky-200"   },
   { href: "/story",     emoji: "📖", title: "Story Mode",           description: "Help Kòkò find his voice",     gradient: "from-rose-400 to-pink-400",     shadow: "shadow-rose-200",  ring: "ring-rose-200"  },
 ];
@@ -467,6 +468,37 @@ function ParentHome() {
               </div>
             </div>
             <SongButton song={SOTD_SONG} label={`🎵 Sing the ${SOTD_LETTER} song`} />
+          </div>
+        </div>
+
+        {/* Keep Learning */}
+        <div className="px-4 mt-6">
+          <h2 className="text-base font-bold text-stone-700 mb-3">🌟 Keep Learning</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Link href="/word-builder"
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-teal-50 to-cyan-50 ring-1 ring-teal-200 hover:shadow-md transition active:scale-95">
+              <span className="text-3xl">🧩</span>
+              <span className="text-xs font-bold text-stone-800 text-center">Word Builder</span>
+              <span className="text-[10px] text-stone-600">Build today's words</span>
+            </Link>
+            <Link href="/literacy"
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 ring-1 ring-amber-200 hover:shadow-md transition active:scale-95">
+              <span className="text-3xl">🔤</span>
+              <span className="text-xs font-bold text-stone-800 text-center">Letter Practice</span>
+              <span className="text-[10px] text-stone-600">Learn your letters</span>
+            </Link>
+            <Link href="/dj-booth"
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 ring-1 ring-sky-200 hover:shadow-md transition active:scale-95">
+              <span className="text-3xl">🎚️</span>
+              <span className="text-xs font-bold text-stone-800 text-center">DJ Booth</span>
+              <span className="text-[10px] text-stone-600">Mix & make music</span>
+            </Link>
+            <Link href="/story"
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50 ring-1 ring-rose-200 hover:shadow-md transition active:scale-95">
+              <span className="text-3xl">📖</span>
+              <span className="text-xs font-bold text-stone-800 text-center">Story Time</span>
+              <span className="text-[10px] text-stone-600">Explore a new story</span>
+            </Link>
           </div>
         </div>
 
