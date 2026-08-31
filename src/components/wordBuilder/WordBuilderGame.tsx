@@ -12,7 +12,6 @@ import Koko from "@/components/characters/Koko";
 import type { Language } from "@/types";
 import type { WordChallenge } from "@/lib/wordBuilder/types";
 import { KOKO_DIALOGUE, INSTRUCTION_TEXT, LEVEL_CONFIGS } from "@/lib/wordBuilder/types";
-import { playLetterSound } from "@/lib/audio/speech";
 import KokoFeedback from "./KokoFeedback";
 
 interface WordBuilderGameProps {
@@ -46,31 +45,17 @@ export default function WordBuilderGame({
   const [kokoReaction, setKokoReaction] = useState<string | null>(null);
   const [currentHint, setCurrentHint] = useState<string | null>(null);
   const [attemptCount, setAttemptCount] = useState(0);
-  const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
 
   const word = challenge.word;
   const instructionText = INSTRUCTION_TEXT[language];
   const dialogue = KOKO_DIALOGUE[language];
   const level = LEVEL_CONFIGS[word.level];
 
-  // ─── Play word pronunciation on load ───────────────────────────────────
-  useEffect(() => {
-    // Play the word when challenge loads
-    setTimeout(() => {
-      playWordPronunciation();
-    }, 500);
-  }, [challenge.word.id, language]);
-
   // ─── Handle letter selection ────────────────────────────────────────────
   const handleLetterClick = (letter: string) => {
     if (gameState !== "playing") return;
 
-    // Play letter sound
-    playLetterSound({
-      letter,
-      language,
-    }).catch(() => {});
-
+    // No audio for Word Adventure
     onSelectLetter(letter);
   };
 
@@ -104,11 +89,6 @@ export default function WordBuilderGame({
         spread: 70,
         origin: { y: 0.6 },
       });
-
-      // Play celebration sound and word pronunciation
-      setTimeout(() => {
-        playWordPronunciation();
-      }, 500);
 
       // Trigger correct answer callback after animation
       setTimeout(() => {
@@ -156,36 +136,10 @@ export default function WordBuilderGame({
         setCurrentHint(null);
         setKokoReaction(null);
       }, 2000);
-    } else if (hint.startsWith("audio:")) {
-      const letter = hint.split(":")[1];
-      playLetterSound({ letter, language })
-        .then(() => {
-          setTimeout(() => {
-            setCurrentHint(null);
-            setKokoReaction(null);
-          }, 500);
-        })
-        .catch(() => {
-          setCurrentHint(null);
-          setKokoReaction(null);
-        });
     }
   };
 
   // ─── Play word pronunciation ────────────────────────────────────────────
-  const playWordPronunciation = async () => {
-    setSpeakingIndex(-1); // Indicate whole word playing
-    try {
-      await playLetterSound({
-        letter: word.word,
-        language,
-      });
-    } catch (err) {
-      console.error("Error playing word:", err);
-    }
-    setSpeakingIndex(null);
-  };
-
   const getHintHighlightLetter = (): string | null => {
     if (currentHint?.startsWith("highlight:")) {
       return currentHint.split(":")[1];
@@ -199,14 +153,29 @@ export default function WordBuilderGame({
     <div className="min-h-screen w-full bg-gradient-to-b from-cream-bg to-amber-50 flex flex-col items-center justify-between p-4 md:p-6">
       {/* Header */}
       <div className="w-full max-w-2xl mb-6">
-        <motion.button
-          onClick={onBackToHome}
-          whileTap={{ scale: 0.95 }}
-          className="text-sm font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-2 rounded-full transition-colors focus-ring mb-4"
-          aria-label="Back to home"
-        >
-          ← Back
-        </motion.button>
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <motion.button
+            onClick={onBackToHome}
+            whileTap={{ scale: 0.95 }}
+            className="text-sm font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-2 rounded-full transition-colors focus-ring"
+            aria-label="Back to home"
+          >
+            ← Back
+          </motion.button>
+          
+          <motion.button
+            onClick={() => {
+              onResetSelection();
+              setAttemptCount(0);
+            }}
+            whileTap={{ scale: 0.95 }}
+            className="text-sm font-bold text-blue-700 bg-blue-100 hover:bg-blue-200 px-3 py-2 rounded-full transition-colors focus-ring"
+            aria-label="Reset game"
+            title="Reset the current word"
+          >
+            🔄 Reset
+          </motion.button>
+        </div>
 
         <div className="flex items-center justify-between">
           <div>
@@ -228,7 +197,7 @@ export default function WordBuilderGame({
           animate={gameState === "correct" ? { scale: [1, 1.2, 1] } : {}}
           transition={{ duration: 0.6 }}
         >
-          <Koko speaking={speakingIndex !== null} className="w-32 h-32 md:w-40 md:h-40" />
+          <Koko speaking={false} className="w-32 h-32 md:w-40 md:h-40" />
         </motion.div>
 
         {/* Kòkò feedback */}
