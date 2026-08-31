@@ -36,7 +36,7 @@ export default function WordBuilderPage() {
     recordCompletion,
     getDailyWord,
     completeDailyWord,
-  } = useWordBuilder(activeChild?.id ?? null);
+  } = useWordBuilder();
 
   const [currentView, setCurrentView] = useState<GameView>("language-select");
   const [lastSelectedLanguage, setLastSelectedLanguage] = useState<string | null>(null);

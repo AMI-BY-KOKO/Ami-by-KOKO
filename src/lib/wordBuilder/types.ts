@@ -96,7 +96,7 @@ export interface WordChallenge {
 
 export interface WordBuilderProgress {
   id: string;
-  child_id: string;
+  user_id: string;
   language: Language;
   current_level: number;
   current_word_index: number;
@@ -109,7 +109,7 @@ export interface WordBuilderProgress {
   last_daily_word_date: string; // ISO date
   mastered_words: string[]; // word IDs
   achievements?: AchievementType[]; // unlocked achievement IDs
-  last_activity: string; // ISO timestamp
+  last_synced: string; // ISO timestamp
 }
 
 export interface DailyWordState {

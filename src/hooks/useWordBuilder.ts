@@ -26,15 +26,25 @@ import { LEVEL_CONFIGS } from "@/lib/wordBuilder/types";
 const STORAGE_KEY_LANGUAGE = "wordBuilder_language";
 const STORAGE_KEY_SESSION = "wordBuilder_session";
 
-export function useWordBuilder(childId: string | null) {
+export function useWordBuilder() {
   const supabase = createClient();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // ─── Get Current User ───────────────────────────────────────────────────
+  useEffect(() => {
+    async function getUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || null);
+    }
+    getUser();
+  }, [supabase]);
 
   // ─── Language Selection ──────────────────────────────────────────────────
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null);
   const [isLoadingLanguage, setIsLoadingLanguage] = useState(true);
 
   useEffect(() => {
-    if (!childId) {
+    if (!userId) {
       setIsLoadingLanguage(false);
       return;
     }
@@ -46,7 +56,7 @@ export function useWordBuilder(childId: string | null) {
     }
 
     setIsLoadingLanguage(false);
-  }, [childId]);
+  }, [userId]);
 
   const selectLanguage = useCallback((language: Language) => {
     setSelectedLanguage(language);
@@ -61,7 +71,7 @@ export function useWordBuilder(childId: string | null) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!childId || !selectedLanguage) return;
+    if (!userId || !selectedLanguage) return;
 
     async function fetchProgress() {
       setIsLoadingProgress(true);
@@ -72,7 +82,7 @@ export function useWordBuilder(childId: string | null) {
         const { data, error: err } = await (supabase as any)
           .from("word_builder_progress")
           .select("*")
-          .eq("child_id", childId)
+          .eq("user_id", userId)
           .eq("language", selectedLanguage)
           .single();
 
@@ -84,10 +94,10 @@ export function useWordBuilder(childId: string | null) {
           setProgress(data as WordBuilderProgress);
         } else {
           // First time — create initial progress
-          if (!childId || !selectedLanguage) return;
+          if (!userId || !selectedLanguage) return;
 
           const initial: Partial<WordBuilderProgress> = {
-            child_id: childId,
+            user_id: userId,
             language: selectedLanguage,
             current_level: 1,
             current_word_index: 0,
@@ -99,7 +109,7 @@ export function useWordBuilder(childId: string | null) {
             daily_word_completed_today: false,
             last_daily_word_date: "",
             mastered_words: [],
-            last_activity: new Date().toISOString(),
+            last_synced: new Date().toISOString(),
           };
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,7 +131,7 @@ export function useWordBuilder(childId: string | null) {
     }
 
     fetchProgress();
-  }, [childId, selectedLanguage, supabase]);
+  }, [userId, selectedLanguage, supabase]);
 
   // ─── Current Challenge ───────────────────────────────────────────────────
   const [currentChallenge, setCurrentChallenge] = useState<WordChallenge | null>(null);
@@ -227,14 +237,14 @@ export function useWordBuilder(childId: string | null) {
 
   // ─── Progress Updates ────────────────────────────────────────────────────
   const recordCompletion = useCallback(async (starsEarned: 1 | 2 | 3) => {
-    if (!progress || !currentChallenge || !childId) return;
+    if (!progress || !currentChallenge || !userId) return;
 
     try {
       const updated: Partial<WordBuilderProgress> = {
         words_completed: progress.words_completed + 1,
         stars_earned: progress.stars_earned + starsEarned,
         word_garden_seeds: progress.word_garden_seeds + 1,
-        last_activity: new Date().toISOString(),
+        last_synced: new Date().toISOString(),
         mastered_words: [...progress.mastered_words, currentChallenge.word.id],
       };
 
@@ -261,7 +271,7 @@ export function useWordBuilder(childId: string | null) {
       const { data: newData, error: err } = await (supabase as any)
         .from("word_builder_progress")
         .update(updated)
-        .eq("child_id", childId)
+        .eq("user_id", userId)
         .eq("language", selectedLanguage)
         .select()
         .single();
@@ -273,7 +283,7 @@ export function useWordBuilder(childId: string | null) {
     } catch (err) {
       console.error("[useWordBuilder] record completion error:", err);
     }
-  }, [progress, currentChallenge, childId, selectedLanguage, supabase]);
+  }, [progress, currentChallenge, userId, selectedLanguage, supabase]);
 
   // ─── Daily Word ─────────────────────────────────────────────────────────
   const getDailyWord = useCallback((): Word | null => {
@@ -294,7 +304,7 @@ export function useWordBuilder(childId: string | null) {
   }, [selectedLanguage]);
 
   const completeDailyWord = useCallback(async () => {
-    if (!progress || !childId) return;
+    if (!progress || !userId) return;
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -303,14 +313,14 @@ export function useWordBuilder(childId: string | null) {
         stars_earned: progress.stars_earned + 10,
         daily_word_completed_today: true,
         last_daily_word_date: today,
-        last_activity: new Date().toISOString(),
+        last_synced: new Date().toISOString(),
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: newData, error: err } = await (supabase as any)
         .from("word_builder_progress")
         .update(updated)
-        .eq("child_id", childId)
+        .eq("user_id", userId)
         .eq("language", selectedLanguage)
         .select()
         .single();
@@ -321,7 +331,7 @@ export function useWordBuilder(childId: string | null) {
     } catch (err) {
       console.error("[useWordBuilder] daily word error:", err);
     }
-  }, [progress, childId, selectedLanguage, supabase]);
+  }, [progress, userId, selectedLanguage, supabase]);
 
   return {
     // Language
