@@ -131,6 +131,8 @@ export function useWordBuilder() {
 
           console.log("[useWordBuilder] creating initial progress record");
 
+          const today = new Date().toISOString().split("T")[0];
+          
           const initial: Partial<WordBuilderProgress> = {
             user_id: userId,
             language: selectedLanguage,
@@ -139,10 +141,10 @@ export function useWordBuilder() {
             words_completed: 0,
             stars_earned: 0,
             streak_count: 0,
-            last_streak_date: new Date().toISOString().split("T")[0] || "",
+            last_streak_date: today || new Date().toISOString().split("T")[0],
             word_garden_seeds: 0,
             daily_word_completed_today: false,
-            last_daily_word_date: "",
+            last_daily_word_date: today || new Date().toISOString().split("T")[0],
             mastered_words: [],
             last_synced: new Date().toISOString(),
           };
