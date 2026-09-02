@@ -16,10 +16,9 @@ import Koko from "@/components/characters/Koko";
 import AdventureMap from "./AdventureMap";
 import WordGarden from "./WordGarden";
 import WordCollection from "./WordCollection";
-import GameModeSelector from "./GameModeSelector";
 import Achievements from "./Achievements";
 import type { Language } from "@/types";
-import type { WordBuilderProgress, Word, AchievementType, GameMode } from "@/lib/wordBuilder/types";
+import type { WordBuilderProgress, Word, AchievementType } from "@/lib/wordBuilder/types";
 import { LANGUAGE_OPTIONS, LEVEL_CONFIGS, KOKO_DIALOGUE } from "@/lib/wordBuilder/types";
 import { getAllWords } from "@/lib/wordBuilder/wordDatasets";
 
@@ -47,7 +46,6 @@ export default function WordBuilderHome({
   const [showMap, setShowMap] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
-  const [gameMode, setGameMode] = useState<GameMode>("BUILD");
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   const languageConfig = LANGUAGE_OPTIONS[language];
@@ -68,62 +66,67 @@ export default function WordBuilderHome({
     seedCount < 10 ? "🌱" : seedCount < 25 ? "🌿" : seedCount < 50 ? "🌷" : "🌳";
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-cream-bg to-amber-50 flex flex-col items-center justify-start p-4 md:p-6">
-      {/* Header */}
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen w-full bg-gradient-to-b from-cream-bg to-amber-50 flex flex-col items-center justify-start overflow-x-hidden">
+      {/* Compact mobile header with minimal height */}
+      <div className="w-full sticky top-16 md:top-20 z-30 bg-gradient-to-b from-cream-bg via-cream-bg to-transparent pb-2 md:pb-3 px-4 md:px-6 pt-2 md:pt-3">
         <motion.div
-          initial={{ y: -20, opacity: 0 }}
+          initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center justify-between mb-4"
+          className="flex items-center justify-between gap-2 max-w-2xl mx-auto"
         >
+          {/* Left: Language selector */}
           <button
             onClick={onChangeLanguage}
-            className="text-sm font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-2 rounded-full transition-colors focus-ring"
+            className="text-xs md:text-sm font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-2 md:px-3 py-1.5 md:py-2 rounded-full transition-colors focus-ring whitespace-nowrap"
             aria-label="Change language"
           >
             🌍 {languageConfig.displayName}
           </button>
-          <div className="flex gap-4">
+
+          {/* Center: Compact stats (stars + streak) */}
+          <div className="flex gap-2 md:gap-3 items-center">
+            <div className="text-center bg-amber-50 rounded-lg px-2 py-1">
+              <div className="text-sm md:text-base font-bold text-amber-600">⭐{progress?.stars_earned ?? 0}</div>
+            </div>
+            <div className="text-center bg-rose-50 rounded-lg px-2 py-1">
+              <div className="text-sm md:text-base font-bold text-rose-500">🔥{progress?.streak_count ?? 0}</div>
+            </div>
+          </div>
+
+          {/* Right: Action buttons (compact) */}
+          <div className="flex gap-1 md:gap-2">
             <motion.button
               onClick={() => setShowMap(!showMap)}
-              className={`text-sm font-bold px-3 py-2 rounded-full transition-all focus-ring ${
+              className={`text-xs md:text-sm font-bold px-2 md:px-3 py-1.5 md:py-2 rounded-full transition-all focus-ring ${
                 showMap
                   ? "bg-green-200 text-green-800"
                   : "bg-stone-200 text-stone-700 hover:bg-stone-300"
               }`}
               whileTap={{ scale: 0.95 }}
               aria-label={showMap ? "Show quick start" : "Show adventure map"}
+              title="Toggle adventure map"
             >
-              {showMap ? "🗺️ Map" : "🎮 Quick"}
+              {showMap ? "🗺️" : "🎮"}
             </motion.button>
             <motion.button
               onClick={() => setShowAchievements(true)}
-              className="text-sm font-bold px-3 py-2 rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-all focus-ring"
+              className="text-xs md:text-sm font-bold px-2 md:px-3 py-1.5 md:py-2 rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-all focus-ring"
               whileTap={{ scale: 0.95 }}
               aria-label="View achievements"
+              title="View badges"
             >
-              🏆 Badges
+              🏆
             </motion.button>
             <motion.button
               onClick={() => setShowResetConfirm(true)}
-              className="text-sm font-bold px-3 py-2 rounded-full bg-red-100 text-red-800 hover:bg-red-200 transition-all focus-ring"
+              className="text-xs md:text-sm font-bold px-2 md:px-3 py-1.5 md:py-2 rounded-full bg-red-100 text-red-800 hover:bg-red-200 transition-all focus-ring"
               whileTap={{ scale: 0.95 }}
               aria-label="Reset all progress"
-              title="Reset progress from the beginning"
+              title="Reset progress"
             >
-              ↻ Reset
+              ↻
             </motion.button>
-            <div className="flex gap-3">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-amber-600">⭐</div>
-                <div className="text-xs text-stone-600">{progress?.stars_earned ?? 0}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-rose-500">🔥</div>
-                <div className="text-xs text-stone-600">{progress?.streak_count ?? 0} day</div>
-              </div>
-            </div>
           </div>
         </motion.div>
       </div>
@@ -137,7 +140,7 @@ export default function WordBuilderHome({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="w-full flex-1 flex items-center justify-center"
+            className="w-full flex-1 flex items-center justify-center px-4 md:px-6"
           >
             <AdventureMap
               progress={progress}
@@ -158,38 +161,48 @@ export default function WordBuilderHome({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="w-full max-w-xl flex flex-col items-center gap-8 mt-4"
+            className="w-full flex-1 overflow-y-auto flex flex-col items-center px-4 md:px-6"
           >
-            {/* Kòkò with greeting */}
-            <div className="flex flex-col items-center gap-4">
-              <Koko speaking={false} className="w-40 h-40 md:w-48 md:h-48" />
+            {/* Hero Section - Compact */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="w-full max-w-xl flex flex-col items-center gap-2 md:gap-3 py-2 md:py-3"
+            >
+              {/* Kòkò - smaller on mobile */}
+              <div className="w-28 h-28 md:w-40 md:h-40 flex items-center justify-center">
+                <Koko speaking={false} />
+              </div>
+
+              {/* Title + greeting - compact spacing */}
               <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-black text-amber-900 mb-2">
-                  🦜 Kòkò's Word Adventure
+                <h1 className="text-2xl md:text-4xl font-black text-amber-900">
+                  Kòkò's Word Adventure
                 </h1>
-                <p className="text-lg md:text-xl text-stone-700 font-semibold">
+                <p className="text-sm md:text-base text-stone-700 font-medium mt-1">
                   {greetingText}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Level indicator card */}
+            {/* Current Level Card - Compact */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-full bg-gradient-to-br from-white to-amber-50 rounded-3xl shadow-xl p-6 md:p-8 ring-1 ring-amber-100"
+              className="w-full max-w-xl bg-white rounded-2xl shadow-md p-4 md:p-6 ring-1 ring-amber-100 mb-3 md:mb-4"
             >
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-black text-green-800 mb-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg md:text-2xl font-black text-green-800 mb-0.5">
                     {levelConfig.name}
                   </h2>
-                  <p className="text-sm md:text-base text-stone-600 font-medium">
+                  <p className="text-xs md:text-sm text-stone-600 font-medium line-clamp-2">
                     {levelConfig.description}
                   </p>
                 </div>
-                <div className="text-6xl">
+                <div className="text-4xl md:text-5xl ml-2 flex-shrink-0">
                   {currentLevel === 1 && "🌱"}
                   {currentLevel === 2 && "🌿"}
                   {currentLevel === 3 && "🌳"}
@@ -198,62 +211,22 @@ export default function WordBuilderHome({
                 </div>
               </div>
 
-              {/* Progress bar */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-stone-700 uppercase">Progress in this level</span>
-                  <span className="text-sm font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full">
+              {/* Progress bar - compact */}
+              <div className="space-y-1 md:space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-stone-700 uppercase">Progress</span>
+                  <span className="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
                     {wordsInLevel}/{totalWordsInLevel}
                   </span>
                 </div>
-                <div className="w-full h-4 bg-stone-200 rounded-full overflow-hidden shadow-inner">
+                <div className="w-full h-2 md:h-3 bg-stone-200 rounded-full overflow-hidden shadow-inner">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-amber-400 to-amber-500"
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                   />
                 </div>
-              </div>
-
-              {/* Level stats grid */}
-              <div className="grid grid-cols-3 gap-3 md:gap-4">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-center p-4 md:p-5 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl ring-1 ring-amber-200"
-                >
-                  <div className="text-4xl mb-2">⭐</div>
-                  <div className="text-lg md:text-xl font-black text-amber-900">
-                    {progress?.stars_earned ?? 0}
-                  </div>
-                  <div className="text-xs font-bold text-stone-600 mt-1">Stars</div>
-                </motion.div>
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.35 }}
-                  className="text-center p-4 md:p-5 bg-gradient-to-br from-rose-100 to-rose-50 rounded-2xl ring-1 ring-rose-200"
-                >
-                  <div className="text-4xl mb-2">🔥</div>
-                  <div className="text-lg md:text-xl font-black text-rose-900">
-                    {progress?.streak_count ?? 0}
-                  </div>
-                  <div className="text-xs font-bold text-stone-600 mt-1">Streak</div>
-                </motion.div>
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-center p-4 md:p-5 bg-gradient-to-br from-green-100 to-green-50 rounded-2xl ring-1 ring-green-200"
-                >
-                  <div className="text-4xl mb-2">{gardenStage}</div>
-                  <div className="text-lg md:text-xl font-black text-green-900">
-                    {seedCount}
-                  </div>
-                  <div className="text-xs font-bold text-stone-600 mt-1">Garden</div>
-                </motion.div>
               </div>
             </motion.div>
 
@@ -261,22 +234,58 @@ export default function WordBuilderHome({
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.43 }}
-              className="w-full"
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="w-full max-w-xl"
             >
-              <GameModeSelector
-                selectedMode={gameMode}
-                onSelectMode={setGameMode}
-                language={language}
-              />
+              {/* Primary BUILD CTA - Prominent */}
+              <motion.div
+                className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl shadow-lg p-6 md:p-8 mb-4 ring-2 ring-amber-400"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="flex items-center gap-4 md:gap-5">
+                  <motion.div
+                    className="text-5xl md:text-6xl flex-shrink-0"
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    🧩
+                  </motion.div>
+                  <div className="text-white flex-1">
+                    <h3 className="text-xl md:text-2xl font-black mb-1">BUILD A WORD</h3>
+                    <p className="text-sm md:text-base font-semibold opacity-95">
+                      Mix • Match • Discover
+                    </p>
+                  </div>
+                  <motion.div
+                    className="text-3xl md:text-4xl flex-shrink-0 font-black text-amber-100"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    ▶
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Alternative modes hint */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-center text-xs md:text-sm text-stone-600 italic"
+              >
+                <p>
+                  🎧 Sound Challenge & 🔍 Word Hunt coming soon!
+                </p>
+              </motion.div>
             </motion.div>
 
-            {/* Word Garden */}
+            {/* Word Garden - Compact */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
-              className="w-full"
+              transition={{ duration: 0.6, delay: 0.35 }}
+              className="w-full max-w-xl mb-3 md:mb-4"
             >
               <WordGarden
                 seedCount={seedCount}
@@ -284,28 +293,28 @@ export default function WordBuilderHome({
               />
             </motion.div>
 
-            {/* Action buttons */}
+            {/* Action buttons - stack vertically, compact spacing */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="w-full grid gap-4 md:gap-5"
+              className="w-full max-w-xl space-y-2 md:space-y-3 mb-4 md:mb-6"
             >
               {/* Primary CTA */}
               <button
                 onClick={onStart}
                 disabled={loading}
-                className={`w-full py-5 md:py-6 px-6 rounded-3xl font-bold text-xl md:text-2xl transition-all duration-300 focus-ring shadow-lg
+                className={`w-full py-4 md:py-5 px-4 md:px-6 rounded-2xl md:rounded-3xl font-bold text-lg md:text-xl transition-all duration-300 focus-ring shadow-md
                   ${
                     loading
                       ? "bg-amber-300 text-amber-700 opacity-50 cursor-not-allowed"
-                      : "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                      : "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                   }
                 `}
                 aria-label="Start Word Adventure"
               >
                 {loading ? (
-                  <span className="flex items-center justify-center gap-3">
+                  <span className="flex items-center justify-center gap-2">
                     <motion.span
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity }}
@@ -315,7 +324,7 @@ export default function WordBuilderHome({
                     Loading…
                   </span>
                 ) : (
-                  `▶ START ADVENTURE${wordsInLevel > 0 ? " (Continue)" : ""}`
+                  `▶ ${wordsInLevel > 0 ? "Continue" : "Start"} Adventure`
                 )}
               </button>
 
@@ -323,19 +332,19 @@ export default function WordBuilderHome({
               <motion.button
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.48 }}
+                transition={{ delay: 0.45 }}
                 onClick={() => setShowCollection(true)}
                 disabled={loading || !progress?.mastered_words?.length}
-                className={`w-full py-4 md:py-5 px-6 rounded-3xl font-bold text-lg md:text-xl transition-all duration-300 focus-ring shadow-md
+                className={`w-full py-3 md:py-4 px-4 md:px-6 rounded-2xl md:rounded-3xl font-bold text-base md:text-lg transition-all duration-300 focus-ring shadow-sm
                   ${
                     progress?.mastered_words?.length
-                      ? "bg-white border-3 border-amber-400 text-amber-700 hover:bg-amber-50"
-                      : "bg-stone-100 border-3 border-stone-300 text-stone-500 cursor-not-allowed opacity-60"
+                      ? "bg-white border-2 md:border-3 border-amber-400 text-amber-700 hover:bg-amber-50"
+                      : "bg-stone-100 border-2 md:border-3 border-stone-300 text-stone-500 cursor-not-allowed opacity-60"
                   }
                 `}
                 aria-label="View my word collection"
               >
-                📚 My Words — {progress?.mastered_words?.length ?? 0} Collected
+                📚 My Words — {progress?.mastered_words?.length ?? 0}
               </motion.button>
 
               {/* Daily Word button (if not completed today) */}
@@ -343,13 +352,13 @@ export default function WordBuilderHome({
                 <motion.button
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.48 }}
                   onClick={onDailyWord}
                   disabled={loading}
-                  className="w-full py-4 md:py-5 px-6 rounded-3xl font-bold text-lg md:text-xl bg-white border-3 border-green-400 text-green-700 hover:bg-green-50 transition-all duration-300 focus-ring shadow-md"
+                  className="w-full py-3 md:py-4 px-4 md:px-6 rounded-2xl md:rounded-3xl font-bold text-base md:text-lg bg-white border-2 md:border-3 border-green-400 text-green-700 hover:bg-green-50 transition-all duration-300 focus-ring shadow-sm"
                   aria-label="Daily Word challenge"
                 >
-                  ⭐ Daily Word Challenge — +10 Stars!
+                  ⭐ Daily Word — +10 Stars
                 </motion.button>
               )}
 
@@ -358,24 +367,24 @@ export default function WordBuilderHome({
                 <motion.div
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="w-full py-4 md:py-5 px-6 rounded-3xl font-bold text-lg md:text-xl bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 text-center flex items-center justify-center gap-3 ring-2 ring-green-300"
+                  transition={{ delay: 0.48 }}
+                  className="w-full py-3 md:py-4 px-4 md:px-6 rounded-2xl md:rounded-3xl font-bold text-base md:text-lg bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 text-center flex items-center justify-center gap-2 ring-2 ring-green-300"
                 >
-                  ✅ Daily Word Complete!
-                  <span className="text-2xl">+10⭐</span>
+                  ✅ Daily Complete
+                  <span className="text-xl">+10⭐</span>
                 </motion.div>
               )}
             </motion.div>
 
-            {/* Footer */}
+            {/* Inspirational message - subtle */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-center text-sm md:text-base text-stone-700 font-semibold italic"
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="text-center text-xs md:text-sm text-stone-700 font-medium italic mb-4 md:mb-6 px-4"
             >
               <p>
-                🌱 Build words → 🌿 Grow your Word Garden → 🌳 Unlock new worlds → 🏆 Become a Word Champion!
+                🌱 Build → 🌿 Grow Garden → 🌳 New Worlds → 🏆 Champion!
               </p>
             </motion.div>
           </motion.div>

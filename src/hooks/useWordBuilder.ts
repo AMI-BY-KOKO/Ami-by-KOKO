@@ -270,13 +270,25 @@ export function useWordBuilder() {
     const level = progress.current_level as 1 | 2 | 3 | 4 | 5;
     const levelConfig = LEVEL_CONFIGS[level];
 
-    // Only allow 1 hint per word
-    if (hintsUsed >= 1) return null;
+    // Check hints available for this level
+    if (hintsUsed >= levelConfig.hintsAvailable) return null;
 
     setHintsUsed(prev => prev + 1);
 
-    // Always highlight the first correct letter
-    return `highlight:${currentChallenge.correctOrder[0]}`;
+    // Progressive hints based on hint number
+    if (hintsUsed === 0) {
+      // First hint: just encouragement
+      return "encouragement";
+    } else if (hintsUsed === 1) {
+      // Second hint: highlight the first correct letter
+      return `highlight:${currentChallenge.correctOrder[0]}`;
+    } else {
+      // Third hint (if available): highlight first TWO letters for lower levels
+      if (level <= 2) {
+        return `highlight:${currentChallenge.correctOrder[0]}${currentChallenge.correctOrder[1]}`;
+      }
+      return null;
+    }
   }, [currentChallenge, hintsUsed, progress]);
 
   // ─── Progress Updates ────────────────────────────────────────────────────

@@ -136,8 +136,8 @@ export interface LevelConfig {
 export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
   1: {
     level: 1,
-    name: "Letter Friends",
-    description: "2-letter words",
+    name: "🌱 Letter Garden",
+    description: "Meet your letter friends!",
     wordLengths: [2],
     wordsPerLevel: 8,
     distractorLetterCount: 0,
@@ -147,8 +147,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
   },
   2: {
     level: 2,
-    name: "Little Words",
-    description: "Simple 3-letter words",
+    name: "🛤️ Little Word Path",
+    description: "Your first words await!",
     wordLengths: [3],
     wordsPerLevel: 10,
     distractorLetterCount: 1,
@@ -158,8 +158,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
   },
   3: {
     level: 3,
-    name: "Word Explorer",
-    description: "Harder 3-letter words",
+    name: "🌳 Word Forest",
+    description: "Explore new words!",
     wordLengths: [3],
     wordsPerLevel: 10,
     distractorLetterCount: 2,
@@ -169,8 +169,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
   },
   4: {
     level: 4,
-    name: "Word Builder",
-    description: "4-letter words",
+    name: "🏘️ Kòkò's Village",
+    description: "Build bigger words!",
     wordLengths: [4],
     wordsPerLevel: 12,
     distractorLetterCount: 2,
@@ -180,8 +180,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
   },
   5: {
     level: 5,
-    name: "Kòkò Challenge",
-    description: "Advanced 4-letter words",
+    name: "🏆 Kòkò Challenge",
+    description: "Ready for the ultimate challenge?",
     wordLengths: [4],
     wordsPerLevel: 12,
     distractorLetterCount: 3,

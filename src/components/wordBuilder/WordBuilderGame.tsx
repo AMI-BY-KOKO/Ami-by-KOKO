@@ -114,7 +114,7 @@ export default function WordBuilderGame({
     const hint = onGetHint();
     if (!hint) {
       // No more hints available
-      setKokoReaction("Keep trying! You can do it!");
+      setKokoReaction("You're so close! Keep trying!");
       setTimeout(() => setKokoReaction(null), 1500);
       return;
     }
@@ -122,7 +122,7 @@ export default function WordBuilderGame({
     setCurrentHint(hint);
     setKokoReaction(dialogue.hint[Math.floor(Math.random() * dialogue.hint.length)]);
 
-    // Process hint - always highlight the first letter
+    // Process hint based on type
     if (hint === "encouragement") {
       // Show encouragement for 1.5s
       setTimeout(() => {
@@ -130,7 +130,6 @@ export default function WordBuilderGame({
         setKokoReaction(null);
       }, 1500);
     } else if (hint.startsWith("highlight:")) {
-      const letter = hint.split(":")[1];
       // Highlight will be shown in the UI, visible for 3s
       setTimeout(() => {
         setCurrentHint(null);
@@ -140,14 +139,15 @@ export default function WordBuilderGame({
   };
 
   // ─── Play word pronunciation ────────────────────────────────────────────
-  const getHintHighlightLetter = (): string | null => {
+  const getHintHighlightLetters = (): string[] => {
     if (currentHint?.startsWith("highlight:")) {
-      return currentHint.split(":")[1];
+      const lettersStr = currentHint.split(":")[1];
+      return lettersStr.split("");
     }
-    return null;
+    return [];
   };
 
-  const highlightedLetter = getHintHighlightLetter();
+  const highlightedLetters = getHintHighlightLetters();
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-cream-bg to-amber-50 flex flex-col items-center justify-between p-4 md:p-6">
@@ -244,7 +244,7 @@ export default function WordBuilderGame({
           {challenge.correctOrder.map((letter, index) => {
             const selectedLetter = selectedLetters[index];
             const isCorrect = selectedLetter === letter;
-            const isHighlighted = highlightedLetter === letter;
+            const isHighlighted = highlightedLetters.includes(letter);
 
             return (
               <motion.div
@@ -261,7 +261,7 @@ export default function WordBuilderGame({
                     isCorrect
                       ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg ring-2 ring-amber-600"
                       : isHighlighted
-                        ? "bg-gradient-to-br from-green-100 to-emerald-100 border-4 border-green-500 text-stone-800"
+                        ? "bg-gradient-to-br from-green-100 to-emerald-100 border-4 border-green-500 text-stone-800 shadow-lg"
                         : "bg-gradient-to-br from-stone-100 to-stone-200 border-4 border-stone-300 text-stone-300"
                   }
                 `}
@@ -300,7 +300,7 @@ export default function WordBuilderGame({
               const isUsed = selectedLetters.includes(letter) &&
                 selectedLetters.indexOf(letter) < challenge.correctOrder.indexOf(letter);
               const isSelected = selectedLetters.includes(letter);
-              const isHintLetter = currentHint?.startsWith("highlight:") && currentHint.split(":")[1] === letter;
+              const isHintLetter = highlightedLetters.includes(letter);
 
               return (
                 <motion.button
