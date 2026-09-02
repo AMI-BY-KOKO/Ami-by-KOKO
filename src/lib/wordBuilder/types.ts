@@ -139,7 +139,7 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
     name: "🌱 Letter Garden",
     description: "Meet your letter friends!",
     wordLengths: [2],
-    wordsPerLevel: 8,
+    wordsPerLevel: 37, // All 37 enabled 2-letter words
     distractorLetterCount: 0,
     hintsAvailable: 3,
     showPictures: true,
@@ -150,7 +150,7 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
     name: "🛤️ Little Word Path",
     description: "Your first words await!",
     wordLengths: [3],
-    wordsPerLevel: 10,
+    wordsPerLevel: 47, // All 47 enabled 3-letter words
     distractorLetterCount: 1,
     hintsAvailable: 3,
     showPictures: true,
@@ -160,8 +160,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
     level: 3,
     name: "🌳 Word Forest",
     description: "Explore new words!",
-    wordLengths: [3],
-    wordsPerLevel: 10,
+    wordLengths: [3, 4], // Mixed 3-4 letter words
+    wordsPerLevel: 57, // All 57 4-letter words
     distractorLetterCount: 2,
     hintsAvailable: 2,
     showPictures: true,
@@ -171,8 +171,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
     level: 4,
     name: "🏘️ Kòkò's Village",
     description: "Build bigger words!",
-    wordLengths: [4],
-    wordsPerLevel: 12,
+    wordLengths: [5],
+    wordsPerLevel: 67, // All 67 5-letter words
     distractorLetterCount: 2,
     hintsAvailable: 2,
     showPictures: true,
@@ -182,8 +182,8 @@ export const LEVEL_CONFIGS: Record<number, LevelConfig> = {
     level: 5,
     name: "🏆 Kòkò Challenge",
     description: "Ready for the ultimate challenge?",
-    wordLengths: [4],
-    wordsPerLevel: 12,
+    wordLengths: [6, 7, 8, 9], // 6+ letter words
+    wordsPerLevel: 77, // All 77 6+ letter words
     distractorLetterCount: 3,
     hintsAvailable: 1,
     showPictures: true,

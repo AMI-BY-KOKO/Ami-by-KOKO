@@ -22,6 +22,7 @@ import {
   shuffleArray,
 } from "@/lib/wordBuilder/wordDatasets";
 import { LEVEL_CONFIGS } from "@/lib/wordBuilder/types";
+import { playWordPronunciation } from "@/lib/audio/speech";
 
 const STORAGE_KEY_LANGUAGE = "wordBuilder_language";
 const STORAGE_KEY_SESSION = "wordBuilder_session";
@@ -263,9 +264,13 @@ export function useWordBuilder() {
     return isCorrect;
   }, [selectedLetters, currentChallenge]);
 
-  // ─── Hint System ────────────────────────────────────────────────────────
-  const getHint = useCallback((): string | null => {
-    if (!currentChallenge || !progress) return null;
+  // ─── Hint System with Word Pronunciation ────────────────────────────────
+  const getHint = useCallback(async (): Promise<{
+    type: 'encouragement' | 'pronunciation' | 'highlight-first' | 'highlight-multi';
+    firstLetterToGlow?: string;
+    message?: string;
+  } | null> => {
+    if (!currentChallenge || !progress || !selectedLanguage) return null;
 
     const level = progress.current_level as 1 | 2 | 3 | 4 | 5;
     const levelConfig = LEVEL_CONFIGS[level];
@@ -275,21 +280,39 @@ export function useWordBuilder() {
 
     setHintsUsed(prev => prev + 1);
 
+    const hintNumber = hintsUsed;
+
     // Progressive hints based on hint number
-    if (hintsUsed === 0) {
-      // First hint: just encouragement
-      return "encouragement";
-    } else if (hintsUsed === 1) {
-      // Second hint: highlight the first correct letter
-      return `highlight:${currentChallenge.correctOrder[0]}`;
+    if (hintNumber === 0) {
+      // First hint: pronounce the word
+      try {
+        await playWordPronunciation(currentChallenge.word.word, selectedLanguage);
+      } catch (err) {
+        console.error("[useWordBuilder] pronunciation error:", err);
+      }
+      return {
+        type: 'pronunciation',
+        message: '🎵 Listen to the word!',
+      };
+    } else if (hintNumber === 1) {
+      // Second hint: highlight the first letter and show its position
+      return {
+        type: 'highlight-first',
+        firstLetterToGlow: currentChallenge.correctOrder[0],
+        message: '✨ First letter glowing!',
+      };
     } else {
       // Third hint (if available): highlight first TWO letters for lower levels
       if (level <= 2) {
-        return `highlight:${currentChallenge.correctOrder[0]}${currentChallenge.correctOrder[1]}`;
+        return {
+          type: 'highlight-multi',
+          firstLetterToGlow: currentChallenge.correctOrder[0],
+          message: `✨ First ${Math.min(2, currentChallenge.correctOrder.length)} letters glowing!`,
+        };
       }
       return null;
     }
-  }, [currentChallenge, hintsUsed, progress]);
+  }, [currentChallenge, hintsUsed, progress, selectedLanguage]);
 
   // ─── Progress Updates ────────────────────────────────────────────────────
   const recordCompletion = useCallback(async (starsEarned: 1 | 2 | 3) => {

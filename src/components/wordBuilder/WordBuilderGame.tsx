@@ -22,7 +22,11 @@ interface WordBuilderGameProps {
   onDeselectLetter: () => void;
   onResetSelection: () => void;
   onSubmitAnswer: () => boolean;
-  onGetHint: () => string | null;
+  onGetHint: () => Promise<{
+    type: 'encouragement' | 'pronunciation' | 'highlight-first' | 'highlight-multi';
+    firstLetterToGlow?: string;
+    message?: string;
+  } | null>;
   onCorrectAnswer: (stars: 1 | 2 | 3) => void;
   onBackToHome: () => void;
 }
@@ -43,7 +47,11 @@ export default function WordBuilderGame({
 }: WordBuilderGameProps) {
   const [gameState, setGameState] = useState<GameState>("playing");
   const [kokoReaction, setKokoReaction] = useState<string | null>(null);
-  const [currentHint, setCurrentHint] = useState<string | null>(null);
+  const [currentHint, setCurrentHint] = useState<{
+    type: 'encouragement' | 'pronunciation' | 'highlight-first' | 'highlight-multi';
+    firstLetterToGlow?: string;
+    message?: string;
+  } | null>(null);
   const [attemptCount, setAttemptCount] = useState(0);
 
   const word = challenge.word;
@@ -108,10 +116,10 @@ export default function WordBuilderGame({
   };
 
   // ─── Handle hint ────────────────────────────────────────────────────────
-  const handleGetHint = () => {
+  const handleGetHint = async () => {
     if (gameState !== "playing") return;
 
-    const hint = onGetHint();
+    const hint = await onGetHint();
     if (!hint) {
       // No more hints available
       setKokoReaction("You're so close! Keep trying!");
@@ -120,30 +128,43 @@ export default function WordBuilderGame({
     }
 
     setCurrentHint(hint);
-    setKokoReaction(dialogue.hint[Math.floor(Math.random() * dialogue.hint.length)]);
-
-    // Process hint based on type
-    if (hint === "encouragement") {
-      // Show encouragement for 1.5s
-      setTimeout(() => {
-        setCurrentHint(null);
-        setKokoReaction(null);
-      }, 1500);
-    } else if (hint.startsWith("highlight:")) {
-      // Highlight will be shown in the UI, visible for 3s
-      setTimeout(() => {
-        setCurrentHint(null);
-        setKokoReaction(null);
-      }, 3000);
+    
+    let feedbackMessage = hint.message || "";
+    if (hint.type === 'pronunciation') {
+      feedbackMessage = "🎵 Listen carefully!";
+    } else if (hint.type === 'highlight-first') {
+      feedbackMessage = "✨ First letter glowing!";
+    } else if (hint.type === 'highlight-multi') {
+      feedbackMessage = "✨ Multiple letters glowing!";
     }
+    
+    setKokoReaction(feedbackMessage);
+
+    // Hide hint after delay
+    const hideDelay = hint.type === 'pronunciation' ? 3000 : 3000;
+    setTimeout(() => {
+      setCurrentHint(null);
+      setKokoReaction(null);
+    }, hideDelay);
   };
 
-  // ─── Play word pronunciation ────────────────────────────────────────────
+  // ─── Get highlighted letters based on hint type ──────────────────────────
   const getHintHighlightLetters = (): string[] => {
-    if (currentHint?.startsWith("highlight:")) {
-      const lettersStr = currentHint.split(":")[1];
-      return lettersStr.split("");
+    if (!currentHint) return [];
+
+    if (currentHint.type === 'highlight-first' && currentHint.firstLetterToGlow) {
+      return [currentHint.firstLetterToGlow];
     }
+
+    if (currentHint.type === 'highlight-multi' && currentHint.firstLetterToGlow) {
+      // For multi-letter hints, show first two letters max
+      const firstLetter = currentHint.firstLetterToGlow;
+      const letterIndex = challenge.correctOrder.indexOf(firstLetter);
+      if (letterIndex >= 0) {
+        return challenge.correctOrder.slice(0, Math.min(letterIndex + 2, challenge.correctOrder.length));
+      }
+    }
+
     return [];
   };
 
