@@ -76,6 +76,34 @@ export default function BottomNav({ role }: BottomNavProps) {
           );
         })}
       </div>
+
+      {/* Footer links section */}
+      <div className="border-t border-amber-50 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-2.5 text-center">
+        <div className="flex items-center justify-center gap-2 text-xs max-w-2xl mx-auto flex-wrap">
+          <a
+            href="/privacy"
+            className="text-amber-700 hover:text-amber-800 font-semibold transition underline-offset-2 hover:underline"
+          >
+            📄 Privacy
+          </a>
+          <span className="text-stone-300">•</span>
+          <a
+            href="/terms"
+            className="text-amber-700 hover:text-amber-800 font-semibold transition underline-offset-2 hover:underline"
+          >
+            📄 Terms
+          </a>
+          <span className="text-stone-300">•</span>
+          <a
+            href="https://amibykoko.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-amber-700 hover:text-amber-800 font-semibold transition underline-offset-2 hover:underline"
+          >
+            🌐 amibykoko.app
+          </a>
+        </div>
+      </div>
     </nav>
   );
 }

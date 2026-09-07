@@ -119,7 +119,7 @@ export default async function AppLayout({
     return (
       <div className="min-h-screen bg-amber-50">
         <AppNav profile={profile} />
-        <main className="w-full max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <main className="w-full max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-32">
           <ErrorBoundaryWrapper>
             {children}
           </ErrorBoundaryWrapper>

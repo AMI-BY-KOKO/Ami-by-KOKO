@@ -494,18 +494,35 @@ export default function LandingPage() {
 
       {/* ── Footer ─────────────────────────────────────────── */}
       <footer className="bg-stone-900 text-stone-400 py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🦜</span>
-            <span className="font-extrabold text-white">Àmì by Kòkò</span>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🦜</span>
+              <span className="font-extrabold text-white">Àmì by Kòkò</span>
+            </div>
+            <p className="text-sm text-center text-stone-500">
+              Made with ❤️ for African children everywhere.
+            </p>
+            <div className="flex gap-5 sm:gap-6 text-sm">
+              <a href="mailto:hello@amibykoko.com" className="hover:text-white transition">Contact</a>
+              <a href="/auth/signup" className="hover:text-white transition">Sign up</a>
+              <a href="mailto:schools@amibykoko.com" className="hover:text-white transition">Schools</a>
+            </div>
           </div>
-          <p className="text-sm text-center text-stone-500">
-            Made with ❤️ for African children everywhere.
-          </p>
-          <div className="flex gap-5 sm:gap-6 text-sm">
-            <a href="mailto:hello@amibykoko.com" className="hover:text-white transition">Contact</a>
-            <a href="/auth/signup" className="hover:text-white transition">Sign up</a>
-            <a href="mailto:schools@amibykoko.com" className="hover:text-white transition">Schools</a>
+          
+          {/* Legal links */}
+          <div className="border-t border-stone-700 pt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-stone-500">
+            <a href="https://amibykoko.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+              amibykoko.app
+            </a>
+            <span className="hidden sm:block">•</span>
+            <Link href="/privacy" className="hover:text-white transition">
+              Privacy Policy
+            </Link>
+            <span className="hidden sm:block">•</span>
+            <Link href="/terms" className="hover:text-white transition">
+              Terms of Service
+            </Link>
           </div>
         </div>
       </footer>

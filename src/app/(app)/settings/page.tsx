@@ -548,6 +548,16 @@ export default function SettingsPage() {
           <h2 className="font-bold text-stone-700 mb-3">About</h2>
           <p className="text-sm text-stone-500">Àmì by Kòkò — v0.1.0 MVP</p>
           <p className="text-xs text-stone-400 mt-1">Made with ❤️ for Nigerian children.</p>
+          
+          {/* Legal links */}
+          <div className="mt-4 pt-4 border-t border-stone-100 flex flex-col gap-2">
+            <a href="/privacy" className="text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-2">
+              📄 Privacy Policy
+            </a>
+            <a href="/terms" className="text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-2">
+              📄 Terms of Service
+            </a>
+          </div>
         </section>
       </div>
 
