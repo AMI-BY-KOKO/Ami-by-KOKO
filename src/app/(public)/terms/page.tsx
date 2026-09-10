@@ -210,7 +210,7 @@ export default function TermsPage() {
               </h2>
               <p>
                 These terms are governed by the laws of the Federal Republic of Nigeria. Any
-                disputes shall be resolved in Oyo State courts.
+                disputes shall be resolved in Lagos State courts.
               </p>
             </div>
 
@@ -236,7 +236,7 @@ export default function TermsPage() {
                   <strong>Website:</strong> amibykoko.app
                 </p>
                 <p>
-                  <strong>Location:</strong> Ibadan, Oyo State, Nigeria
+                  <strong>Location:</strong> Lagos State, Nigeria
                 </p>
               </div>
             </div>

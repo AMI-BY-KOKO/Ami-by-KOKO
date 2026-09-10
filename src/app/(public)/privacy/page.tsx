@@ -55,7 +55,7 @@ export default function PrivacyPage() {
               </h2>
               <p>
                 Àmì by Kòkò ('we', 'our', 'the app') is operated by Akinwoleola Clinton,
-                Ibadan, Oyo State, Nigeria. This Privacy Policy explains how we collect,
+                Lagos State, Nigeria. This Privacy Policy explains how we collect,
                 use and protect information when you use amibykoko.app.
               </p>
             </div>
@@ -254,7 +254,7 @@ export default function PrivacyPage() {
                   <strong>Website:</strong> amibykoko.app
                 </p>
                 <p>
-                  <strong>Location:</strong> Ibadan, Oyo State, Nigeria
+                  <strong>Location:</strong> Lagos State, Nigeria
                 </p>
               </div>
             </div>
