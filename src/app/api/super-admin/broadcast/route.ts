@@ -125,13 +125,17 @@ export async function POST(request: NextRequest) {
     const { Resend } = await import('resend')
     const resend = new Resend(process.env.RESEND_API_KEY)
 
+    // Use custom domain if configured, otherwise use Resend's default
+    const senderEmail = process.env.RESEND_FROM_EMAIL || 'noreply@resend.dev'
+    const senderName = process.env.RESEND_FROM_NAME || 'Àmì by Kòkò'
+    
     // Send emails
     let successCount = 0
     for (const email of recipientEmails) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (resend as any).emails.send({
-          from: 'Àmì by Kòkò <noreply@resend.dev>',
+          from: `${senderName} <${senderEmail}>`,
           to: email,
           subject,
           html: `
