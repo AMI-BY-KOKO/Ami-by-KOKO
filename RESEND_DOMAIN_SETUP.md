@@ -34,10 +34,12 @@ from: Àmì by Kòkò <noreply@amibykoko.app>
 These are already added to `.env.local`:
 
 ```env
-RESEND_API_KEY="re_5hN6EmB8_LBGJjXm4RCQHuFbQ3dGpqwaN"
+RESEND_API_KEY="your_resend_api_key_here"
 RESEND_FROM_EMAIL="noreply@amibykoko.app"
 RESEND_FROM_NAME="Àmì by Kòkò"
 ```
+
+Get your actual API key from: https://resend.com/api-keys
 
 **For Vercel deployment:**
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
