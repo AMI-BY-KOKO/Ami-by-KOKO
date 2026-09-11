@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -113,6 +114,21 @@ export default function SignupPage() {
         <p className="mb-6 text-center text-sm text-stone-500">
           Free to start — English phonics included
         </p>
+
+        {/* Google OAuth Button */}
+        <div className="mb-6">
+          <GoogleSignInButton />
+        </div>
+
+        {/* Divider */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-stone-200"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-white px-2 text-stone-500">or create with email</span>
+          </div>
+        </div>
 
         <form onSubmit={handleSignup} className="flex flex-col gap-4">
           {/* Full name */}
