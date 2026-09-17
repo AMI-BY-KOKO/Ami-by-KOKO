@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import TryALetter from "@/components/landing/TryALetter";
+import YouTubeBanner from "@/components/YouTubeBanner/YouTubeBanner";
 
 const FEATURES = [
   {
@@ -338,6 +339,8 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </section>
+
+      <YouTubeBanner />
 
       {/* ── Pricing ────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
