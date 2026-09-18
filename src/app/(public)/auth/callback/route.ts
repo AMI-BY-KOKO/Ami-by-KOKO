@@ -24,19 +24,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/auth/login?error=no_user`);
     }
 
-    // Check if parent profile exists
-    const { data: parentProfile } = await supabase
-      .from("parent_profiles")
-      .select("id")
-      .eq("user_id", data.user.id)
+    // Check if user profile exists
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id, role")
+      .eq("id", data.user.id)
       .maybeSingle();
 
-    // If no parent profile, redirect to onboarding
-    if (!parentProfile) {
-      return NextResponse.redirect(`${origin}/onboarding/parent-profile`);
+    // If no profile, redirect to role selection
+    if (!profile) {
+      return NextResponse.redirect(`${origin}/onboarding/role-selection`);
     }
 
-    // Parent profile exists, continue to intended destination
+    // Profile exists, check if they've completed role-specific onboarding
+    // For now, redirect to intended destination (dashboard or home based on role)
     return NextResponse.redirect(`${origin}${next}`);
   }
 

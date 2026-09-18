@@ -420,7 +420,7 @@ export default function SettingsPage() {
                       ))}
                     </div>
                   </div>
-                  <a href="https://wa.me/2348000000000?text=Hi%2C%20I%27d%20like%20to%20upgrade%20my%20school%20plan%20on%20%C3%80m%C3%AC%20by%20K%C3%B2k%C3%B2"
+                  <a href="https://wa.me/2349037789995?text=Hi%2C%20I%27d%20like%20to%20upgrade%20my%20school%20plan%20on%20%C3%80m%C3%AC%20by%20K%C3%B2k%C3%B2"
                     target="_blank" rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-green-700 bg-green-50 hover:bg-green-100 py-3 rounded-2xl transition border border-green-200">
                     📱 Contact us to upgrade your school plan

@@ -155,11 +155,19 @@ export function useProgress(childId: string | null, language: Language) {
       }
 
       // Persist
-      await fetch("/api/progress", {
+      const persistResult = await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ childId, language, letter, subject, patch }),
       });
+
+      if (!persistResult.ok) {
+        const errorData = await persistResult.json();
+        console.error("[upsertProgress] API error:", errorData);
+        throw new Error(`Failed to persist progress: ${errorData.error}`);
+      }
+
+      console.log("[upsertProgress] Progress persisted successfully for", letter, patch);
 
       // Milestone check — literacy only
       if (patch.mastered && subject === "literacy") {
@@ -189,7 +197,7 @@ export function useProgress(childId: string | null, language: Language) {
         }
       }
     },
-    [childId, language, literacyProgress]
+    [childId, language]
   );
 
   // ── Convenience writers ───────────────────────────────────────────────────
@@ -200,15 +208,27 @@ export function useProgress(childId: string | null, language: Language) {
                  : literacyProgress;
     const existing = bucket.find(p => p.letter === letter);
     return upsertProgress(letter, { heard_count: (existing?.heard_count ?? 0) + 1 }, subject);
-  }, [literacyProgress, numeracyProgress, worldProgress, upsertProgress]);
+  }, [upsertProgress]);
 
   const recordCorrect = useCallback((letter: string, subject = "literacy") => {
     const bucket = subject === "numeracy" ? numeracyProgress
                  : subject === "world"    ? worldProgress
                  : literacyProgress;
     const existing = bucket.find(p => p.letter === letter);
-    return upsertProgress(letter, { heard_count: (existing?.heard_count ?? 0) + 1, mastered: true }, subject);
-  }, [literacyProgress, numeracyProgress, worldProgress, upsertProgress]);
+    
+    // Call upsertProgress and then check achievements
+    return upsertProgress(letter, { heard_count: (existing?.heard_count ?? 0) + 1, mastered: true }, subject)
+      .then(async () => {
+        // After marking as mastered, check and award achievements
+        if (childId) {
+          const { checkAndAwardAchievements } = await import("@/lib/achievements/actions");
+          const result = await checkAndAwardAchievements(childId);
+          if (result.success && result.newAchievementIds.length > 0) {
+            console.log("[recordCorrect] 🏆 Achievements awarded:", result.newAchievementIds);
+          }
+        }
+      });
+  }, [upsertProgress, childId, literacyProgress, numeracyProgress, worldProgress]);
 
   const recordTraced = useCallback((letter: string, subject = "literacy") => {
     const bucket = subject === "numeracy" ? numeracyProgress
@@ -216,8 +236,20 @@ export function useProgress(childId: string | null, language: Language) {
                  : literacyProgress;
     const existing = bucket.find(p => p.letter === letter);
     const newCount = (existing?.traced_count ?? 0) + 1;
-    return upsertProgress(letter, { traced_count: newCount, mastered: newCount >= 3 }, subject);
-  }, [literacyProgress, numeracyProgress, worldProgress, upsertProgress]);
+    
+    // Call upsertProgress and then check achievements
+    return upsertProgress(letter, { traced_count: newCount, mastered: newCount >= 3 }, subject)
+      .then(async () => {
+        // After completing tracing, check and award achievements
+        if (childId && newCount >= 3) {
+          const { checkAndAwardAchievements } = await import("@/lib/achievements/actions");
+          const result = await checkAndAwardAchievements(childId);
+          if (result.success && result.newAchievementIds.length > 0) {
+            console.log("[recordTraced] 🏆 Achievements awarded:", result.newAchievementIds);
+          }
+        }
+      });
+  }, [upsertProgress, childId, literacyProgress, numeracyProgress, worldProgress]);
 
   // ── Derived values ────────────────────────────────────────────────────────
 

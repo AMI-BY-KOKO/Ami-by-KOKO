@@ -4,10 +4,17 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { initializeChildProgress, getChildAllProgress } from "@/lib/learning-paths/actions";
 import CreateChildModal from "@/components/ui/CreateChildModal";
 import OnboardingFlow from "@/components/ui/OnboardingFlow";
 import SongButton from "@/components/ui/SongButton";
 import ChallengeCard from "@/components/ui/ChallengeCard";
+import TodaysAdventure from "@/components/TodaysAdventure";
+import DailyChallengeCard from "@/components/DailyChallengeCard";
+import { StreakDisplay } from "@/components/StreakDisplay";
+import { StreakMilestoneCelebration, NewStreakStarted } from "@/components/StreakMilestoneCelebration";
+import { AchievementDisplay, AchievementCounter } from "@/components/AchievementDisplay";
+import { AchievementCelebration } from "@/components/AchievementCelebration";
 import { useProgress } from "@/hooks/useProgress";
 import { useStreak } from "@/hooks/useStreak";
 import { useChild } from "@/hooks/useChild";
@@ -64,7 +71,7 @@ function SchoolAdminHome({ schoolName, subscriptionActive }: { schoolName: strin
             <p className="font-bold text-amber-800 text-sm">Students can only access A–F</p>
             <p className="text-amber-700 text-xs mt-0.5">Upgrade your school plan to unlock everything for all students.</p>
             <a
-              href="https://wa.me/2348000000000?text=Hi%2C%20I%27d%20like%20to%20upgrade%20my%20school%20plan%20on%20%C3%80m%C3%AC%20by%20K%C3%B2k%C3%B2"
+              href="https://wa.me/2349037789995?text=Hi%2C%20I%27d%20like%20to%20upgrade%20my%20school%20plan%20on%20%C3%80m%C3%AC%20by%20K%C3%B2k%C3%B2"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 mt-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition"
@@ -287,6 +294,9 @@ function ParentHome() {
   const [showModal, setShowModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSwitcher, setShowSwitcher] = useState(false);
+  const [streakMilestoneDay, setStreakMilestoneDay] = useState<number | null>(null);
+  const [showNewStreakStarted, setShowNewStreakStarted] = useState(false);
+  const [newAchievements, setNewAchievements] = useState<any[]>([]);
 
   const shardsFound = STORY_LETTERS.filter(l => masteredLetters.includes(l)).length;
   const isSchoolChild = !!activeChildWithClass?.school_id;
@@ -301,6 +311,30 @@ function ParentHome() {
     init();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Initialize learning paths progress for active child if not already done
+  useEffect(() => {
+    async function ensureProgressInitialized() {
+      if (!activeChild?.id) return;
+
+      try {
+        // Check if progress exists for this child
+        const existingProgress = await getChildAllProgress(activeChild.id);
+        
+        // If no progress exists, initialize it
+        if (!existingProgress || existingProgress.length === 0) {
+          const result = await initializeChildProgress(activeChild.id);
+          if (!result.success) {
+            console.warn("Failed to initialize progress:", result.error);
+          }
+        }
+      } catch (err) {
+        console.error("Error ensuring progress initialized:", err);
+      }
+    }
+
+    ensureProgressInitialized();
+  }, [activeChild?.id]);
 
   return (
     <>
@@ -431,27 +465,18 @@ function ParentHome() {
           </div>
         )}
 
-        {/* Mode cards */}
+        {/* Kòkò's Daily Challenge */}
         <div className="px-4 mt-6">
-          <h2 className="text-base font-bold text-stone-700 mb-3">What do you want to do today?</h2>
-          <div className="flex flex-col gap-3">
-            {MODES.map((mode, i) => (
-              <motion.div key={mode.href} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 + i * 0.08 }}>
-                <Link href={mode.href}
-                  className={`flex items-center gap-4 p-4 rounded-3xl bg-white shadow-md ${mode.shadow} ring-1 ${mode.ring} transition hover:scale-[1.02] active:scale-[0.98]`}>
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${mode.gradient} flex items-center justify-center text-2xl shadow-sm flex-shrink-0`}>
-                    {mode.emoji}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-stone-800 text-sm">{mode.title}</p>
-                    <p className="text-stone-500 text-xs">{mode.description}</p>
-                  </div>
-                  <div className="text-stone-300">›</div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+          {activeChild && (
+            <DailyChallengeCard childId={activeChild.id} />
+          )}
+        </div>
+
+        {/* Today's Adventure - Guided Learning Path */}
+        <div className="px-4 mt-6">
+          {activeChild && (
+            <TodaysAdventure childId={activeChild.id} />
+          )}
         </div>
 
         {/* Song of the Day */}
@@ -522,6 +547,20 @@ function ParentHome() {
           </div>
         </div>
 
+        {/* Streak Display Card */}
+        <div className="px-4 mt-6">
+          {activeChild && (
+            <StreakDisplay />
+          )}
+        </div>
+
+        {/* Achievement Display Card */}
+        <div className="px-4 mt-6">
+          {activeChild && (
+            <AchievementDisplay childId={activeChild.id} />
+          )}
+        </div>
+
         {/* No child profile banner — parents only */}
         {!childrenLoading && children.length === 0 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="px-4 mt-4">
@@ -541,6 +580,24 @@ function ParentHome() {
       </div>
 
       {showSwitcher && <div className="fixed inset-0 z-10" onClick={() => setShowSwitcher(false)} />}
+
+      {/* Streak Milestone Celebration */}
+      <StreakMilestoneCelebration
+        milestoneDay={streakMilestoneDay}
+        onClose={() => setStreakMilestoneDay(null)}
+      />
+
+      {/* New Streak Started */}
+      <NewStreakStarted
+        show={showNewStreakStarted}
+        onClose={() => setShowNewStreakStarted(false)}
+      />
+
+      {/* Achievement Celebration */}
+      <AchievementCelebration
+        achievements={newAchievements}
+        onClose={() => setNewAchievements([])}
+      />
 
       <AnimatePresence>
         {showModal && userId && (
