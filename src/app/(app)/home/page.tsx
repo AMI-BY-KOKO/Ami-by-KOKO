@@ -16,6 +16,7 @@ import { useChallenges } from "@/hooks/useChallenges";
 import { getSongOfTheDay, getLetterSong } from "@/lib/audio/songs";
 import { isStudentAccount } from "@/lib/access";
 import { SUBJECT_EMOJIS, CLASS_LABELS, type ChildWithClass } from "@/types";
+import YouTubeBannerHome from "@/components/YouTubeBanner/YouTubeBannerHome";
 
 const MODES = [
   { href: "/literacy",  emoji: "🔤", title: "Literacy & Language",  description: "Letters, sounds and tracing",  gradient: "from-amber-400 to-orange-400", shadow: "shadow-amber-200", ring: "ring-amber-200" },
@@ -102,6 +103,10 @@ function SchoolAdminHome({ schoolName, subscriptionActive }: { schoolName: strin
           className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-2xl transition shadow-md shadow-green-200">
           Open School Dashboard →
         </Link>
+      </div>
+
+      <div className="px-4 mt-4">
+        <YouTubeBannerHome />
       </div>
     </div>
   );
@@ -268,6 +273,7 @@ function StudentHome({
           </div>
         </div>
       </div>
+
     </div>
   );
 }
@@ -538,6 +544,11 @@ function ParentHome() {
             </div>
           </motion.div>
         )}
+
+        <div className="">
+          <YouTubeBannerHome />
+        </div>
+
       </div>
 
       {showSwitcher && <div className="fixed inset-0 z-10" onClick={() => setShowSwitcher(false)} />}
