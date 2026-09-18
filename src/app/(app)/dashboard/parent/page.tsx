@@ -16,6 +16,7 @@ import EditChildModal from "@/components/ui/EditChildModal";
 import Certificate from "@/components/ui/Certificate";
 import type { Child, CertificateType, ChildWithClass } from "@/types";
 import { CERTIFICATE_CONFIGS, CLASS_LABELS } from "@/types";
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 
 const ALPHABET = Object.keys(LETTER_DATA.english);
 const NUMBERS = ["1","2","3","4","5","6","7","8","9","10"];
@@ -140,7 +141,7 @@ export default function ParentDashboardPage() {
 
   const activeCertConfig = showCertificate ? CERTIFICATE_CONFIGS[showCertificate] : null;
 
-  return (
+  return (<>
     <div className="flex flex-col gap-5 pb-10">
       <h1 className="text-2xl font-extrabold text-stone-800">
         {isStudent ? "My Progress" : "Dashboard"}
@@ -412,5 +413,6 @@ export default function ParentDashboardPage() {
         )}
       </AnimatePresence>
     </div>
+    <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" /></>
   );
 }

@@ -9,7 +9,7 @@ import CreateChildModal from "@/components/ui/CreateChildModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { openPaystackPopup, generateReference, PAYSTACK_PLANS } from "@/lib/paystack/client";
 import { CLASS_LABELS, type ClassLevel } from "@/types";
-
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 // ─── Student settings view ────────────────────────────────────────────────────
 
 interface StudentInfo {
@@ -136,7 +136,7 @@ function StudentSettings({ student }: { student: StudentInfo }) {
         <p className="text-sm text-stone-500">Àmì by Kòkò — v0.1.0 MVP</p>
         <p className="text-xs text-stone-400 mt-1">Made with ❤️ for Nigerian children.</p>
       </section>
-    </div>
+    </div>  
   );
 }
 
@@ -658,6 +658,7 @@ export default function SettingsPage() {
           </>
         )}
       </AnimatePresence>
+      <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
     </>
   );
 }
