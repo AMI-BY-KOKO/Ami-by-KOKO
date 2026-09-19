@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import TryALetter from "@/components/landing/TryALetter";
+import YouTubeBanner from "@/components/YouTubeBanner/YouTubeBanner";
 import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 
 const FEATURES = [
@@ -336,6 +337,9 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </section>
+
+      <YouTubeBanner />
+
       {/* ── Pricing ────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
