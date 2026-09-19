@@ -2,7 +2,7 @@ const YouTubeBanner: React.FC = () => {
   const youtubeUrl: string = "https://youtube.com/@amibykoko01?si=cGbl_bP9BiQMqoKE";
 
   return (
-    <section className="relative mx-auto my-8 max-w-6xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-400 via-purple-500 to-pink-500 px-6 py-10 shadow-2xl md:px-12 md:py-12">
+    <section className="relative lg:mx-auto sm:mx-6 md:mx-10 mx-4 my-8 max-w-6xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-400 via-purple-500 to-pink-500 px-6 py-10 shadow-2xl md:px-12 md:py-12">
 
       {/* =========================
           Decorative Background
