@@ -21,6 +21,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import type { ChildWithClass } from "@/types";
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 
 type Step = "school_code" | "pick_name" | "enter_pin";
 
@@ -121,6 +122,7 @@ function SchoolCodeStep({
       <a href="/auth/login" className="text-sm text-stone-400 hover:text-amber-600 transition">
         Parent / teacher login →
       </a>
+      <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
     </motion.div>
   );
 }
@@ -170,6 +172,7 @@ function PickNameStep({
     </motion.div>
   );
 }
+
 
 // ─── PIN pad ──────────────────────────────────────────────────────────────────
 

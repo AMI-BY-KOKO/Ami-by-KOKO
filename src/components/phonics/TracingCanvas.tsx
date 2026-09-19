@@ -214,7 +214,7 @@ function SingleCanvas({ letter, isLower = false, hideLabel = false, onComplete }
             >
               <motion.span
                 initial={{ scale: 0 }}
-                animate={{ scale: [0, 1.4, 1] }}
+                animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 300 }}
                 className="text-4xl"
               >
@@ -272,10 +272,6 @@ export default function TracingCanvas({ letter, onTraced, mode = "letter" }: Tra
     setLowerDone(true);
     onTraced?.();
   }, [onTraced]);
-
-  useEffect(() => {
-    if (upperDone && lowerDone) onTraced?.();
-  }, [upperDone, lowerDone, onTraced]);
 
   // ── Number mode — single canvas, no uppercase/lowercase labels ──
   if (mode === "number") {

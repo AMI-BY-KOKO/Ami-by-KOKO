@@ -9,7 +9,7 @@ const PARENT_NAV = [
   { href: "/home",             emoji: "🏠", label: "Home"     },
   { href: "/literacy",         emoji: "🔤", label: "Literacy" },
   { href: "/numeracy",         emoji: "🔢", label: "Numbers"  },
-  { href: "/world",            emoji: "🌍", label: "World"    },
+  { href: "/games",            emoji: "🎮", label: "Games"    },
   { href: "/dashboard/parent", emoji: "👤", label: "Me"       },
 ];
 

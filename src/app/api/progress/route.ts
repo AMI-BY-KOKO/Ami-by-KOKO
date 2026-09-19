@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { childId, language, letter, subject, cls, term, patch } = body;
 
-  if (!childId || !language || !letter) {
-    return NextResponse.json({ error: "childId, language and letter are required." }, { status: 400 });
+  if (!childId) {
+    return NextResponse.json({ error: "childId is required." }, { status: 400 });
   }
 
   const { anonClient, serviceClient } = await getClients();
@@ -47,6 +47,32 @@ export async function POST(request: NextRequest) {
   const { data: { user }, error: authError } = await anonClient.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+  }
+
+  // NEW SYSTEM: If we have subject and letter, update child_progress
+  if (subject && letter) {
+    // Convert letter to activity_ref (e.g., 'A' -> 'letter_a')
+    const activityRef = `letter_${letter.toLowerCase()}`;
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (serviceClient as any)
+      .from("child_progress")
+      .upsert({
+        child_id: childId,
+        activity_ref: activityRef,
+        ...patch,
+      }, { onConflict: "child_id,activity_ref" });
+
+    if (error) {
+      console.error("[POST /api/progress] Error upserting child_progress:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // LEGACY SYSTEM: Fall back to old progress table if needed
+  if (!letter) {
+    return NextResponse.json({ error: "letter is required." }, { status: 400 });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,9 +86,12 @@ export async function POST(request: NextRequest) {
       class: cls ?? null,
       term: term ?? null,
       ...patch,
-      last_activity: new Date().toISOString(),
     }, { onConflict: "child_id,language,letter" });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[POST /api/progress] Error updating progress:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  
   return NextResponse.json({ ok: true });
 }
