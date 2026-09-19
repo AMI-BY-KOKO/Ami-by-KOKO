@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -23,6 +22,7 @@ import { useChallenges } from "@/hooks/useChallenges";
 import { getSongOfTheDay, getLetterSong } from "@/lib/audio/songs";
 import { isStudentAccount } from "@/lib/access";
 import { SUBJECT_EMOJIS, CLASS_LABELS, type ChildWithClass } from "@/types";
+
 
 const MODES = [
   { href: "/literacy",  emoji: "🔤", title: "Literacy & Language",  description: "Letters, sounds and tracing",  gradient: "from-amber-400 to-orange-400", shadow: "shadow-amber-200", ring: "ring-amber-200" },
@@ -168,7 +168,6 @@ function StudentHome({
           <img src="/ami-koko.svg" alt="Àmì and Kòkò" className="w-full h-full object-contain object-bottom" />
         </motion.div>
       </div>
-
       {/* Assignments */}
       {assignments.length > 0 && (
         <div className="px-4 mt-6">
@@ -614,7 +613,7 @@ function ParentHome() {
             setShowOnboarding(false);
           }} />
         )}
-      </AnimatePresence>
+      </AnimatePresence> 
     </>
   );
 }
@@ -709,5 +708,8 @@ export default function HomePage() {
     return <StudentHome child={studentChild} schoolName={schoolName} />;
   }
 
-  return <ParentHome />;
+  return( <>
+  <ParentHome />
+  </>
+  )
 }

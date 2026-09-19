@@ -8,9 +8,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 
 export default function PrivacyPage() {
-  return (
+  return (<>
     <div className="min-h-screen bg-gradient-to-b from-cream-bg to-amber-50">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-amber-100">
@@ -310,5 +311,7 @@ export default function PrivacyPage() {
         </div>
       </div>
     </div>
+    <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
+    </>
   );
 }

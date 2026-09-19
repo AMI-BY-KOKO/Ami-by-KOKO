@@ -1,8 +1,8 @@
 "use client";
-
 import { motion } from "framer-motion";
 import Link from "next/link";
 import TryALetter from "@/components/landing/TryALetter";
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 
 const FEATURES = [
   {
@@ -44,7 +44,7 @@ const TESTIMONIALS = [
 ];
 
 export default function LandingPage() {
-  return (
+  return (<>
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#FFFBF0" }}>
 
       {/* ── Sticky Nav ─────────────────────────────────────── */}
@@ -70,7 +70,6 @@ export default function LandingPage() {
           </div>
         </div>
       </nav>
-
       {/* ── Hero ───────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-10 sm:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
@@ -200,7 +199,6 @@ export default function LandingPage() {
 
       {/* ── Interactive demo ────────────────────────────────── */}
       <TryALetter />
-
       {/* ── Features ───────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <motion.div
@@ -338,7 +336,6 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </section>
-
       {/* ── Pricing ────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -528,5 +525,7 @@ export default function LandingPage() {
       </footer>
 
     </div>
+    <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
+    </>
   );
 }

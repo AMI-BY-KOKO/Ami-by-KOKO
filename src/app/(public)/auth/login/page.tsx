@@ -1,5 +1,5 @@
 "use client";
-
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -56,7 +56,7 @@ export default function LoginPage() {
         <h1 className="mb-6 text-center text-3xl font-bold text-amber-500">
           Welcome back!
         </h1>
-
+        <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
         {/* Google OAuth Button */}
         <div className="mb-6">
           <GoogleSignInButton />
