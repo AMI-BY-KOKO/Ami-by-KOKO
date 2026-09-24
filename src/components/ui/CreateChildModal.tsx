@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { CLASS_LABELS, type ClassLevel, type Term } from "@/types";
 import { useClassConfig } from "@/hooks/useClassConfig";
+import { initializeChildProgress } from "@/lib/learning-paths/actions";
 
 const AVATARS = ["🧒🏾", "👦🏾", "👧🏾", "🧒🏽", "👦🏽", "👧🏽", "🧒🏿", "👦🏿", "👧🏿"];
 const ALL_CLASSES: ClassLevel[] = ["sprout_1", "sprout_2", "sprout_3", "stepping_stone"];
@@ -32,25 +33,42 @@ export default function CreateChildModal({ parentId, onCreated, onClose }: Creat
     setLoading(true);
     setError(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any)
-      .from("children")
-      .insert({
-        parent_id: parentId,
-        name: name.trim(),
-        age: age ? parseInt(age) : null,
-        avatar_url: avatar,
-        class: cls,
-        term,
-      });
+    try {
+      // Insert the new child
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
+        .from("children")
+        .insert({
+          parent_id: parentId,
+          name: name.trim(),
+          age: age ? parseInt(age) : null,
+          avatar_url: avatar,
+          class: cls,
+          term,
+        })
+        .select("id")
+        .single();
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+
+      // Initialize learning paths for the new child
+      if (data?.id) {
+        const initResult = await initializeChildProgress(data.id);
+        if (!initResult.success) {
+          console.warn("Failed to initialize child progress:", initResult.error);
+          // Don't fail the entire flow, but log the issue
+        }
+      }
+
+      onCreated();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create child");
       setLoading(false);
-      return;
     }
-
-    onCreated();
   }
 
   return (

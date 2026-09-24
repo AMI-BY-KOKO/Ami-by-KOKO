@@ -70,11 +70,15 @@ export default function LetterDetail({ letter, language, letterData }: LetterDet
   const nextLetter = letter < "Z" ? String.fromCharCode(letter.charCodeAt(0) + 1) : null;
   const prevLetter = letter > "A" ? String.fromCharCode(letter.charCodeAt(0) - 1) : null;
 
-  // Record heard when page loads
+  // Record heard when page loads — use a flag to prevent multiple calls
+  const recordedRef = useRef(false);
   useEffect(() => {
-    if (activeChild?.id) recordHeard(letter);
+    if (activeChild?.id && !recordedRef.current) {
+      recordedRef.current = true;
+      recordHeard(letter);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [letter, activeChild?.id]);
+  }, []);
 
   async function handlePlay() {
     if (speaking) return;
