@@ -31,9 +31,9 @@ export function isLetterFree(letter: string, language: string = "english"): bool
   return ["a", "b", "c", "d", "e", "f"].includes(lowerLetter);
 }
 
-/** Numbers 1–3 are free; 4–10 require paid access */
+/** Numbers 1–10 are free; 11+ require paid access */
 export function isNumberFree(num: number | string): boolean {
-  return [1, 2, 3].includes(Number(num));
+  return Number(num) <= 10;
 }
 
 /** Body Parts category is free; all others require paid access */

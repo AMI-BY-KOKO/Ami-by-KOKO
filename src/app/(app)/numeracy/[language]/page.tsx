@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useChild } from "@/hooks/useChild";
@@ -10,26 +10,130 @@ import { isNumberFree } from "@/lib/access";
 import UpgradePrompt from "@/components/ui/UpgradePrompt";
 import LockedOverlay from "@/components/ui/LockedOverlay";
 
+const NUMBER_ICONS = [
+  "1F96D", "1F34A", "1F34C", "1F347", "1F353", "1F360", "1F966", "1F955", "1F336", "1F33D",
+  "1F95E", "1F351", "1F352", "1F348", "1F349", "1F34D", "1F34E", "1F350", "1F351", "1F352",
+];
+
+const COLOURS = [
+  "from-amber-400 to-orange-400",
+  "from-green-400 to-emerald-500",
+  "from-violet-400 to-purple-500",
+  "from-rose-400 to-pink-500",
+  "from-sky-400 to-blue-500",
+  "from-amber-400 to-yellow-400",
+  "from-teal-400 to-cyan-500",
+  "from-orange-400 to-red-400",
+  "from-fuchsia-400 to-pink-400",
+  "from-green-500 to-emerald-400",
+];
+
+function getYorubaNumber(value: number): string {
+  const ones: Record<number, string> = {
+    1: "Ọkan",
+    2: "Èjì",
+    3: "Ẹta",
+    4: "Ẹrin",
+    5: "Àrún",
+    6: "Ẹfà",
+    7: "Èje",
+    8: "Ẹjọ",
+    9: "Ẹsàn",
+  };
+
+  const teens: Record<number, string> = {
+    10: "Ẹwà",
+    11: "Mokanlá",
+    12: "Mejìlá",
+    13: "Mẹ́tàlá",
+    14: "Mẹ́rinlá",
+    15: "Márùn",
+    16: "Mẹ́fàlá",
+    17: "Méjè",
+    18: "Mẹ́jọ",
+    19: "Mẹ́sàn",
+  };
+
+  const tens: Record<number, string> = {
+    2: "Ogún",
+    3: "Ọgbọn",
+    4: "Ọgbẹ̀rin",
+    5: "Ààdọ́ta",
+    6: "Ọgọ́fa",
+    7: "Ọgọ́je",
+    8: "Ọgọ́jọ",
+    9: "Ọgọ́sàn",
+  };
+
+  if (value <= 9) return ones[value];
+  if (value <= 19) return teens[value];
+  if (value % 10 === 0) {
+    const tensValue = value / 10;
+    return tens[tensValue] ?? `${tens[Math.floor(tensValue / 10)] ?? ""} ${ones[value % 10] ?? ""}`.trim();
+  }
+
+  const tensValue = Math.floor(value / 10);
+  const remainder = value % 10;
+  const tensWord = tens[tensValue] ?? "";
+  const unitWord = ones[remainder] ?? "";
+
+  return `${unitWord} l'${tensWord.toLowerCase()}`.trim();
+}
+
+const YORUBA_NUMBERS: Record<number, string> = Object.fromEntries(
+  Array.from({ length: 100 }, (_, index) => [index + 1, getYorubaNumber(index + 1)])
+);
+
+function getEnglishNumber(value: number): string {
+  const ones = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+  const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+  if (value < 10) return ones[value];
+  if (value < 20) return teens[value - 10];
+  if (value < 100) {
+    const tensValue = Math.floor(value / 10);
+    const remainder = value % 10;
+    return remainder === 0 ? tens[tensValue] : `${tens[tensValue]} ${ones[remainder]}`;
+  }
+  if (value === 100) return "One Hundred";
+
+  return "One Hundred";
+}
+
 const NUMBER_DATA: Record<string, {
   numeral: string; word: string; yorubaWord: string; imageUrl: string; colour: string;
-}> = {
-  "1":  { numeral:"1",  word:"One",   yorubaWord:"Ọkan", imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F96D.svg", colour:"from-amber-400 to-orange-400" },
-  "2":  { numeral:"2",  word:"Two",   yorubaWord:"Èjì",  imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F34A.svg", colour:"from-green-400 to-emerald-500" },
-  "3":  { numeral:"3",  word:"Three", yorubaWord:"Ẹta",  imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F34C.svg", colour:"from-violet-400 to-purple-500" },
-  "4":  { numeral:"4",  word:"Four",  yorubaWord:"Ẹrin", imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F347.svg", colour:"from-rose-400 to-pink-500" },
-  "5":  { numeral:"5",  word:"Five",  yorubaWord:"Àrún", imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F353.svg", colour:"from-sky-400 to-blue-500" },
-  "6":  { numeral:"6",  word:"Six",   yorubaWord:"Ẹfà",  imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F360.svg", colour:"from-amber-400 to-yellow-400" },
-  "7":  { numeral:"7",  word:"Seven", yorubaWord:"Èje",  imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F966.svg", colour:"from-teal-400 to-cyan-500" },
-  "8":  { numeral:"8",  word:"Eight", yorubaWord:"Ẹjọ",  imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F955.svg", colour:"from-orange-400 to-red-400" },
-  "9":  { numeral:"9",  word:"Nine",  yorubaWord:"Ẹsàn", imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F336.svg", colour:"from-fuchsia-400 to-pink-400" },
-  "10": { numeral:"10", word:"Ten",   yorubaWord:"Ẹwà",  imageUrl:"https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/1F33D.svg", colour:"from-green-500 to-emerald-400" },
-};
+}> = Object.fromEntries(
+  Array.from({ length: 100 }, (_, index) => {
+    const numeral = index + 1;
+    const colour = COLOURS[(numeral - 1) % COLOURS.length];
+    const icon = NUMBER_ICONS[(numeral - 1) % NUMBER_ICONS.length];
+
+    return [String(numeral), {
+      numeral: String(numeral),
+      word: getEnglishNumber(numeral),
+      yorubaWord: YORUBA_NUMBERS[numeral] ?? getEnglishNumber(numeral),
+      imageUrl: `https://cdn.jsdelivr.net/npm/openmoji@15.0.0/color/svg/${icon}.svg`,
+      colour,
+    }];
+  })
+);
 
 interface Props { params: Promise<{ language: string }> }
 
 export default function NumeracyGridPage({ params }: Props) {
   const { language } = use(params);
   if (language !== "english") notFound();
+
+  const searchParams = useSearchParams();
+  const rangeStart = Number(searchParams.get("start") ?? "1");
+  const rangeEnd = Number(searchParams.get("end") ?? "10");
+  const safeRangeStart = Math.min(Math.max(rangeStart, 1), 100);
+  const safeRangeEnd = Math.min(Math.max(rangeEnd, safeRangeStart), 100);
+  const visibleNumbers = Object.values(NUMBER_DATA).filter((data) => {
+    const value = Number(data.numeral);
+    return value >= safeRangeStart && value <= safeRangeEnd;
+  });
 
   const { activeChild, loading: childLoading } = useChild();
   const { hasPaid, loading: accessLoading, isStudent } = useAccess(activeChild);
@@ -52,23 +156,23 @@ export default function NumeracyGridPage({ params }: Props) {
     <>
       <div className="pb-10">
         <div className="mb-5 text-center">
-          <h1 className="text-xl sm:text-2xl font-extrabold text-stone-800">Numbers 1–10</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-stone-800">Numbers {safeRangeStart}–{safeRangeEnd}</h1>
           <p className="text-stone-500 text-sm mt-1">Tap a number — hear Kòkò say it! 🦜</p>
-          {!hasPaid && !isStudent && (
+          {!hasPaid && !isStudent && safeRangeStart > 10 && (
             <p className="text-amber-600 text-xs font-semibold mt-1">
-              🔒 Numbers 4–10 locked ·{" "}
+              🔒 Numbers {safeRangeStart}–{safeRangeEnd} locked ·{" "}
               <button onClick={() => setUpgradeOpen(true)} className="underline">Unlock Explorer</button>
             </p>
           )}
-          {!hasPaid && isStudent && (
+          {!hasPaid && isStudent && safeRangeStart > 10 && (
             <p className="text-amber-600 text-xs font-semibold mt-1">🔒 Some numbers are locked</p>
           )}
         </div>
 
-        <div role="list" aria-label="Numbers 1 to 10"
+        <div role="list" aria-label={`Numbers ${safeRangeStart} to ${safeRangeEnd}`}
           className="grid grid-cols-4 sm:grid-cols-5 gap-2 sm:gap-3">
-          {Object.values(NUMBER_DATA).map((data, i) => {
-            const locked = !hasPaid && !isNumberFree(data.numeral);
+          {visibleNumbers.map((data, i) => {
+            const locked = !hasPaid && !isNumberFree(data.numeral) && Number(data.numeral) > 10;
             return (
               <motion.div key={data.numeral} role="listitem"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -110,7 +214,7 @@ export default function NumeracyGridPage({ params }: Props) {
         </div>
       </div>
 
-      <UpgradePrompt isOpen={upgradeOpen} onClose={() => setUpgradeOpen(false)} feature="numbers 4–10" />
+      <UpgradePrompt isOpen={upgradeOpen} onClose={() => setUpgradeOpen(false)} feature="numbers 11–100" />
     </>
   );
 }
