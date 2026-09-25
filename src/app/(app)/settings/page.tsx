@@ -8,7 +8,7 @@ import { useAccess } from "@/hooks/useAccess";
 import CreateChildModal from "@/components/ui/CreateChildModal";
 import { AnimatePresence } from "framer-motion";
 import { CLASS_LABELS, type ClassLevel } from "@/types";
-
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 // ─── Student settings view ────────────────────────────────────────────────────
 
 interface StudentInfo {
@@ -123,7 +123,7 @@ function StudentSettings({ student }: { student: StudentInfo }) {
         <p className="text-sm text-stone-500">Àmì by Kòkò — v0.1.0 MVP</p>
         <p className="text-xs text-stone-400 mt-1">Made with ❤️ for Nigerian children.</p>
       </section>
-    </div>
+    </div>  
   );
 }
 
@@ -416,6 +416,96 @@ export default function SettingsPage() {
           />
         )}
       </AnimatePresence>
+
+      {/* Payment Status Modal */}
+      <AnimatePresence>
+        {paymentStatus !== "idle" && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-40"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6 pb-10 max-w-lg mx-auto"
+            >
+              {paymentStatus === "processing" && (
+                <div className="text-center py-8">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1 }}
+                    className="text-5xl inline-block mb-4"
+                  >
+                    ⏳
+                  </motion.div>
+                  <h2 className="text-xl font-extrabold text-stone-900 mb-2">Processing Payment</h2>
+                  <p className="text-stone-500 text-sm leading-relaxed">
+                    Please wait while we confirm your payment...
+                  </p>
+                  <p className="text-xs text-stone-400 mt-4">This usually takes a few seconds</p>
+                </div>
+              )}
+
+              {paymentStatus === "success" && (
+                <div className="text-center py-8">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="text-6xl inline-block mb-4"
+                  >
+                    ✨
+                  </motion.div>
+                  <h2 className="text-2xl font-extrabold text-green-700 mb-2">Payment Successful!</h2>
+                  <p className="text-stone-600 text-sm leading-relaxed mb-4">
+                    Your subscription is now active. Reloading...
+                  </p>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="text-4xl inline-block"
+                  >
+                    🎉
+                  </motion.div>
+                </div>
+              )}
+
+              {paymentStatus === "error" && (
+                <div className="text-center py-8">
+                  <div className="text-5xl inline-block mb-4">⚠️</div>
+                  <h2 className="text-xl font-extrabold text-red-700 mb-2">Confirmation Delayed</h2>
+                  <p className="text-stone-600 text-sm leading-relaxed mb-4">
+                    {paymentErrorMessage || "Your payment was received but we couldn't confirm it immediately."}
+                  </p>
+                  <p className="text-xs text-stone-500 mb-6">
+                    Try refreshing the page. If it still doesn't work, your payment may have failed.
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-2xl transition"
+                    >
+                      Refresh Page
+                    </button>
+                    <button
+                      onClick={() => setPaymentStatus("idle")}
+                      className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-900 font-bold py-3 rounded-2xl transition"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+      <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
     </>
   );
 }

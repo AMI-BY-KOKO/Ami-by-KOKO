@@ -1,8 +1,9 @@
 "use client";
-
 import { motion } from "framer-motion";
 import Link from "next/link";
 import TryALetter from "@/components/landing/TryALetter";
+import YouTubeBanner from "@/components/YouTubeBanner/YouTubeBanner";
+import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 
 const FEATURES = [
   {
@@ -44,7 +45,7 @@ const TESTIMONIALS = [
 ];
 
 export default function LandingPage() {
-  return (
+  return (<>
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#FFFBF0" }}>
 
       {/* ── Sticky Nav ─────────────────────────────────────── */}
@@ -70,7 +71,6 @@ export default function LandingPage() {
           </div>
         </div>
       </nav>
-
       {/* ── Hero ───────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-10 sm:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
@@ -200,7 +200,6 @@ export default function LandingPage() {
 
       {/* ── Interactive demo ────────────────────────────────── */}
       <TryALetter />
-
       {/* ── Features ───────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <motion.div
@@ -339,20 +338,15 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* ── Free Message ────────────────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 sm:p-12 text-center border-2 border-green-200"
-        >
-          <span className="text-5xl sm:text-6xl inline-block mb-4">✨</span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 mb-3">
-            Completely free — no paywalls
-          </h2>
-          <p className="text-stone-600 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-            All features are accessible to all users. English phonics, numbers, world categories, story mode, DJ booth, and more — everything is free. No credit card needed. No paywalls. No upgrades. Just learning for African children.
+      <YouTubeBanner />
+
+      {/* ── Pricing ────────────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="text-center mb-10 sm:mb-14">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 mb-3">Simple, honest pricing</h2>
+          <p className="text-stone-500 max-w-xl mx-auto text-sm sm:text-base">
+            Start free. Upgrade when your child is hooked.
           </p>
         </motion.div>
       </section>
@@ -447,5 +441,7 @@ export default function LandingPage() {
       </footer>
 
     </div>
+    <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
+    </>
   );
 }
