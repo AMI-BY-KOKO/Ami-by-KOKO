@@ -43,11 +43,10 @@ interface AccessContext {
   school: School | null;
 }
 
-/** Returns true if the user has full paid access */
+/** 
+ * Returns true if the user has full paid access.
+ * NOW: Always returns true — Àmì by Kòkò is completely free for all users.
+ */
 export function hasPaidAccess(ctx: AccessContext): boolean {
-  // School child with active school subscription
-  if (ctx.child?.school_id && ctx.school?.subscription_active) return true;
-  // Active parent subscription
-  if (ctx.subscription?.active) return true;
-  return false;
+  return true;
 }

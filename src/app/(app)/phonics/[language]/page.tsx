@@ -10,8 +10,6 @@ import { useProgress } from "@/hooks/useProgress";
 import { useChild } from "@/hooks/useChild";
 import { useAccess } from "@/hooks/useAccess";
 import { isLetterFree } from "@/lib/access-utils";
-import UpgradePrompt from "@/components/ui/UpgradePrompt";
-import LockedOverlay from "@/components/ui/LockedOverlay";
 
 const CARD_COLOURS = [
   "from-amber-400 to-orange-400",
@@ -35,7 +33,6 @@ export default function PhonicsGridPage({ params }: Props) {
   const { activeChild, loading: childLoading } = useChild();
   const { masteredLetters } = useProgress(activeChild?.id ?? null, lang);
   const { hasPaid, loading: accessLoading, isStudent } = useAccess(activeChild);
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   if (childLoading || accessLoading) {
     return (
@@ -66,16 +63,6 @@ export default function PhonicsGridPage({ params }: Props) {
               ⭐ {masteredLetters.length}/{alphabet.length} mastered
             </p>
           )}
-          {!hasPaid && !isStudent && (
-            <p className="text-amber-600 text-xs font-semibold mt-1">
-              🔒 Letters G–Z locked · <button onClick={() => setUpgradeOpen(true)} className="underline">Unlock Explorer</button>
-            </p>
-          )}
-          {!hasPaid && isStudent && (
-            <p className="text-amber-600 text-xs font-semibold mt-1">
-              🔒 Some letters are locked
-            </p>
-          )}
         </div>
 
         <div role="list" aria-label={`${language} alphabet`}
@@ -85,34 +72,6 @@ export default function PhonicsGridPage({ params }: Props) {
             // Show the word in the language being learned (localWord for non-English)
             const word = lang === "english" ? data.englishWord : data.localWord;
             const mastered = masteredLetters.includes(data.letter);
-            const locked = !hasPaid && !isLetterFree(data.letter, lang);
-
-            if (locked) {
-              return (
-                <motion.div key={data.letter} role="listitem"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.2, delay: i * 0.025 }}>
-                  <div className={`relative flex flex-col items-center rounded-2xl bg-gradient-to-br ${colour} shadow-md text-white overflow-hidden`}>
-                    <div className="w-full bg-white/20 flex items-center justify-center p-1.5 pt-2">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center opacity-40">
-                        {data.imageUrl
-                          ? <img src={data.imageUrl} alt="" className="w-full h-full object-contain" />
-                          : <span className="text-2xl">📖</span>
-                        }
-                      </div>
-                    </div>
-                    <div className="w-full flex flex-col items-center pb-2 pt-1 px-1 opacity-40">
-                      <div className="flex items-baseline gap-0.5 leading-none">
-                        <span className="text-lg sm:text-xl font-extrabold drop-shadow">{data.letter}</span>
-                        <span className="text-sm sm:text-base font-bold opacity-75 drop-shadow">{data.letter.toLowerCase()}</span>
-                      </div>
-                    </div>
-                    <LockedOverlay onTap={() => setUpgradeOpen(true)} isStudent={isStudent} />
-                  </div>
-                </motion.div>
-              );
-            }
 
             return (
               <motion.div key={data.letter} role="listitem"
@@ -150,12 +109,6 @@ export default function PhonicsGridPage({ params }: Props) {
           })}
         </div>
       </div>
-
-      <UpgradePrompt
-        isOpen={upgradeOpen}
-        onClose={() => setUpgradeOpen(false)}
-        feature="letters G–Z"
-      />
     </>
   );
 }
