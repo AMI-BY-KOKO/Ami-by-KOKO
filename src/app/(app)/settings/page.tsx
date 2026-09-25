@@ -6,8 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useChild } from "@/hooks/useChild";
 import { useAccess } from "@/hooks/useAccess";
 import CreateChildModal from "@/components/ui/CreateChildModal";
-import { AnimatePresence, motion } from "framer-motion";
-import { openPaystackPopup, generateReference, PAYSTACK_PLANS } from "@/lib/paystack/client";
+import { AnimatePresence } from "framer-motion";
 import { CLASS_LABELS, type ClassLevel } from "@/types";
 import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 // ─── Student settings view ────────────────────────────────────────────────────
@@ -69,7 +68,7 @@ function StudentSettings({ student }: { student: StudentInfo }) {
           <span className="font-semibold text-stone-800">{student.schoolName ?? "your school"}</span>.
         </p>
         <p className="text-sm text-stone-500 mt-2">
-          Ask your teacher if anything is locked.
+          All content is free — enjoy full access to all lessons!
         </p>
       </section>
 
@@ -82,36 +81,24 @@ function StudentSettings({ student }: { student: StudentInfo }) {
               <span className="text-2xl">🇬🇧</span>
               <div>
                 <p className="font-semibold text-stone-800 text-sm">English</p>
-                <p className="text-xs text-stone-500">
-                  {student.schoolSubscriptionActive ? "Full A–Z" : "A–F available"}
-                </p>
+                <p className="text-xs text-stone-500">Full A–Z</p>
               </div>
             </div>
             <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full">
-              {student.schoolSubscriptionActive ? "Full ✓" : "Free ✓"}
+              Free ✓
             </span>
           </div>
 
-          <div className={`flex items-center justify-between p-3 rounded-2xl ring-1 ${
-            student.schoolSubscriptionActive ? "bg-green-50 ring-green-200" : "bg-stone-50 ring-stone-200"
-          }`}>
+          <div className="flex items-center justify-between p-3 bg-green-50 rounded-2xl ring-1 ring-green-200">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🇳🇬</span>
               <div>
                 <p className="font-semibold text-stone-800 text-sm">Yorùbá</p>
-                <p className="text-xs text-stone-500">
-                  {student.schoolSubscriptionActive
-                    ? "Available with school plan"
-                    : "Ask your teacher to unlock"}
-                </p>
+                <p className="text-xs text-stone-500">Full access · Coming soon</p>
               </div>
             </div>
-            <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-              student.schoolSubscriptionActive
-                ? "text-green-700 bg-green-100"
-                : "text-stone-400 bg-stone-100"
-            }`}>
-              {student.schoolSubscriptionActive ? "Soon ✓" : "🔒"}
+            <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full">
+              Coming 🔜
             </span>
           </div>
 
@@ -124,7 +111,7 @@ function StudentSettings({ student }: { student: StudentInfo }) {
                   <p className="text-xs text-stone-400">Coming soon</p>
                 </div>
               </div>
-              <span className="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full">Soon</span>
+              <span className="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full">Coming 🔜</span>
             </div>
           ))}
         </div>
@@ -146,7 +133,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const supabase = createClient();
   const { children, activeChild, selectChild } = useChild();
-  const { hasPaid, isStudent } = useAccess(activeChild);
+  const { isStudent } = useAccess(activeChild);
   const [showAddChild, setShowAddChild] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -156,11 +143,7 @@ export default function SettingsPage() {
   const [savingPhone, setSavingPhone] = useState(false);
   const [phoneSaved, setPhoneSaved] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-  const [subPlan, setSubPlan] = useState<string | null>(null);
-  const [subExpiry, setSubExpiry] = useState<string | null>(null);
   const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
-  const [paymentErrorMessage, setPaymentErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -210,18 +193,6 @@ export default function SettingsPage() {
         const { count } = await (supabase as any)
           .from("children").select("id", { count: "exact", head: true }).eq("school_id", profile.school_id);
         if (school) setSchoolInfo({ name: school.name, subscription_active: school.subscription_active, student_count: count ?? 0 });
-      } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: sub } = await (supabase as any)
-          .from("subscriptions")
-          .select("plan, expires_at")
-          .eq("profile_id", user.id)
-          .eq("active", true)
-          .maybeSingle();
-        if (sub) {
-          setSubPlan(sub.plan);
-          setSubExpiry(sub.expires_at ? new Date(sub.expires_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : null);
-        }
       }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -258,70 +229,7 @@ export default function SettingsPage() {
     router.push("/auth/login");
   }
 
-  function handlePlan(planKey: keyof typeof PAYSTACK_PLANS) {
-    if (!userEmail || !userId) return;
-    const plan = PAYSTACK_PLANS[planKey];
-    setPaymentStatus("processing");
-    setPaymentErrorMessage(null);
-
-    openPaystackPopup({
-      email: userEmail,
-      amount: plan.amount,
-      reference: generateReference(plan.id),
-      planId: plan.id,
-      onSuccess: async (reference) => {
-        console.log("[Settings] Payment callback received, reference:", reference);
-        console.log("[Settings] Waiting for webhook to process subscription...");
-        
-        // Poll for subscription creation (max 10 seconds, check every 500ms)
-        let attempts = 0;
-        const maxAttempts = 20;
-
-        const checkInterval = setInterval(async () => {
-          attempts++;
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data: sub } = await (supabase as any)
-              .from("subscriptions")
-              .select("active, expires_at")
-              .eq("profile_id", userId)
-              .eq("active", true)
-              .maybeSingle();
-
-            if (sub) {
-              const now = new Date().toISOString();
-              if (!sub.expires_at || sub.expires_at > now) {
-                clearInterval(checkInterval);
-                console.log("[Settings] ✓ Subscription verified after", attempts * 500, "ms");
-                setPaymentStatus("success");
-                
-                setTimeout(() => {
-                  console.log("[Settings] Reloading page to reflect unlocked content...");
-                  window.location.reload();
-                }, 2000);
-              }
-            } else if (attempts >= maxAttempts) {
-              clearInterval(checkInterval);
-              console.error("[Settings] ✗ Subscription not created after 10 seconds");
-              setPaymentStatus("error");
-              setPaymentErrorMessage("Payment received but subscription not confirmed. Please refresh or contact support.");
-            }
-          } catch (err) {
-            console.error("[Settings] Error checking subscription:", err);
-            if (attempts >= maxAttempts) {
-              clearInterval(checkInterval);
-              setPaymentStatus("error");
-            }
-          }
-        }, 500);
-      },
-      onClose: () => {
-        setPaymentStatus("idle");
-      },
-    });
-  }
-
-  // ── Parent / school admin view (unchanged) ──────────────────────────────────
+  // ── Parent / school admin view ──────────────────────────────────
   return (
     <>
       <div className="flex flex-col gap-5 pb-10">
@@ -396,11 +304,9 @@ export default function SettingsPage() {
           </section>
         )}
 
-        {/* Subscription */}
+        {/* Free Access */}
         <section className="bg-white rounded-3xl p-5 shadow-sm ring-1 ring-stone-100">
-          <h2 className="font-bold text-stone-700 mb-3">
-            {userRole === "school_admin" ? "School Plan" : "Subscription"}
-          </h2>
+          <h2 className="font-bold text-stone-700 mb-3">Subscription</h2>
 
           {userRole === "school_admin" ? (
             <div className="flex flex-col gap-3">
@@ -420,82 +326,22 @@ export default function SettingsPage() {
                       ))}
                     </div>
                   </div>
-                  <a href="https://wa.me/2349037789995?text=Hi%2C%20I%27d%20like%20to%20upgrade%20my%20school%20plan%20on%20%C3%80m%C3%AC%20by%20K%C3%B2k%C3%B2"
+                  <a href="https://wa.me/2349037789995?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20%C3%80m%C3%AC%20by%20K%C3%B2k%C3%B2%20for%20my%20school"
                     target="_blank" rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-green-700 bg-green-50 hover:bg-green-100 py-3 rounded-2xl transition border border-green-200">
-                    📱 Contact us to upgrade your school plan
+                    📱 Contact us for school features
                   </a>
                 </>
               ) : (
                 <p className="text-stone-400 text-sm">Loading school info…</p>
               )}
             </div>
-          ) : hasPaid ? (
-            <div className="flex flex-col gap-3">
-              <div className="bg-green-50 rounded-2xl p-4 ring-1 ring-green-200">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="font-bold text-green-800 text-sm capitalize">
-                    {subPlan?.replace(/-/g, " ") ?? "Explorer"} ✅
-                  </p>
-                  {subExpiry && <p className="text-xs text-green-600">Renews {subExpiry}</p>}
-                </div>
-                <div className="flex flex-col gap-1 text-xs text-green-700">
-                  {["Full A–Z letters","Full numbers 1–10","All 5 World categories","Full Story Mode","All 8 DJ pads","Yorùbá (coming soon)"].map(f => (
-                    <span key={f}>✅ {f}</span>
-                  ))}
-                </div>
-              </div>
-              {subPlan?.startsWith("explorer") && (
-                <button onClick={() => handlePlan("FAMILY_MONTHLY")}
-                  className="w-full text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 py-3 rounded-2xl transition border border-amber-200">
-                  Upgrade to Family (up to 4 children) →
-                </button>
-              )}
-            </div>
           ) : (
-            <div className="flex flex-col gap-4">
-              <div className="bg-stone-50 rounded-2xl p-4 ring-1 ring-stone-200">
-                <p className="font-bold text-stone-700 text-sm mb-2">Current plan: Free</p>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                  <span className="text-green-600">✅ Letters A–F</span>
-                  <span className="text-stone-400">🔒 Letters G–Z</span>
-                  <span className="text-green-600">✅ Numbers 1–3</span>
-                  <span className="text-stone-400">🔒 Numbers 4–10</span>
-                  <span className="text-green-600">✅ Body Parts</span>
-                  <span className="text-stone-400">🔒 All languages</span>
-                  <span className="text-green-600">✅ 3 story shards</span>
-                  <span className="text-stone-400">🔒 Full story</span>
-                </div>
-              </div>
-              <button onClick={() => handlePlan("EXPLORER_MONTHLY")}
-                className="w-full flex items-center justify-between bg-amber-50 border-2 border-amber-200 rounded-2xl px-4 py-3 hover:border-amber-400 transition active:scale-95">
-                <div className="text-left">
-                  <p className="font-bold text-stone-900 text-sm">Explorer Monthly</p>
-                  <p className="text-xs text-stone-500">Full access · 1 child · cancel anytime</p>
-                </div>
-                <p className="font-extrabold text-amber-600">₦1,500<span className="text-xs font-normal">/mo</span></p>
-              </button>
-              <button onClick={() => handlePlan("EXPLORER_YEARLY")}
-                className="w-full flex items-center justify-between bg-amber-500 rounded-2xl px-4 py-3 hover:bg-amber-600 transition relative overflow-hidden active:scale-95">
-                <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-bl-xl">BEST VALUE</div>
-                <div className="text-left">
-                  <p className="font-bold text-white text-sm">Explorer Annual</p>
-                  <p className="text-xs text-amber-100">2 months free · 1 child</p>
-                </div>
-                <p className="font-extrabold text-white">₦15,000<span className="text-xs font-normal">/yr</span></p>
-              </button>
-              <button onClick={() => handlePlan("FAMILY_MONTHLY")}
-                className="w-full flex items-center justify-between bg-white border border-stone-200 rounded-2xl px-4 py-3 hover:border-amber-300 transition active:scale-95">
-                <div className="text-left">
-                  <p className="font-bold text-stone-900 text-sm">Family Plan</p>
-                  <p className="text-xs text-stone-500">Up to 4 children</p>
-                </div>
-                <p className="font-extrabold text-stone-700">₦2,500<span className="text-xs font-normal">/mo</span></p>
-              </button>
-              <a href="mailto:schools@amibykoko.com"
-                className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-green-700 bg-green-50 hover:bg-green-100 py-3 rounded-2xl transition border border-green-200">
-                🏫 For schools — contact us
-              </a>
+            <div className="bg-green-50 rounded-2xl p-4 ring-1 ring-green-200">
+              <p className="font-bold text-green-700 text-sm mb-2">Àmì by Kòkò is completely free!</p>
+              <p className="text-xs text-green-600 leading-relaxed">
+                All features are accessible to all users — no paywalls, no upgrades needed. Enjoy full access to all letters, numbers, world categories, story shards, and DJ pads. Start learning today! 🎉
+              </p>
             </div>
           )}
         </section>
@@ -509,25 +355,26 @@ export default function SettingsPage() {
                 <span className="text-2xl">🇬🇧</span>
                 <div>
                   <p className="font-semibold text-stone-800 text-sm">English</p>
-                  <p className="text-xs text-stone-500">{hasPaid ? "Full A–Z" : "A–F free"}</p>
+                  <p className="text-xs text-stone-500">Full A–Z</p>
                 </div>
               </div>
               <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full">
-                {hasPaid ? "Full ✓" : "Free ✓"}
+                Free ✓
               </span>
             </div>
-            <div className={`flex items-center justify-between p-3 rounded-2xl ring-1 ${hasPaid ? "bg-green-50 ring-green-200" : "bg-stone-50 ring-stone-200"}`}>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-2xl ring-1 ring-green-200">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🇳🇬</span>
                 <div>
                   <p className="font-semibold text-stone-800 text-sm">Yorùbá</p>
-                  <p className="text-xs text-stone-500">{hasPaid ? "Included in your plan" : "Requires Explorer plan"}</p>
+                  <p className="text-xs text-stone-500">Full access · Coming soon</p>
                 </div>
               </div>
-              <span className={`text-xs font-bold px-2 py-1 rounded-full ${hasPaid ? "text-green-700 bg-green-100" : "text-stone-400 bg-stone-100"}`}>
-                {hasPaid ? "Soon ✓" : "🔒 Locked"}
+              <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full">
+                Coming 🔜
               </span>
             </div>
+
             {["Igbo", "Hausa"].map(lang => (
               <div key={lang} className="flex items-center justify-between p-3 bg-stone-50 rounded-2xl ring-1 ring-stone-100 opacity-60">
                 <div className="flex items-center gap-3">
@@ -537,7 +384,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-stone-400">Coming soon</p>
                   </div>
                 </div>
-                <span className="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full">Soon</span>
+                <span className="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full">Coming 🔜</span>
               </div>
             ))}
           </div>
