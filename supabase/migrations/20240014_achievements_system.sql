@@ -123,7 +123,7 @@ BEGIN
         IF EXISTS (
           SELECT 1 FROM public.child_progress cp
           WHERE cp.child_id = p_child_id
-            AND cp.activity_ref LIKE (v_achievement.criteria_value || '%')
+            AND cp.activity_ref LIKE (replace(v_achievement.criteria_value, E'\\', E'\\\\') || '%' ESCAPE E'\\')
             AND cp.status IN ('completed', 'mastered')
           LIMIT 1
         ) THEN
@@ -139,13 +139,19 @@ BEGIN
           v_threshold INTEGER;
         BEGIN
           v_prefix := split_part(v_achievement.criteria_value, '|', 1);
-          v_threshold := split_part(v_achievement.criteria_value, '|', 2)::INTEGER;
+          v_threshold := NULLIF(split_part(v_achievement.criteria_value, '|', 2), '')::INTEGER;
+
+          -- Validate that threshold was successfully parsed
+          IF v_threshold IS NULL THEN
+            RAISE WARNING 'Invalid criteria_value format for achievement %: %', v_achievement.id, v_achievement.criteria_value;
+            CONTINUE;
+          END IF;
 
           SELECT COUNT(*)
           INTO v_count
           FROM public.child_progress cp
           WHERE cp.child_id = p_child_id
-            AND cp.activity_ref LIKE (v_prefix || '%')
+            AND cp.activity_ref LIKE (replace(v_prefix, E'\\', E'\\\\') || '%' ESCAPE E'\\')
             AND cp.status IN ('completed', 'mastered');
 
           IF v_count >= v_threshold THEN

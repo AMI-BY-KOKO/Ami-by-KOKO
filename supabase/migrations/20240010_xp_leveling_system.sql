@@ -4,6 +4,15 @@
 -- ============================================================================
 
 -- ============================================================================
+-- PART 0: ENSURE children TABLE HAS XP COLUMNS
+-- ============================================================================
+
+ALTER TABLE public.children
+  ADD COLUMN IF NOT EXISTS xp_total INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT now();
+
+-- ============================================================================
 -- PART 1: CREATE xp_events TABLE (append-only log)
 -- ============================================================================
 
@@ -81,31 +90,30 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 DROP TRIGGER IF EXISTS update_child_xp_total_on_insert ON public.xp_events;
 DROP FUNCTION IF EXISTS update_child_xp_total();
 
--- When an xp_event is inserted, update child_profiles with new xp_total and current_level
+-- When an xp_event is inserted, update children with new xp_total and current_level
 CREATE OR REPLACE FUNCTION update_child_xp_total()
 RETURNS TRIGGER AS $$
 DECLARE
   v_new_xp_total INTEGER;
   v_new_level INTEGER;
+  v_child_id UUID;
 BEGIN
+  v_child_id := NEW.child_id;
+  
   -- Sum all XP events for this child
   SELECT COALESCE(SUM(xp_amount), 0)
   INTO v_new_xp_total
   FROM public.xp_events
-  WHERE child_id = NEW.child_id;
+  WHERE child_id = v_child_id;
 
   v_new_level := calculate_level(v_new_xp_total);
 
-  -- Update child_profiles (if it exists)
-  UPDATE public.child_profiles
+  -- Update children table with new xp_total and current_level
+  UPDATE public.children
   SET xp_total = v_new_xp_total,
       current_level = v_new_level,
       updated_at = now()
-  WHERE parent_user_id = (
-    SELECT parent_id FROM public.children WHERE id = NEW.child_id
-  ) AND name = (
-    SELECT name FROM public.children WHERE id = NEW.child_id
-  );
+  WHERE id = v_child_id;
 
   RETURN NEW;
 END;
