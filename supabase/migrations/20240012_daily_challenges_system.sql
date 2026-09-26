@@ -1,6 +1,7 @@
 -- ============================================================================
 -- DAILY CHALLENGES SYSTEM (CORRECTED: references children.id)
--- Run this after 20240011_learning_paths_system.sql
+-- Run this after 20240011_learning_paths_system.sql AND 20240010_xp_leveling_system.sql
+-- (Requires calculate_level() function from 20240010)
 -- ============================================================================
 
 -- ============================================================================

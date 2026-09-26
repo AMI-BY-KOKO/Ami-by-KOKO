@@ -7,7 +7,6 @@ import { Toaster } from './components/ui/toaster';
 import { TooltipProvider } from './components/ui/tooltip';
 import { Volume2, VolumeX, ArrowRight, RotateCcw, HelpCircle, Star, Sparkles, Check, LockKeyhole, ArrowLeft, Map } from 'lucide-react';
 import NotFound from './pages/not-found';
-import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import { LETTERS, QUESTION_BANK, SOUND_NEIGHBORS, type Question } from './content/questions';
 import {
   createSuperLetterChallengeQuestions,

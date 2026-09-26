@@ -6,6 +6,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { useStreak } from "@/hooks/useStreak";
 import { useCertificates } from "@/hooks/useCertificates";
 import { useAssignments } from "@/hooks/useAssignments";
+import { useLetterHuntProgress } from "@/hooks/useLetterHuntProgress";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -21,6 +22,89 @@ import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 const ALPHABET = Object.keys(LETTER_DATA.english);
 const NUMBERS = ["1","2","3","4","5","6","7","8","9","10"];
 const TOTAL_WORLD = Object.keys(WORLD_ITEMS).length; // 24
+
+// ─── Letter Hunt Progress Card ───────────────────────────────────────────────
+
+function LetterHuntProgressCard({ childId }: { childId: string | null }) {
+  const { progress, loading } = useLetterHuntProgress(childId ?? '');
+  
+  const LEVELS = [
+    { id: 1, name: 'Letter Hunt', icon: '⭐' },
+    { id: 2, name: 'Sound Safari', icon: '🦁' },
+    { id: 3, name: 'Picture Hunt', icon: '🖼️' },
+    { id: 4, name: 'Sound Match', icon: '🎧' },
+    { id: 5, name: 'Super Challenge', icon: '🏆' },
+  ];
+
+  const completedLevels = Object.values(progress).filter((p) => p?.is_complete).length;
+
+  if (!childId) return null;
+
+  return (
+    <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-4 shadow-sm ring-1 ring-amber-200">
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-sm font-bold text-amber-900 flex items-center gap-2">
+          <span>🦜</span> Kòkò's Letter Hunt
+        </p>
+        <span className="text-xs text-amber-700 font-semibold">{completedLevels}/5 levels</span>
+      </div>
+
+      {loading ? (
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="h-8 bg-amber-100 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {LEVELS.map((level) => {
+            const levelProgress = progress[level.id];
+            const isComplete = levelProgress?.is_complete ?? false;
+            const score = levelProgress?.current_score ?? 0;
+
+            return (
+              <motion.div
+                key={level.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: level.id * 0.05 }}
+                className={`flex items-center gap-3 p-2.5 rounded-xl transition ${
+                  isComplete ? 'bg-green-100 ring-1 ring-green-200' : 'bg-white ring-1 ring-amber-100 hover:ring-amber-300'
+                }`}
+              >
+                <span className="text-lg">{level.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs font-semibold truncate ${
+                    isComplete ? 'text-green-800' : 'text-amber-900'
+                  }`}>
+                    {level.name}
+                  </p>
+                  {isComplete && score > 0 && (
+                    <p className="text-xs text-green-700">
+                      Score: {score}/8 ⭐
+                    </p>
+                  )}
+                </div>
+                {isComplete ? (
+                  <span className="text-lg">✅</span>
+                ) : (
+                  <span className="text-xs text-amber-600 font-bold">→</span>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      <Link
+        href="/games/letter-hunt"
+        className="block w-full mt-3 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-2.5 rounded-xl transition text-center shadow-sm active:scale-95"
+      >
+        Play Now 🎮
+      </Link>
+    </div>
+  );
+}
 
 // ─── Certificate card ─────────────────────────────────────────────────────────
 
@@ -319,6 +403,9 @@ export default function ParentDashboardPage() {
               })}
             </div>
           </div>
+
+          {/* ── Kòkò's Letter Hunt Game Progress ── */}
+          <LetterHuntProgressCard childId={activeChild?.id ?? null} />
 
           {/* ── Issue 3 fix: Certificates Gallery ── */}
           <div className="bg-white rounded-3xl p-4 shadow-sm ring-1 ring-stone-100">

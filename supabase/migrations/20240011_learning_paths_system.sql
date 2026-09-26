@@ -231,3 +231,24 @@ VALUES
   -- Stories (free story start)
   ('stories', 1, 'story_koko_voice', 'Kòkò Lost His Voice', NULL, 1)
 ON CONFLICT DO NOTHING;
+
+
+-- ============================================================================
+-- PART 6: AUTO-INITIALIZE LEARNING PATHS FOR NEW CHILDREN (TRIGGER)
+-- ============================================================================
+
+DROP TRIGGER IF EXISTS init_child_learning_paths ON public.children;
+
+CREATE OR REPLACE FUNCTION trigger_init_child_learning_paths()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Automatically initialize learning progress when a new child is created
+  PERFORM initialize_child_progress(NEW.id);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER init_child_learning_paths
+  AFTER INSERT ON public.children
+  FOR EACH ROW
+  EXECUTE FUNCTION trigger_init_child_learning_paths();

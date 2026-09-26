@@ -4,6 +4,24 @@
 -- Safe to re-run (uses DROP CONSTRAINT IF EXISTS / ADD CONSTRAINT IF NOT EXISTS)
 -- ============================================================
 
+-- Validate existing data before expanding constraints
+-- Remove any invalid subject values that don't match the new constraint
+DELETE FROM public.progress
+WHERE subject NOT IN (
+  'literacy', 'numeracy', 'world', 'songs',
+  'science', 'zoology_botany', 'seasonal_creativity',
+  'health_habits', 'social_habits', 'colours_shapes',
+  'french', 'music_arts', 'practical_life', 'letter_name'
+);
+
+DELETE FROM public.assignments
+WHERE subject NOT IN (
+  'literacy', 'numeracy', 'world', 'songs',
+  'science', 'zoology_botany', 'seasonal_creativity',
+  'health_habits', 'social_habits', 'colours_shapes',
+  'french', 'music_arts', 'practical_life', 'letter_name'
+);
+
 -- Update class_config to activate Sprout 2 and Sprout 3
 UPDATE public.class_config SET active = true WHERE class IN ('sprout_2', 'sprout_3');
 
