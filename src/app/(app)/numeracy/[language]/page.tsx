@@ -7,8 +7,6 @@ import Link from "next/link";
 import { useChild } from "@/hooks/useChild";
 import { useAccess } from "@/hooks/useAccess";
 import { isNumberFree } from "@/lib/access";
-import UpgradePrompt from "@/components/ui/UpgradePrompt";
-import LockedOverlay from "@/components/ui/LockedOverlay";
 
 const NUMBER_ICONS = [
   "1F96D", "1F34A", "1F34C", "1F347", "1F353", "1F360", "1F966", "1F955", "1F336", "1F33D",
@@ -137,7 +135,6 @@ export default function NumeracyGridPage({ params }: Props) {
 
   const { activeChild, loading: childLoading } = useChild();
   const { hasPaid, loading: accessLoading, isStudent } = useAccess(activeChild);
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   if (childLoading || accessLoading) {
     return (
@@ -178,36 +175,21 @@ export default function NumeracyGridPage({ params }: Props) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: i * 0.05 }}
-                whileTap={locked ? {} : { scale: 0.92 }}>
-                {locked ? (
-                  <div className={`relative flex flex-col items-center rounded-2xl bg-gradient-to-br ${data.colour} shadow-md text-white overflow-hidden`}>
-                    <div className="w-full bg-white/20 flex items-center justify-center p-1.5 pt-2">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center opacity-40">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={data.imageUrl} alt="" className="w-full h-full object-contain" />
-                      </div>
+                whileTap={{ scale: 0.92 }}>
+                <Link href={`/numeracy/${language}/${data.numeral}`}
+                  className={`flex flex-col items-center rounded-2xl bg-gradient-to-br ${data.colour} shadow-md text-white overflow-hidden transition hover:scale-105`}
+                  aria-label={`Number ${data.numeral}, ${data.word}`}>
+                  <div className="w-full bg-white/20 flex items-center justify-center p-1.5 pt-2">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={data.imageUrl} alt={data.word} className="w-full h-full object-contain" />
                     </div>
-                    <div className="w-full flex flex-col items-center pb-2 pt-1 px-1 opacity-40">
-                      <span className="text-2xl sm:text-3xl font-extrabold drop-shadow leading-none">{data.numeral}</span>
-                    </div>
-                    <LockedOverlay onTap={() => setUpgradeOpen(true)} isStudent={isStudent} />
                   </div>
-                ) : (
-                  <Link href={`/numeracy/${language}/${data.numeral}`}
-                    className={`flex flex-col items-center rounded-2xl bg-gradient-to-br ${data.colour} shadow-md text-white overflow-hidden transition hover:scale-105`}
-                    aria-label={`Number ${data.numeral}, ${data.word}`}>
-                    <div className="w-full bg-white/20 flex items-center justify-center p-1.5 pt-2">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={data.imageUrl} alt={data.word} className="w-full h-full object-contain" />
-                      </div>
-                    </div>
-                    <div className="w-full flex flex-col items-center pb-2 pt-1 px-1">
-                      <span className="text-2xl sm:text-3xl font-extrabold drop-shadow leading-none">{data.numeral}</span>
-                      <span className="text-[9px] sm:text-[10px] font-medium opacity-90 mt-0.5">{data.word}</span>
-                    </div>
-                  </Link>
-                )}
+                  <div className="w-full flex flex-col items-center pb-2 pt-1 px-1">
+                    <span className="text-2xl sm:text-3xl font-extrabold drop-shadow leading-none">{data.numeral}</span>
+                    <span className="text-[9px] sm:text-[10px] font-medium opacity-90 mt-0.5">{data.word}</span>
+                  </div>
+                </Link>
               </motion.div>
             );
           })}

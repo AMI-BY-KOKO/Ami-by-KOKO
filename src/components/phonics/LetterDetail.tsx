@@ -151,14 +151,7 @@ export default function LetterDetail({ letter, language, letterData }: LetterDet
           {meaning && <p className="text-orange-100 text-sm mt-0.5">{meaning}</p>}
         </div>
 
-        <div className="flex gap-2 mt-1 flex-wrap justify-center">
-          <span className="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
-            🇬🇧 {letterData.englishWord}
-          </span>
-          <span className="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
-            🇳🇬 {letterData.localWord}
-          </span>
-        </div>
+
       </motion.div>
 
       {/* ── Kòkò sound button ── */}

@@ -181,7 +181,6 @@ export default function AboutPage() {
             </p>
             <div className="flex gap-5 sm:gap-6 text-sm">
               <Link href="/about" className="hover:text-white transition">About</Link>
-              <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
               <a href="mailto:hello@amibykoko.com" className="hover:text-white transition">Contact</a>
             </div>
           </div>

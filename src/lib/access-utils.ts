@@ -16,37 +16,28 @@
 
 /** 
  * Check if a letter is free based on language.
- * English & French: A–F are free
- * Yorùbá: A, B, D, E, Ẹ, F are free (first 6 of 25 letters)
+ * NOW: Always returns true — all letters are free for all users.
  */
 export function isLetterFree(letter: string, language: string = "english"): boolean {
-  const lowerLetter = letter.toLowerCase();
-  
-  if (language === "yoruba") {
-    // Yorùbá free letters: A, B, D, E, Ẹ, F
-    return ["a", "b", "d", "e", "ẹ", "f"].includes(lowerLetter);
-  }
-  
-  // English and French: A–F are free
-  return ["a", "b", "c", "d", "e", "f"].includes(lowerLetter);
+  return true;
 }
 
-/** Numbers 1–10 are free; 11+ require paid access */
+/** Numbers 1–10 are all free — no paywall. */
 export function isNumberFree(num: number | string): boolean {
-  return Number(num) <= 10;
+  return true;
 }
 
-/** Body Parts category is free; all others require paid access */
+/** All world categories are free — no paywall. */
 export function isCategoryFree(category: string): boolean {
-  return category === "body";
+  return true;
 }
 
-/** First 3 story shards (index 0–2) are free */
+/** All story shards (0–9) are free — no paywall. */
 export function isShardFree(index: number): boolean {
-  return index < 3;
+  return true;
 }
 
-/** First 3 DJ pads (index 0–2) are free */
+/** All DJ pads (0–7) are free — no paywall. */
 export function isPadFree(index: number): boolean {
-  return index < 3;
+  return true;
 }

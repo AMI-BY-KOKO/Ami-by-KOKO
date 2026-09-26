@@ -20,47 +20,10 @@ export interface AccessContext {
 }
 
 export async function getAccessContext(childId?: string | null): Promise<AccessContext> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) return { hasPaid: false, subscription: null, school: null };
-
-  // Students don't have a profile — check via child's school
-  const isStudent = user.user_metadata?.role === "student";
-  const effectiveChildId = childId ?? (isStudent ? user.user_metadata?.child_id : null);
-
-  // Check parent subscription
-  let subscription = null;
-  if (!isStudent) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await (supabase as any)
-      .from("subscriptions")
-      .select("id, plan, active, expires_at")
-      .eq("profile_id", user.id)
-      .eq("active", true)
-      .gt("expires_at", new Date().toISOString())
-      .maybeSingle();
-    subscription = data ?? null;
-  }
-
-  // Check if child belongs to an active school
-  let school = null;
-  if (effectiveChildId) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: child } = await (supabase as any)
-      .from("children")
-      .select("school_id, schools(subscription_active)")
-      .eq("id", effectiveChildId)
-      .maybeSingle();
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (child?.school_id && (child as any).schools?.subscription_active) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      school = (child as any).schools as { subscription_active: boolean };
-    }
-  }
-
-  const hasPaid = !!subscription || !!school;
-
-  return { hasPaid, subscription, school };
+  /**
+   * NOW: Always returns hasPaid: true for all users.
+   * Àmì by Kòkò is completely free — no subscription checks needed.
+   * All content is accessible to everyone.
+   */
+  return { hasPaid: true, subscription: null, school: null };
 }
