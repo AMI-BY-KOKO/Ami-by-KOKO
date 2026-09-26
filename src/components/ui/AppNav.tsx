@@ -101,11 +101,31 @@ export default function AppNav({ profile }: AppNavProps) {
     if (isSchoolAdmin || isStudent) return;
     const savedId = typeof window !== "undefined" ? localStorage.getItem("activeChildId") : null;
     if (!savedId) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    supabase.from("children" as any).select("name, avatar_url").eq("id", savedId).single()
-      .then(({ data }: { data: { name: string; avatar_url: string | null } | null }) => {
-        if (data) { setChildName(data.name); setChildAvatar(data.avatar_url); }
-      });
+    
+    const loadChild = async () => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data, error } = await (supabase as any)
+          .from("children")
+          .select("name, avatar_url")
+          .eq("id", savedId)
+          .single();
+        
+        if (error) {
+          console.error('[AppNav] Error loading active child:', error);
+          return;
+        }
+        
+        if (data) { 
+          setChildName(data.name); 
+          setChildAvatar(data.avatar_url); 
+        }
+      } catch (err) {
+        console.error('[AppNav] Exception loading active child:', err);
+      }
+    };
+    
+    loadChild();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSchoolAdmin, isStudent]);
 

@@ -76,9 +76,9 @@ export default async function AppLayout({
             userId: user.id,
           })
           
-          // If profile doesn't exist (PGRST116), try to create it
-          if (profileError.code === 'PGRST116') {
-            console.log('[AppLayout] Profile not found, attempting to create...')
+          // If profile doesn't exist (PGRST116) OR returns empty error, try to create it
+          if (profileError.code === 'PGRST116' || !profileError.message) {
+            console.log('[AppLayout] Profile not found or error is empty, attempting to create...')
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data: newProfile, error: createError }: { data: Profile | null; error: any } = await (supabase as any)
               .from('profiles')
