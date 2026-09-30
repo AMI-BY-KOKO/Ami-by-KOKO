@@ -57,9 +57,9 @@ class AudioService {
       const source = await this.playRecordedClip(word, options);
       return source;
     } catch (recordedError) {
+      const recordedErrorMsg = recordedError instanceof Error ? recordedError.message : String(recordedError);
       console.warn(
-        `Failed to play recorded clip for "${word}":`,
-        recordedError
+        `Failed to play recorded clip for "${word}": ${recordedErrorMsg}`
       );
 
       // Fallback to Web Speech API
@@ -68,14 +68,14 @@ class AudioService {
           await this.playSynthesizedSpeech(word, options);
           return "synthesized";
         } catch (synthesisError) {
-          console.error(
-            `Failed to synthesize speech for "${word}":`,
-            synthesisError
+          const synthesisErrorMsg = synthesisError instanceof Error ? synthesisError.message : String(synthesisError);
+          console.warn(
+            `Failed to synthesize speech for "${word}": ${synthesisErrorMsg}`
           );
           if (options.onError) {
             options.onError(
               new Error(
-                `Audio playback failed for "${word}": ${String(synthesisError)}`
+                `Audio playback failed for "${word}": ${synthesisErrorMsg}`
               )
             );
           }
@@ -85,7 +85,7 @@ class AudioService {
 
       if (options.onError) {
         options.onError(
-          new Error(`Audio playback failed for "${word}": ${String(recordedError)}`)
+          new Error(`Audio playback failed for "${word}": ${recordedErrorMsg}`)
         );
       }
       return "fallback";
@@ -192,7 +192,13 @@ class AudioService {
       };
 
       utterance.onerror = (error) => {
-        console.error("Speech synthesis error:", error);
+        // "interrupted" is not a real error — it's expected when user stops/pauses playback
+        if (error.error === "interrupted") {
+          resolve(); // Treat as successful completion
+          return;
+        }
+
+        console.warn(`Speech synthesis failed: ${error.error}`);
         reject(new Error(`Speech synthesis failed: ${error.error}`));
       };
 
