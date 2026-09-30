@@ -24,7 +24,7 @@ export const COMING_SOON_STORIES: ComingSoonStory[] = [
     category: "African Folktales",
     ageRange: "Ages 3–8",
     status: "coming-soon" as const,
-    coverImageUrl: "/stories/folktales/cover.webp",
+    coverImageUrl: undefined,
   },
   {
     id: "bedtime-coming-soon",
@@ -34,7 +34,7 @@ export const COMING_SOON_STORIES: ComingSoonStory[] = [
     category: "Bedtime Stories",
     ageRange: "Ages 0–7",
     status: "coming-soon" as const,
-    coverImageUrl: "/stories/bedtime/cover.webp",
+    coverImageUrl: undefined,
   },
 ];
 
