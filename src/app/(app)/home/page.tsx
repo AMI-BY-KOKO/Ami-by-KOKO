@@ -484,6 +484,58 @@ function ParentHome() {
           )}
         </div>
 
+        {/* 🌟 Featured Story — Unmissable */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="px-4 mt-6"
+        >
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-400 via-amber-300 to-yellow-200 shadow-xl shadow-amber-300 min-h-[220px]">
+            {/* Animated background shapes */}
+            <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white opacity-10" />
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full bg-white opacity-10" />
+            
+            <div className="relative z-10 p-5 flex flex-col h-full">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-1.5 bg-white/30 rounded-full px-3 py-1 mb-2 w-fit">
+                <span className="text-lg">✨</span>
+                <span className="text-xs font-bold text-white">NEW STORY</span>
+              </div>
+
+              {/* Title + Description */}
+              <h3 className="text-lg font-extrabold text-white mb-1 leading-tight drop-shadow-sm">
+                🇳🇬 Nigeria's Independence
+              </h3>
+              <p className="text-sm font-semibold text-amber-50 mb-4 line-clamp-2">
+                Join Àmì on a journey through October 1st, 1960!
+              </p>
+
+              {/* Quick info */}
+              <div className="flex items-center gap-3 mb-4 text-xs text-white/90">
+                <span className="flex items-center gap-1">
+                  <span>📖</span> 29 pages
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <span>🎯</span> Ages 0–11
+                </span>
+              </div>
+
+              {/* CTA Button */}
+              <Link
+                href="/story"
+                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-amber-50 text-amber-600 font-extrabold text-sm px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition active:scale-95 w-fit"
+              >
+                🎬 Start Reading
+              </Link>
+            </div>
+
+            {/* Decorative book emoji */}
+            <div className="absolute bottom-2 right-4 text-4xl opacity-20">📚</div>
+          </div>
+        </motion.div>
+
         {/* Song of the Day */}
         <div className="px-4 mt-6">
           <h2 className="text-base font-bold text-stone-700 mb-3">🎵 Song of the Day</h2>

@@ -112,7 +112,13 @@ export default function AppNav({ profile }: AppNavProps) {
           .single();
         
         if (error) {
-          console.error('[AppNav] Error loading active child:', error);
+          // Log only relevant error info, not the full error object
+          console.warn('[AppNav] Could not load active child — clearing cache', {
+            message: error?.message,
+            code: error?.code,
+          });
+          // Clear the invalid child ID from cache
+          localStorage.removeItem("activeChildId");
           return;
         }
         
@@ -121,7 +127,9 @@ export default function AppNav({ profile }: AppNavProps) {
           setChildAvatar(data.avatar_url); 
         }
       } catch (err) {
-        console.error('[AppNav] Exception loading active child:', err);
+        console.warn('[AppNav] Exception loading active child:', err instanceof Error ? err.message : 'Unknown error');
+        // Clear potentially corrupt cache on error
+        localStorage.removeItem("activeChildId");
       }
     };
     
