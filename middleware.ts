@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
       .maybeSingle();
 
     // No profile or no role — redirect to role selection
-    if (!profile || !profile.role) {
+    if (!profile || !(profile as any)?.role) {
       return NextResponse.redirect(new URL('/auth/select-role', request.url));
     }
 
