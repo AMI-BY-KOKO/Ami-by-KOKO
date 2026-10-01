@@ -1,0 +1,225 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { findAudioFile } from "@/lib/audio/audioFileFinder";
+
+interface StoryAudioPlayerProps {
+  audioUrl?: string;
+  pageNumber: number;
+  isCurrentPage: boolean;
+}
+
+/**
+ * StoryAudioPlayer — plays professional voice-actor audio for story pages
+ * 
+ * Features:
+ * - No browser Text-to-Speech (Web Speech API removed entirely)
+ * - Play, pause, replay controls
+ * - Auto-detects audio file format (.mp3, .mpeg, .wav, .m4a, .ogg, .webm)
+ * - Graceful degradation if audio file doesn't exist
+ * - Stops audio when page changes
+ * - Shows loading/error states
+ * - Accessible button labels
+ */
+export function StoryAudioPlayer({
+  audioUrl,
+  pageNumber,
+  isCurrentPage,
+}: StoryAudioPlayerProps) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [canPlay, setCanPlay] = useState(false);
+  const [resolvedAudioUrl, setResolvedAudioUrl] = useState<string | null>(null);
+  const autoplayAttemptedRef = useRef(false);
+
+  // Resolve audio URL to find actual file format
+  useEffect(() => {
+    if (!audioUrl) {
+      setResolvedAudioUrl(null);
+      autoplayAttemptedRef.current = false;
+      return;
+    }
+
+    const resolveUrl = async () => {
+      try {
+        // Remove extension if present to check for other formats
+        let basePath = audioUrl;
+        const extensionMatch = audioUrl.match(/\.(mp3|mpeg|wav|m4a|ogg|webm|mp4)$/i);
+        if (extensionMatch) {
+          basePath = audioUrl.substring(0, audioUrl.length - extensionMatch[0].length);
+        }
+
+        const foundUrl = await findAudioFile(basePath);
+        setResolvedAudioUrl(foundUrl);
+        // Reset autoplay flag when URL resolves
+        autoplayAttemptedRef.current = false;
+      } catch (err) {
+        console.error(`Failed to resolve audio URL for page ${pageNumber}:`, err);
+        setResolvedAudioUrl(audioUrl);
+        autoplayAttemptedRef.current = false;
+      }
+    };
+
+    resolveUrl();
+  }, [audioUrl, pageNumber]);
+
+  // Stop audio when page changes, or autoplay when new page becomes current
+  useEffect(() => {
+    if (!isCurrentPage) {
+      // Page no longer current: stop audio and reset autoplay flag
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      setIsPlaying(false);
+      autoplayAttemptedRef.current = false;
+    } else if (isCurrentPage && canPlay && !autoplayAttemptedRef.current) {
+      // Page just became current and audio is ready: attempt autoplay
+      autoplayAttemptedRef.current = true;
+      const playPromise = audioRef.current?.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => {
+            // Browser autoplay policy may block this; user can click play manually
+            console.debug(`Autoplay blocked for page ${pageNumber}: ${err.message}`);
+          });
+      }
+    }
+  }, [isCurrentPage, canPlay, pageNumber]);
+
+  // Handle audio metadata loading
+  const handleCanPlay = () => {
+    setCanPlay(true);
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  // Handle audio errors
+  const handleError = () => {
+    setHasError(true);
+    setIsLoading(false);
+    setIsPlaying(false);
+  };
+
+  // Handle play button
+  const handlePlay = async () => {
+    if (!audioRef.current || !canPlay) return;
+
+    try {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        setIsLoading(true);
+        await audioRef.current.play();
+        setIsPlaying(true);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error(`Audio playback error for page ${pageNumber}:`, err);
+      setHasError(true);
+      setIsPlaying(false);
+      setIsLoading(false);
+    }
+  };
+
+  // Handle replay button
+  const handleReplay = async () => {
+    if (!audioRef.current || !canPlay) return;
+
+    try {
+      audioRef.current.currentTime = 0;
+      setIsLoading(true);
+      await audioRef.current.play();
+      setIsPlaying(true);
+      setIsLoading(false);
+    } catch (err) {
+      console.error(`Audio replay error for page ${pageNumber}:`, err);
+      setHasError(true);
+      setIsPlaying(false);
+      setIsLoading(false);
+    }
+  };
+
+  // Handle audio end
+  const handleEnded = () => {
+    setIsPlaying(false);
+  };
+
+  // If no audio URL, don't render
+  if (!resolvedAudioUrl) {
+    return null;
+  }
+
+  // If error loading audio, don't show broken player
+  if (hasError) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col gap-3 mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl ring-1 ring-amber-100">
+      {/* Hidden audio element */}
+      <audio
+        ref={audioRef}
+        src={resolvedAudioUrl}
+        onCanPlay={handleCanPlay}
+        onError={handleError}
+        onEnded={handleEnded}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
+
+      {/* Audio Controls */}
+      <div className="flex items-center gap-2">
+        {/* Play/Pause Button */}
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={handlePlay}
+          disabled={!canPlay || isLoading}
+          aria-label={
+            isPlaying
+              ? `Pause page ${pageNumber} narration`
+              : `Play page ${pageNumber} narration`
+          }
+          className="flex items-center gap-2 px-4 py-3 bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition shadow-md shadow-amber-200 min-h-12"
+        >
+          <span className="text-lg">
+            {isLoading ? "⏳" : isPlaying ? "⏸️" : "▶️"}
+          </span>
+          <span className="text-sm">
+            {isLoading ? "Loading..." : isPlaying ? "Pause" : "Play"}
+          </span>
+        </motion.button>
+
+        {/* Replay Button — only show if audio is ready */}
+        {canPlay && !isLoading && (
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleReplay}
+            aria-label={`Replay page ${pageNumber} narration`}
+            className="flex items-center justify-center w-12 h-12 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-full transition"
+          >
+            <span className="text-lg">🔁</span>
+          </motion.button>
+        )}
+      </div>
+
+      {/* Status Text */}
+      {isPlaying && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xs text-amber-700 font-semibold"
+        >
+          🎧 Listening to narration...
+        </motion.p>
+      )}
+    </div>
+  );
+}
