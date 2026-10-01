@@ -1,16 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
-export default function RoleSelectionPage() {
+function SelectRoleContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   const [selectedRole, setSelectedRole] = useState<'parent' | 'school_admin' | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const nextUrl = searchParams.get('next') ?? '/home';
 
   async function handleRoleSelection() {
     if (!selectedRole) {
@@ -34,31 +37,20 @@ export default function RoleSelectionPage() {
         return;
       }
 
-      // Create or update profile with selected role
-      const { error: upsertError } = await (supabase as any)
+      // Update profile with role
+      const { error: updateError } = await (supabase as any)
         .from('profiles')
-        .upsert(
-          {
-            id: user.id,
-            role: selectedRole,
-            full_name: user.user_metadata?.full_name || '',
-            created_at: new Date().toISOString(),
-          },
-          { onConflict: 'id' }
-        );
+        .update({ role: selectedRole })
+        .eq('id', user.id);
 
-      if (upsertError) {
+      if (updateError) {
         setError('Failed to save your role. Please try again.');
         setLoading(false);
         return;
       }
 
-      // Redirect to appropriate onboarding page based on role
-      if (selectedRole === 'school_admin') {
-        router.push('/onboarding/school-profile');
-      } else {
-        router.push('/onboarding/parent-profile');
-      }
+      // Redirect to intended destination
+      router.push(nextUrl);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -73,7 +65,7 @@ export default function RoleSelectionPage() {
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-amber-500 mb-2">Welcome to Àmì by Kòkò</h1>
           <p className="text-stone-600">
-            Are you a parent or a school administrator?
+            One quick question to get started
           </p>
         </div>
 
@@ -93,7 +85,7 @@ export default function RoleSelectionPage() {
               <div className="flex-1">
                 <p className="font-bold text-stone-800 mb-1">I'm a Parent</p>
                 <p className="text-sm text-stone-600">
-                  Monitor my child's learning progress and create profiles for multiple children
+                  Monitor my child's learning
                 </p>
               </div>
               {selectedRole === 'parent' && (
@@ -120,7 +112,7 @@ export default function RoleSelectionPage() {
               <div className="flex-1">
                 <p className="font-bold text-stone-800 mb-1">I'm a School Administrator</p>
                 <p className="text-sm text-stone-600">
-                  Manage students, track class progress, and create assignments for your school
+                  Manage my school's students
                 </p>
               </div>
               {selectedRole === 'school_admin' && (
@@ -145,7 +137,7 @@ export default function RoleSelectionPage() {
           disabled={loading || !selectedRole}
           className="w-full rounded-2xl bg-amber-500 py-4 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
         >
-          {loading ? 'Setting up your account…' : 'Continue'}
+          {loading ? 'Continuing…' : 'Continue'}
         </button>
 
         <p className="text-center text-xs text-stone-500 mt-4">
@@ -157,5 +149,17 @@ export default function RoleSelectionPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function SelectRolePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen flex flex-col items-center justify-center bg-cream-bg">
+        <div className="text-stone-400">Loading...</div>
+      </main>
+    }>
+      <SelectRoleContent />
+    </Suspense>
   );
 }
