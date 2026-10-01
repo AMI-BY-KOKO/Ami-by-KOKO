@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { StoryAudioControls } from "./StoryAudioControls";
+import { StoryAudioPlayer } from "./StoryAudioPlayer";
 import type { StoryPage as StoryPageType } from "@/types/stories";
 
 interface StoryPageProps {
@@ -10,10 +10,10 @@ interface StoryPageProps {
 }
 
 /**
- * Displays a single story page with text, image, and audio controls
+ * Displays a single story page with text, image, and professional voice-actor audio
+ * Removed all Text-to-Speech in favor of recorded audio files
  */
 export function StoryPage({ page, totalPages }: StoryPageProps) {
-  const textContent = page.audioText || page.text;
   const isLastPage = page.pageNumber === totalPages;
 
   // Determine visual styling based on page type
@@ -93,10 +93,12 @@ export function StoryPage({ page, totalPages }: StoryPageProps) {
           </p>
         </div>
 
-        {/* Audio controls */}
-        <div className="mt-8 pt-6 border-t border-stone-200">
-          <StoryAudioControls text={textContent} />
-        </div>
+        {/* Professional voice-actor audio player */}
+        <StoryAudioPlayer
+          audioUrl={page.audioUrl}
+          pageNumber={page.pageNumber}
+          isCurrentPage={true}
+        />
       </div>
 
       {/* Last page hint */}

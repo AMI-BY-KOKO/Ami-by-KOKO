@@ -26,9 +26,9 @@ export interface StoryPage {
   pageNumber: number;
   type?: StoryPageType;
   text: string;
-  audioText?: string; // Override text for TTS (if needed, e.g., formatting adjustments)
-  imageUrl?: string; // e.g., "/stories/nigerias-independence/page-01.webp"
-  audioUrl?: string; // Future: pre-recorded narration URL
+  imageUrl?: string; // e.g., "/stories/nigerias-independence/page-01.jfif"
+  audioUrl?: string; // e.g., "/stories/nigerias-independence/audio/page-01.mp3"
+  voiceActor?: string; // e.g., "Frey", "Simi", "Vic"
 }
 
 export interface Story {

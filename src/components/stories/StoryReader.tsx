@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { StoryPage } from "./StoryPage";
 import { StoryCompletion } from "./StoryCompletion";
@@ -14,7 +14,8 @@ interface StoryReaderProps {
 
 /**
  * Main story reader component
- * Manages page navigation, progress, and completion state
+ * Manages page navigation, progress, completion state, and audio playback
+ * Ensures audio stops when navigating to a new page
  */
 export function StoryReader({
   story,
@@ -22,6 +23,7 @@ export function StoryReader({
 }: StoryReaderProps) {
   const [currentPageNumber, setCurrentPageNumber] = useState(initialPageNumber);
   const [isComplete, setIsComplete] = useState(false);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   const currentPage = story.pages.find((p) => p.pageNumber === currentPageNumber);
   const totalPages = story.pages.length;
@@ -36,8 +38,23 @@ export function StoryReader({
     }
   }, [isLastPage, isComplete]);
 
+  // Stop audio when page changes
+  useEffect(() => {
+    const audioElements = document.querySelectorAll("audio");
+    audioElements.forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+  }, [currentPageNumber]);
+
   const goToPreviousPage = useCallback(() => {
     if (!isFirstPage) {
+      // Stop any playing audio before navigating
+      const audioElements = document.querySelectorAll("audio");
+      audioElements.forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
       setCurrentPageNumber(currentPageNumber - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -45,6 +62,12 @@ export function StoryReader({
 
   const goToNextPage = useCallback(() => {
     if (!isLastPage) {
+      // Stop any playing audio before navigating
+      const audioElements = document.querySelectorAll("audio");
+      audioElements.forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
       setCurrentPageNumber(currentPageNumber + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
