@@ -184,6 +184,26 @@ export default function SignupPage() {
                 placeholder="e.g. Sunshine Academy"/>
             </div>
           )}
+
+          {/* Phone number — only for parent */}
+          {role === "parent" && (
+            <div>
+              <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-700">
+                WhatsApp number <span className="text-stone-400 font-normal">(optional)</span>
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                autoComplete="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                placeholder="+234 801 234 5678"
+              />
+              <p className="mt-1 text-xs text-stone-400">Get updates when your child completes activities</p>
+            </div>
+          )}
+
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-700">
               Email
@@ -200,22 +220,6 @@ export default function SignupPage() {
             />
           </div>
 
-          {/* WhatsApp / Phone number */}
-          <div>
-            <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-700">
-              WhatsApp number <span className="text-stone-400 font-normal">(optional)</span>
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              autoComplete="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-              placeholder="+234 801 234 5678"
-            />
-            <p className="mt-1 text-xs text-stone-400">Get updates when your child completes activities</p>
-          </div>
 
           {/* Password */}
           <div>
