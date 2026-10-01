@@ -2,12 +2,11 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { updateUserRole } from './actions';
 
 function SelectRoleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
 
   const [selectedRole, setSelectedRole] = useState<'parent' | 'school_admin' | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,29 +24,17 @@ function SelectRoleContent() {
     setError(null);
 
     try {
-      // Get current user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+      // Call server action to update role
+      const result = await updateUserRole(selectedRole);
 
-      if (userError || !user) {
-        setError('You must be logged in to continue');
+      if (!result.success) {
+        setError(result.error || 'Failed to save your role');
         setLoading(false);
         return;
       }
 
-      // Update profile with role
-      const { error: updateError } = await (supabase as any)
-        .from('profiles')
-        .update({ role: selectedRole })
-        .eq('id', user.id);
-
-      if (updateError) {
-        setError('Failed to save your role. Please try again.');
-        setLoading(false);
-        return;
-      }
+      // Small delay to ensure role update is reflected
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Redirect to intended destination
       router.push(nextUrl);
