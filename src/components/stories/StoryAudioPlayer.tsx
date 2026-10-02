@@ -47,7 +47,7 @@ export function StoryAudioPlayer({
       try {
         // Remove extension if present to check for other formats
         let basePath = audioUrl;
-        const extensionMatch = audioUrl.match(/\.(mp3|mpeg|wav|m4a|ogg|webm|mp4)$/i);
+        const extensionMatch = audioUrl.match(/\.(m4a|mp4|mp3|mpeg|wav|ogg|webm)$/i);
         if (extensionMatch) {
           basePath = audioUrl.substring(0, audioUrl.length - extensionMatch[0].length);
         }
@@ -162,18 +162,36 @@ export function StoryAudioPlayer({
     return null;
   }
 
+  // Determine MIME type based on file extension
+  const getMimeType = (url: string): string => {
+    const ext = url.split('.').pop()?.toLowerCase() || '';
+    const mimeTypes: Record<string, string> = {
+      mp3: 'audio/mpeg',
+      mpeg: 'audio/mpeg',
+      wav: 'audio/wav',
+      m4a: 'audio/mp4',
+      mp4: 'audio/mp4',
+      ogg: 'audio/ogg',
+      webm: 'audio/webm',
+    };
+    return mimeTypes[ext] || 'audio/mpeg';
+  };
+
   return (
     <div className="flex flex-col gap-3 mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl ring-1 ring-amber-100">
-      {/* Hidden audio element */}
+      {/* Audio element with explicit MIME type for iOS compatibility */}
       <audio
         ref={audioRef}
-        src={resolvedAudioUrl}
         onCanPlay={handleCanPlay}
         onError={handleError}
         onEnded={handleEnded}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-      />
+        playsInline
+        controlsList="nodownload"
+      >
+        <source src={resolvedAudioUrl} type={getMimeType(resolvedAudioUrl)} />
+      </audio>
 
       {/* Audio Controls */}
       <div className="flex items-center gap-2">
