@@ -5,7 +5,7 @@
  * this utility checks for available formats without requiring a specific extension.
  */
 
-const SUPPORTED_AUDIO_FORMATS = [".mp3", ".mpeg", ".wav", ".m4a", ".ogg", ".webm", ".mp4"];
+const SUPPORTED_AUDIO_FORMATS = [".m4a", ".mp4", ".mp3", ".mpeg", ".wav", ".ogg", ".webm"];
 
 /**
  * Given a base audio path (without extension), find which format actually exists
