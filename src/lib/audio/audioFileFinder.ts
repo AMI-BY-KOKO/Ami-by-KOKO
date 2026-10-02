@@ -1,61 +1,27 @@
 /**
- * audioFileFinder — dynamically locate audio files in different formats
+ * audioFileFinder — resolve audio file paths with format detection
  * 
- * Since voice actor recordings may arrive in different formats (.mp3, .mpeg, .wav, .m4a, .ogg, .webm, .mp4),
- * this utility checks for available formats without requiring a specific extension.
+ * Audio files are organized by format:
+ * - Pages 1-10: MP3 (Frey)
+ * - Pages 11-29: MP4 (Simi, Vic)
  */
-
-const SUPPORTED_AUDIO_FORMATS = [".m4a", ".mp4", ".mp3", ".mpeg", ".wav", ".ogg", ".webm"];
 
 /**
- * Given a base audio path (without extension), find which format actually exists
+ * Get the correct audio file path with extension based on page number
  * 
  * Example:
- * - Input: "/stories/nigerias-independence/audio/page-01"
- * - Output: "/stories/nigerias-independence/audio/page-01.mpeg" (if that file exists)
- * 
- * This function attempts to fetch each format and returns the first one that exists.
- * Falls back to the original path if no format is found (browser will handle the 404).
+ * - Page 1-10: /stories/nigerias-independence/audio/page-01.mp3
+ * - Page 11-29: /stories/nigerias-independence/audio/page-11.mp4
  */
-export async function findAudioFile(baseAudioPath: string): Promise<string> {
-  // If path already includes an extension, return as-is
-  if (SUPPORTED_AUDIO_FORMATS.some((ext) => baseAudioPath.endsWith(ext))) {
-    return baseAudioPath;
-  }
-
-  // Try each format
-  for (const format of SUPPORTED_AUDIO_FORMATS) {
-    const fullPath = `${baseAudioPath}${format}`;
-    try {
-      const response = await fetch(fullPath, { method: "HEAD" });
-      if (response.ok) {
-        return fullPath;
-      }
-    } catch {
-      // Continue to next format
-    }
-  }
-
-  // If no format found, return base path and let browser handle it
-  // (will likely result in a 404, which StoryAudioPlayer handles gracefully)
-  return baseAudioPath;
+export function getAudioFilePath(baseAudioPath: string, pageNumber: number): string {
+  // Pages 1-10 use MP3, pages 11-29 use MP4
+  const extension = pageNumber <= 10 ? ".mp3" : ".mp4";
+  return `${baseAudioPath}${extension}`;
 }
 
 /**
- * Batch-find audio files for multiple pages
- * Useful for preloading audio metadata
+ * Determine MIME type based on page number
  */
-export async function findAudioFiles(
-  basePathPrefix: string,
-  pageNumbers: number[]
-): Promise<Map<number, string>> {
-  const audioMap = new Map<number, string>();
-
-  for (const pageNum of pageNumbers) {
-    const basePath = `${basePathPrefix}/page-${String(pageNum).padStart(2, "0")}`;
-    const audioUrl = await findAudioFile(basePath);
-    audioMap.set(pageNum, audioUrl);
-  }
-
-  return audioMap;
+export function getAudioMimeType(pageNumber: number): string {
+  return pageNumber <= 10 ? "audio/mpeg" : "audio/mp4";
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { findAudioFile } from "@/lib/audio/audioFileFinder";
+import { getAudioFilePath, getAudioMimeType } from "@/lib/audio/audioFileFinder";
 
 interface StoryAudioPlayerProps {
   audioUrl?: string;
@@ -14,13 +14,12 @@ interface StoryAudioPlayerProps {
  * StoryAudioPlayer — plays professional voice-actor audio for story pages
  * 
  * Features:
- * - No browser Text-to-Speech (Web Speech API removed entirely)
+ * - Pages 1-10: MP3 format (Frey)
+ * - Pages 11-29: MP4 format (Simi, Vic)
+ * - Autoplay when page loads
  * - Play, pause, replay controls
- * - Auto-detects audio file format (.mp3, .mpeg, .wav, .m4a, .ogg, .webm)
- * - Graceful degradation if audio file doesn't exist
+ * - Graceful degradation if audio unavailable
  * - Stops audio when page changes
- * - Shows loading/error states
- * - Accessible button labels
  */
 export function StoryAudioPlayer({
   audioUrl,
@@ -32,39 +31,10 @@ export function StoryAudioPlayer({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
-  const [resolvedAudioUrl, setResolvedAudioUrl] = useState<string | null>(null);
   const autoplayAttemptedRef = useRef(false);
 
-  // Resolve audio URL to find actual file format
-  useEffect(() => {
-    if (!audioUrl) {
-      setResolvedAudioUrl(null);
-      autoplayAttemptedRef.current = false;
-      return;
-    }
-
-    const resolveUrl = async () => {
-      try {
-        // Remove extension if present to check for other formats
-        let basePath = audioUrl;
-        const extensionMatch = audioUrl.match(/\.(m4a|mp4|mp3|mpeg|wav|ogg|webm)$/i);
-        if (extensionMatch) {
-          basePath = audioUrl.substring(0, audioUrl.length - extensionMatch[0].length);
-        }
-
-        const foundUrl = await findAudioFile(basePath);
-        setResolvedAudioUrl(foundUrl);
-        // Reset autoplay flag when URL resolves
-        autoplayAttemptedRef.current = false;
-      } catch (err) {
-        console.error(`Failed to resolve audio URL for page ${pageNumber}:`, err);
-        setResolvedAudioUrl(audioUrl);
-        autoplayAttemptedRef.current = false;
-      }
-    };
-
-    resolveUrl();
-  }, [audioUrl, pageNumber]);
+  // Get the correct audio file path with extension
+  const audioFilePath = audioUrl ? getAudioFilePath(audioUrl, pageNumber) : null;
 
   // Stop audio when page changes, or autoplay when new page becomes current
   useEffect(() => {
@@ -76,10 +46,10 @@ export function StoryAudioPlayer({
       }
       setIsPlaying(false);
       autoplayAttemptedRef.current = false;
-    } else if (isCurrentPage && canPlay && !autoplayAttemptedRef.current) {
+    } else if (isCurrentPage && canPlay && !autoplayAttemptedRef.current && audioRef.current) {
       // Page just became current and audio is ready: attempt autoplay
       autoplayAttemptedRef.current = true;
-      const playPromise = audioRef.current?.play();
+      const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
@@ -95,13 +65,21 @@ export function StoryAudioPlayer({
 
   // Handle audio metadata loading
   const handleCanPlay = () => {
+    console.log(`Audio ready for page ${pageNumber}: ${audioFilePath}`);
     setCanPlay(true);
     setIsLoading(false);
     setHasError(false);
   };
 
   // Handle audio errors
-  const handleError = () => {
+  const handleError = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+    const audio = e.currentTarget;
+    console.error(`Audio error for page ${pageNumber}:`, {
+      src: audioFilePath,
+      error: audio.error?.message || 'Unknown error',
+      networkState: audio.networkState,
+      readyState: audio.readyState,
+    });
     setHasError(true);
     setIsLoading(false);
     setIsPlaying(false);
@@ -153,7 +131,7 @@ export function StoryAudioPlayer({
   };
 
   // If no audio URL, don't render
-  if (!resolvedAudioUrl) {
+  if (!audioFilePath) {
     return null;
   }
 
@@ -162,24 +140,11 @@ export function StoryAudioPlayer({
     return null;
   }
 
-  // Determine MIME type based on file extension
-  const getMimeType = (url: string): string => {
-    const ext = url.split('.').pop()?.toLowerCase() || '';
-    const mimeTypes: Record<string, string> = {
-      mp3: 'audio/mpeg',
-      mpeg: 'audio/mpeg',
-      wav: 'audio/wav',
-      m4a: 'audio/mp4',
-      mp4: 'audio/mp4',
-      ogg: 'audio/ogg',
-      webm: 'audio/webm',
-    };
-    return mimeTypes[ext] || 'audio/mpeg';
-  };
+  const mimeType = getAudioMimeType(pageNumber);
 
   return (
     <div className="flex flex-col gap-3 mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl ring-1 ring-amber-100">
-      {/* Audio element with explicit MIME type for iOS compatibility */}
+      {/* Audio element */}
       <audio
         ref={audioRef}
         onCanPlay={handleCanPlay}
@@ -190,7 +155,7 @@ export function StoryAudioPlayer({
         playsInline
         controlsList="nodownload"
       >
-        <source src={resolvedAudioUrl} type={getMimeType(resolvedAudioUrl)} />
+        <source src={audioFilePath} type={mimeType} />
       </audio>
 
       {/* Audio Controls */}
