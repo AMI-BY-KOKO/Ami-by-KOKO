@@ -71,13 +71,14 @@ export function StoryAudioPlayer({
     }
   }, [isCurrentPage]);
 
-  // Attempt autoplay only after canPlay event
+  // Attempt autoplay only after canPlay event (but not on iOS)
   useEffect(() => {
     if (
       !isCurrentPage ||
       !canPlay ||
       autoplayAttemptedRef.current ||
-      !audioRef.current
+      !audioRef.current ||
+      isIOS
     ) {
       return;
     }
@@ -93,13 +94,12 @@ export function StoryAudioPlayer({
           setIsPlaying(true);
         })
         .catch((err) => {
-          // On iOS, autoplay is often blocked; user must click manually
           console.warn(
             `Autoplay blocked for page ${pageNumber}: ${err.message}`
           );
         });
     }
-  }, [isCurrentPage, canPlay, pageNumber]);
+  }, [isCurrentPage, canPlay, pageNumber, isIOS]);
 
   // Handle audio metadata loading
   const handleCanPlay = () => {
@@ -125,7 +125,7 @@ export function StoryAudioPlayer({
 
   // Handle play button
   const handlePlay = async () => {
-    if (!audioRef.current || !canPlay) return;
+    if (!audioRef.current) return;
 
     try {
       if (isPlaying) {
@@ -133,8 +133,15 @@ export function StoryAudioPlayer({
         setIsPlaying(false);
       } else {
         setIsLoading(true);
+        
+        // Ensure metadata is loaded
+        if (!canPlay) {
+          audioRef.current.load();
+        }
+        
         await audioRef.current.play();
         setIsPlaying(true);
+        setCanPlay(true);
         setIsLoading(false);
       }
     } catch (err) {
@@ -221,7 +228,7 @@ export function StoryAudioPlayer({
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={handlePlay}
-          disabled={!canPlay || isLoading}
+          disabled={isLoading || (hasError && !isPlaying) || (!canPlay && !isIOS)}
           aria-label={
             isPlaying
               ? `Pause page ${pageNumber} narration`
