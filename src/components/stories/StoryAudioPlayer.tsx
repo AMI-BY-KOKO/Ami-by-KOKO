@@ -16,10 +16,10 @@ interface StoryAudioPlayerProps {
  * Features:
  * - Pages 1-10: MP3 format (Frey)
  * - Pages 11-29: MP4 format (Simi, Vic)
- * - Autoplay when page loads
+ * - Autoplay on page load (except iOS — requires user tap)
  * - Play, pause, replay controls
  * - Graceful degradation if audio unavailable
- * - Stops audio when page changes
+ * - iOS-specific hint for manual play requirement
  */
 export function StoryAudioPlayer({
   audioUrl,
@@ -32,10 +32,19 @@ export function StoryAudioPlayer({
   const [hasError, setHasError] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
   const [audioLoaded, setAudioLoaded] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const autoplayAttemptedRef = useRef(false);
 
   // Get the correct audio file path with extension
   const audioFilePath = audioUrl ? getAudioFilePath(audioUrl, pageNumber) : null;
+
+  // Detect if running on iOS
+  useEffect(() => {
+    const isIOSDevice =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+      !/Android/.test(navigator.userAgent);
+    setIsIOS(isIOSDevice);
+  }, []);
 
   // When page becomes current, try to load audio metadata
   useEffect(() => {
@@ -173,6 +182,17 @@ export function StoryAudioPlayer({
 
   return (
     <div className="flex flex-col gap-3 mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl ring-1 ring-amber-100">
+      {/* iOS hint */}
+      {isIOS && !isPlaying && (
+        <motion.p
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-xs text-amber-600 font-semibold bg-amber-100/50 px-3 py-2 rounded-lg"
+        >
+          📱 Tap the Play button to listen to Kòkò's voice
+        </motion.p>
+      )}
+
       {/* Audio element with iOS compatibility attributes */}
       <audio
         ref={audioRef}
