@@ -17,20 +17,21 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/stories/:path*/audio/:file*",
+        source: "/stories/:path*/audio/:file*.mp3",
         headers: [
-          {
-            key: "Content-Type",
-            value: "audio/mpeg",
-          },
-          {
-            key: "Accept-Ranges",
-            value: "bytes",
-          },
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
+          { key: "Content-Type", value: "audio/mpeg" },
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      {
+        source: "/stories/:path*/audio/:file*.mp4",
+        headers: [
+          { key: "Content-Type", value: "audio/mp4" },
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
         ],
       },
     ];

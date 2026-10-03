@@ -31,35 +31,64 @@ export function StoryAudioPlayer({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
+  const [audioLoaded, setAudioLoaded] = useState(false);
   const autoplayAttemptedRef = useRef(false);
 
   // Get the correct audio file path with extension
   const audioFilePath = audioUrl ? getAudioFilePath(audioUrl, pageNumber) : null;
 
-  // Stop audio when page changes, or autoplay when new page becomes current
+  // When page becomes current, try to load audio metadata
   useEffect(() => {
-    if (!isCurrentPage) {
-      // Page no longer current: stop audio and reset autoplay flag
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
+    if (!isCurrentPage || !audioRef.current) return;
+
+    // Reset autoplay flag when page changes
+    autoplayAttemptedRef.current = false;
+
+    // On iOS, we need to trigger load to populate metadata
+    if (!audioLoaded) {
+      console.log(`Loading audio metadata for page ${pageNumber}...`);
+      audioRef.current.load();
+      setAudioLoaded(true);
+    }
+  }, [isCurrentPage, pageNumber, audioLoaded]);
+
+  // Stop audio when page changes
+  useEffect(() => {
+    if (!isCurrentPage && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       setIsPlaying(false);
       autoplayAttemptedRef.current = false;
-    } else if (isCurrentPage && canPlay && !autoplayAttemptedRef.current && audioRef.current) {
-      // Page just became current and audio is ready: attempt autoplay
-      autoplayAttemptedRef.current = true;
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-          })
-          .catch((err) => {
-            // Browser autoplay policy may block this; user can click play manually
-            console.debug(`Autoplay blocked for page ${pageNumber}: ${err.message}`);
-          });
-      }
+    }
+  }, [isCurrentPage]);
+
+  // Attempt autoplay only after canPlay event
+  useEffect(() => {
+    if (
+      !isCurrentPage ||
+      !canPlay ||
+      autoplayAttemptedRef.current ||
+      !audioRef.current
+    ) {
+      return;
+    }
+
+    autoplayAttemptedRef.current = true;
+    console.log(`Attempting autoplay for page ${pageNumber}`);
+    
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log(`Autoplay succeeded for page ${pageNumber}`);
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          // On iOS, autoplay is often blocked; user must click manually
+          console.warn(
+            `Autoplay blocked for page ${pageNumber}: ${err.message}`
+          );
+        });
     }
   }, [isCurrentPage, canPlay, pageNumber]);
 
@@ -144,18 +173,26 @@ export function StoryAudioPlayer({
 
   return (
     <div className="flex flex-col gap-3 mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl ring-1 ring-amber-100">
-      {/* Audio element */}
+      {/* Audio element with iOS compatibility attributes */}
       <audio
         ref={audioRef}
+        preload="metadata"
+        playsInline
+        crossOrigin="anonymous"
         onCanPlay={handleCanPlay}
         onError={handleError}
         onEnded={handleEnded}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        playsInline
-        controlsList="nodownload"
+        onPlay={() => {
+          console.log(`Audio playing: page ${pageNumber}`);
+          setIsPlaying(true);
+        }}
+        onPause={() => {
+          console.log(`Audio paused: page ${pageNumber}`);
+          setIsPlaying(false);
+        }}
       >
         <source src={audioFilePath} type={mimeType} />
+        Your browser does not support the audio element.
       </audio>
 
       {/* Audio Controls */}
