@@ -1,16 +1,41 @@
 @import "tailwindcss";
 
-/* ─── Àmì by Kòkò brand tokens ──────────────────────────────────────────── */
+/* ─── Àmì by Kòkò Design Tokens (Tailwind v4 @theme) ──────────────────── */
 @theme {
-  /* Brand colours */
-  --color-amber-koko: #F59E0B;     /* Kòkò's warm amber — primary */
-  --color-green-ami: #166534;      /* Àmì's forest green — secondary */
-  --color-coral-celebrate: #F43F5E; /* Celebration accent */
-  --color-cream-bg: #FEFCE8;       /* Soft cream background */
+  /* Brand — core palette */
+  --color-cream-bg: #FFFBEF;               /* Main background — warm, soft cream */
+  --color-primary-green: #1FA463;          /* Primary action, tints, icons, outline buttons */
+  --color-green-filled: #15803D;           /* Filled green buttons (contrast-safe for white text) */
+  --color-green-hover: #166534;            /* Hover state on filled green (existing green-ami) */
+  --color-accent-yellow: #FFC93C;          /* Main CTAs — use navy text */
+  --color-coral: #F25C54;                  /* Àmì wordmark, secondary accent */
+  --color-navy: #1B2A5B;                   /* Headings, primary text */
+  --color-navy-body: #475074;              /* Body text — secondary */
+  --color-navy-muted: #8A90AD;             /* Muted text, placeholders, secondary labels */
+  --color-border-warm: #EFE8D8;            /* Card borders, dividers */
 
-  /* Typography */
-  --font-display: var(--font-geist-sans, sans-serif);
-  --font-body: var(--font-geist-sans, sans-serif);
+  /* Category colours (solid + pastel tints for learning tiles) */
+  --color-cat-orange: #FF8A3D;             /* Games & Create category */
+  --color-cat-orange-light: #FFEEDD;       /* Pastel background tint */
+  --color-cat-blue: #3B82F6;               /* Learn & Watch category */
+  --color-cat-blue-light: #E6F0FF;         /* Pastel background tint */
+  --color-cat-purple: #8B5CF6;             /* Stories & Rewards category */
+  --color-cat-purple-light: #F0E9FF;       /* Pastel background tint */
+  --color-cat-pink: #EC4899;               /* Music & Creative category */
+  --color-cat-pink-light: #FFE6F1;         /* Pastel background tint */
+  --color-cat-green: #1FA463;              /* Nature & World category (same as primary) */
+  --color-cat-green-light: #E6F7EE;        /* Pastel background tint */
+  --color-cat-yellow: #FFC93C;             /* African Culture category (same as accent) */
+  --color-cat-yellow-light: #FFF9E6;       /* Pastel background tint */
+
+  /* Legacy tokens (kept for compatibility during transition) */
+  --color-amber-koko: #F59E0B;             /* Legacy — gradually replaced with primary-green */
+  --color-green-ami: #166534;              /* Legacy — kept as green-hover */
+  --color-coral-celebrate: #F43F5E;        /* Legacy — use coral token */
+
+  /* Typography — fonts imported via next/font in layout.tsx */
+  --font-display: var(--font-display, system-ui);
+  --font-body: var(--font-body, system-ui);
 }
 
 /* ─── Base styles ────────────────────────────────────────────────────────── */
@@ -24,7 +49,7 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Minimum 48×48px tap targets for all interactive elements */
+/* Minimum 48×48px tap targets for all interactive elements (WCAG AA) */
 button,
 a,
 [role="button"] {
@@ -32,9 +57,15 @@ a,
   min-width: 48px;
 }
 
-/* High-contrast focus ring for accessibility */
+/* High-contrast focus ring for accessibility — PRIMARY GREEN */
 :focus-visible {
-  outline: 3px solid var(--color-amber-koko);
+  outline: 3px solid var(--color-primary-green);  /* #1FA463 */
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Test string for diacritics verification */
+.diacritic-test {
+  font-family: var(--font-display);
+  /* Test: Àmì by Kòkò — Àgbàdo, ṣẹ̀ṣẹ̀, ọmọ */
 }

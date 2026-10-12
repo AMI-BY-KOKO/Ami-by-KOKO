@@ -38,7 +38,7 @@ export default function BottomNav({ role }: BottomNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-amber-100 shadow-lg"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#EFE8D8] shadow-lg"
       aria-label="Main navigation"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
@@ -53,22 +53,20 @@ export default function BottomNav({ role }: BottomNavProps) {
               aria-current={active ? "page" : undefined}
               style={{ minHeight: 64 }}
             >
-              {/* Filled pill behind active icon */}
+              {/* Small yellow dot indicator above active icon */}
               {active && (
                 <motion.div
-                  layoutId="bottom-nav-pill"
-                  className="absolute inset-x-1 top-1.5 bottom-1.5 rounded-2xl bg-amber-100"
+                  layoutId="bottom-nav-indicator"
+                  className="absolute top-2 w-2 h-2 rounded-full bg-yellow"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
 
-              <span className={`relative z-10 text-xl leading-none transition-transform ${active ? "scale-110" : ""}`}>
+              <span className={`relative z-10 text-2xl leading-none transition-colors ${active ? "text-green" : "text-stone-400"}`}>
                 {item.emoji}
               </span>
               <span className={`relative z-10 text-[10px] font-bold leading-none transition-colors ${
-                active
-                  ? isSchoolAdmin ? "text-green-700" : "text-amber-700"
-                  : "text-stone-400"
+                active ? "text-green" : "text-stone-400"
               }`}>
                 {item.label}
               </span>
@@ -76,8 +74,6 @@ export default function BottomNav({ role }: BottomNavProps) {
           );
         })}
       </div>
-
-
     </nav>
   );
 }

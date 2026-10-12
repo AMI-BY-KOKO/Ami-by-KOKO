@@ -1,9 +1,10 @@
 "use client";
-import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import AuthBackButton from "@/components/ui/AuthBackButton";
+import Wordmark from "@/components/ui/Wordmark";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -51,99 +52,117 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-cream-bg px-4">
-      <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg">
-        <h1 className="mb-6 text-center text-3xl font-bold text-amber-500">
-          Welcome back!
-        </h1>
-        <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
-        {/* Google OAuth Button */}
-        <div className="mb-6">
-          <GoogleSignInButton />
-        </div>
-
-        {/* Divider */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-stone-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-2 text-stone-500">or continue with email</span>
-          </div>
-        </div>
-
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-              placeholder="parent@example.com"
-            />
+    <main className="min-h-screen flex items-center justify-center bg-cream-bg px-4 py-8 relative overflow-hidden" style={{
+      backgroundImage: "linear-gradient(135deg, #FFFBEF 0%, #E6F0FF 100%)",
+    }}>
+      <div className="w-full max-w-md flex items-center justify-center">
+        <div className="w-full bg-white rounded-3xl shadow-sm ring-1 ring-border-warm p-6 md:p-8">
+          {/* Back button */}
+          <div className="mb-6">
+            <AuthBackButton />
           </div>
 
-          {/* Password */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label htmlFor="password" className="block text-sm font-medium text-stone-700">
-                Password
+          {/* Wordmark */}
+          <div className="mb-2">
+            <Wordmark size="lg" />
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-2xl md:text-3xl font-bold text-navy text-center font-display mb-1">
+            Welcome Back!
+          </h1>
+          <p className="text-sm text-navy-muted text-center mb-8">
+            Sign in to continue the adventure.
+          </p>
+
+          <form onSubmit={handleLogin} className="flex flex-col gap-5">
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-navy">
+                Email Address
               </label>
-              <a href="/auth/reset-password"
-                className="text-xs text-amber-600 hover:underline font-medium">
-                Forgot password?
-              </a>
-            </div>
-            <div className="relative">
               <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
+                id="email"
+                type="email"
+                autoComplete="email"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-stone-200 px-4 py-3 pr-12 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                placeholder="••••••••"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                placeholder="you@example.com"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-md p-1"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                <EyeIcon open={showPassword} />
-              </button>
+            </div>
+
+            {/* Password */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="password" className="text-sm font-semibold text-navy">
+                  Password
+                </label>
+                <a href="/auth/reset-password"
+                  className="text-sm text-green-filled hover:text-green-hover font-semibold transition">
+                  Forgot password?
+                </a>
+              </div>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 pr-12 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-muted hover:text-navy transition focus:outline-none focus:ring-2 focus:ring-primary-green rounded-md p-1"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <EyeIcon open={showPassword} />
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <p role="alert" className="text-sm text-coral">
+                {error}
+              </p>
+            )}
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 rounded-full bg-accent-yellow hover:bg-[#F5B800] text-navy font-bold transition disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-yellow active:scale-95 mt-2"
+            >
+              {loading ? "Signing in…" : "Log In"}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border-warm"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-3 text-sm text-navy-muted">or</span>
             </div>
           </div>
 
-          {error && (
-            <p role="alert" className="text-sm text-red-600">
-              {error}
-            </p>
-          )}
+          {/* Google button */}
+          <GoogleSignInButton />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-2 rounded-2xl bg-amber-500 py-4 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-          >
-            {loading ? "Signing in…" : "Sign In"}
-          </button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-stone-500">
-          No account?{" "}
-          <a href="/auth/signup" className="font-medium text-amber-600 hover:underline">
-            Sign up free
-          </a>
-        </p>
+          {/* Footer link */}
+          <p className="mt-6 text-center text-sm text-navy-muted">
+            New here?{" "}
+            <a href="/auth/signup" className="font-bold text-green-filled hover:text-green-hover transition">
+              Create an account
+            </a>
+          </p>
+        </div>
       </div>
     </main>
   );

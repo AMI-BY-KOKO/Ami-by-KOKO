@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { initializeChildProgress, getChildAllProgress } from "@/lib/learning-paths/actions";
+import Image from "next/image";
+import { Star, BookOpen, Calculator, Globe, Puzzle, Music, BookHeart } from "lucide-react";
 import CreateChildModal from "@/components/ui/CreateChildModal";
 import OnboardingFlow from "@/components/ui/OnboardingFlow";
 import SongButton from "@/components/ui/SongButton";
@@ -21,21 +23,19 @@ import { useAssignments } from "@/hooks/useAssignments";
 import { useChallenges } from "@/hooks/useChallenges";
 import { getSongOfTheDay, getLetterSong } from "@/lib/audio/songs";
 import { isStudentAccount } from "@/lib/access";
+import { getLevelInfo } from "@/lib/xp/xp";
 import { SUBJECT_EMOJIS, CLASS_LABELS, type ChildWithClass } from "@/types";
-import YouTubeBannerHome from "@/components/YouTubeBanner/YouTubeBannerHome";
-
 
 const MODES = [
-  { href: "/literacy",  emoji: "🔤", title: "Literacy & Language",  description: "Letters, sounds and tracing",  gradient: "from-amber-400 to-orange-400", shadow: "shadow-amber-200", ring: "ring-amber-200" },
-  { href: "/numeracy",  emoji: "🔢", title: "Numbers & Shapes",     description: "Count, trace and explore",     gradient: "from-violet-500 to-purple-400", shadow: "shadow-violet-200", ring: "ring-violet-200" },
-  { href: "/world",     emoji: "🌍", title: "My World",             description: "Animals, colours and more",    gradient: "from-green-500 to-emerald-400", shadow: "shadow-green-200", ring: "ring-green-200" },
-  { href: "/word-builder", emoji: "🦜", title: "Kòkò's Word Adventure", description: "Mix it. Match it. Make a word!", gradient: "from-amber-500 to-orange-500",    shadow: "shadow-amber-200",  ring: "ring-amber-200"  },
-  { href: "/dj-booth",  emoji: "🎵", title: "DJ Booth",             description: "Mix sounds and make music",    gradient: "from-sky-400 to-blue-500",      shadow: "shadow-sky-200",   ring: "ring-sky-200"   },
-  { href: "/story",     emoji: "📖", title: "Story Mode",           description: "Help Kòkò find his voice",     gradient: "from-rose-400 to-pink-400",     shadow: "shadow-rose-200",  ring: "ring-rose-200"  },
+  { href: "/literacy",  icon: "BookOpen", title: "Literacy", color: "purple", bg: "bg-purple-50", tint: "#F0E9FF", colorHex: "#8B5CF6" },
+  { href: "/numeracy",  icon: "Calculator", title: "Numeracy", color: "orange", bg: "bg-orange-50", tint: "#FFEEDD", colorHex: "#FF8A3D" },
+  { href: "/world",     icon: "Globe", title: "My World", color: "blue", bg: "bg-blue-50", tint: "#E6F0FF", colorHex: "#3B82F6" },
+  { href: "/word-builder", icon: "Puzzle", title: "Word Adventure", color: "green", bg: "bg-green-50", tint: "#E6F7EE", colorHex: "#1FA463" },
+  { href: "/dj-booth",  icon: "Music", title: "DJ Booth", color: "pink", bg: "bg-pink-50", tint: "#FFE6F1", colorHex: "#EC4899" },
+  { href: "/story",     icon: "BookHeart", title: "Story Mode", color: "yellow", bg: "bg-yellow-50", tint: "#FFFBEF", colorHex: "#FFC93C" },
 ];
 
 const STORY_LETTERS = ["A","B","C","D","E","F","G","H","I","J"];
-
 const SOTD_LETTER = getSongOfTheDay();
 const SOTD_SONG = getLetterSong(SOTD_LETTER);
 
@@ -64,7 +64,6 @@ function SchoolAdminHome({ schoolName, subscriptionActive }: { schoolName: strin
         </div>
       </div>
 
-      {/* Subscription upgrade banner for inactive schools */}
       {!subscriptionActive && (
         <div className="mx-2 mt-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
           <span className="text-2xl flex-shrink-0">🔒</span>
@@ -111,10 +110,6 @@ function SchoolAdminHome({ schoolName, subscriptionActive }: { schoolName: strin
           Open School Dashboard →
         </Link>
       </div>
-
-      <div className="px-4 mt-4">
-        <YouTubeBannerHome />
-      </div>
     </div>
   );
 }
@@ -135,10 +130,10 @@ function StudentHome({
   const shardsFound = STORY_LETTERS.filter(l => masteredLetters.includes(l)).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 pb-24">
+    <div className="min-h-screen bg-cream-bg pb-32">
 
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-3xl mx-2 mt-2 bg-gradient-to-br from-amber-400 via-orange-300 to-yellow-300 shadow-xl shadow-amber-200 min-h-[240px]">
+      <div className="relative overflow-hidden rounded-3xl mx-3 mt-3 bg-gradient-to-br from-amber-400 via-orange-300 to-yellow-300 shadow-xl shadow-amber-200 min-h-[240px]">
         <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white opacity-10" />
         <div className="absolute -bottom-8 -left-8 w-36 h-36 rounded-full bg-white opacity-10" />
 
@@ -173,6 +168,7 @@ function StudentHome({
           <img src="/ami-koko.svg" alt="Àmì and Kòkò" className="w-full h-full object-contain object-bottom" />
         </motion.div>
       </div>
+
       {/* Assignments */}
       {assignments.length > 0 && (
         <div className="px-4 mt-6">
@@ -220,27 +216,47 @@ function StudentHome({
         </div>
       )}
 
-      {/* Mode cards */}
+      {/* Learning Mode Tiles */}
       <div className="px-4 mt-6">
-        <h2 className="text-base font-bold text-stone-700 mb-3">What do you want to do today?</h2>
-        <div className="flex flex-col gap-3">
-          {MODES.map((mode, i) => (
-            <motion.div key={mode.href} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 + i * 0.08 }}>
-              <Link href={mode.href}
-                className={`flex items-center gap-4 p-4 rounded-3xl bg-white shadow-md ${mode.shadow} ring-1 ${mode.ring} transition hover:scale-[1.02] active:scale-[0.98]`}>
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${mode.gradient} flex items-center justify-center text-2xl shadow-sm flex-shrink-0`}>
-                  {mode.emoji}
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold text-stone-800 text-sm">{mode.title}</p>
-                  <p className="text-stone-500 text-xs">{mode.description}</p>
-                </div>
-                <div className="text-stone-300">›</div>
-              </Link>
-            </motion.div>
-          ))}
+        <h2 className="text-base font-bold text-stone-700 mb-3">Explore & Learn</h2>
+        <div className="grid grid-cols-3 gap-2 md:grid-cols-3 lg:grid-cols-6">
+          {MODES.map((mode, i) => {
+            const iconMap: Record<string, React.ReactNode> = {
+              BookOpen: <BookOpen size={20} />,
+              Calculator: <Calculator size={20} />,
+              Globe: <Globe size={20} />,
+              Puzzle: <Puzzle size={20} />,
+              Music: <Music size={20} />,
+              BookHeart: <BookHeart size={20} />,
+            };
+
+            return (
+              <motion.div key={mode.href}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.05 }}>
+                <Link href={mode.href}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-2xl ${mode.bg} ring-1 ring-[#EFE8D8] hover:shadow-md transition active:scale-95 h-full`}>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold`}
+                    style={{ backgroundColor: mode.colorHex }}>
+                    {iconMap[mode.icon]}
+                  </div>
+                  <p className="text-[11px] font-bold text-stone-800 text-center leading-tight">{mode.title}</p>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
+      </div>
+
+      {/* Daily Challenge */}
+      <div className="px-4 mt-6">
+        <DailyChallengeCard childId={child.id} />
+      </div>
+
+      {/* Today's Adventure */}
+      <div className="px-4 mt-6">
+        <TodaysAdventure childId={child.id} />
       </div>
 
       {/* Song of the Day */}
@@ -253,14 +269,14 @@ function StudentHome({
             </div>
             <div className="flex-1">
               <p className="font-bold text-stone-800 text-sm">Letter {SOTD_LETTER} Song</p>
-              <p className="text-stone-500 text-xs">Sing along with Kòkò!</p>
+              <p className="text-stone-500 text-xs">Free every day — sing along with Kòkò!</p>
             </div>
           </div>
           <SongButton song={SOTD_SONG} label={`🎵 Sing the ${SOTD_LETTER} song`} />
         </div>
       </div>
 
-      {/* Quick stats */}
+      {/* Quick Stats */}
       <div className="px-4 mt-6">
         <div className="bg-white rounded-3xl p-4 shadow-sm ring-1 ring-stone-100 flex items-center justify-around">
           <div className="flex flex-col items-center gap-1">
@@ -323,10 +339,7 @@ function ParentHome() {
       if (!activeChild?.id) return;
 
       try {
-        // Check if progress exists for this child
         const existingProgress = await getChildAllProgress(activeChild.id);
-        
-        // If no progress exists, initialize it
         if (!existingProgress || existingProgress.length === 0) {
           const result = await initializeChildProgress(activeChild.id);
           if (!result.success) {
@@ -343,209 +356,270 @@ function ParentHome() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 pb-24">
-
-        {/* Hero */}
-        <div className="relative overflow-hidden rounded-3xl mx-2 mt-2 bg-gradient-to-br from-amber-400 via-orange-300 to-yellow-300 shadow-xl shadow-amber-200 min-h-[260px]">
-          <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white opacity-10" />
-          <div className="absolute -bottom-8 -left-8 w-36 h-36 rounded-full bg-white opacity-10" />
-
-          <div className="relative z-10 pt-8 pl-6 pr-4 pb-4 max-w-[55%]">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <div className="flex items-center gap-2 mb-1">
-                <p className="text-orange-700 font-semibold text-sm">
-                  {childrenLoading ? "Loading…"
-                    : activeChild ? `Hi, ${activeChild.name}! 👋`
-                    : "Welcome! 👋"}
+      <div className="min-h-screen bg-cream-bg pb-32">
+        
+        {/* ─── HERO BANNER (Scene Image + Text Panel) ─────────────────────────────────── */}
+        <div className="mx-3 mt-3 rounded-3xl overflow-hidden shadow-lg">
+          {/* Desktop/Tablet: Side-by-side layout (TEXT LEFT 45%, IMAGE RIGHT 55%) */}
+          <div className="hidden md:flex h-[300px] lg:h-[340px]">
+            {/* Left: Text Panel (45%) */}
+            <div className="w-[45%] bg-gradient-to-br from-cream-bg to-yellow-100 p-8 flex flex-col justify-center">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                {/* Greeting */}
+                <p className="text-navy font-semibold text-sm mb-2">
+                  {childrenLoading ? "Loading…" : activeChild ? `Hi, ${activeChild.name}! 👋` : "Welcome! 👋"}
                 </p>
+
+                {/* Main heading */}
+                <h1 className="text-2xl font-extrabold text-navy leading-tight mb-2">
+                  Ready to learn with Kòkò?
+                </h1>
+
+                {/* Subheading */}
+                <p className="text-navy-body text-sm leading-relaxed mb-6">
+                  Explore new letters, sounds,<br />and unlock story shards together!
+                </p>
+
+                {/* Child switcher button */}
+                {children.length > 1 && (
+                  <motion.button onClick={() => setShowSwitcher(v => !v)}
+                    className="text-navy bg-white/60 hover:bg-white/80 rounded-full px-3 py-1 text-xs font-bold transition mb-4 w-fit"
+                    aria-label="Switch child">
+                    switch ↕
+                  </motion.button>
+                )}
+
+                {/* Child switcher dropdown */}
+                <AnimatePresence>
+                  {showSwitcher && (
+                    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                      className="absolute top-40 left-12 z-20 bg-white rounded-2xl shadow-xl ring-1 ring-[#EFE8D8] py-2 min-w-[160px]">
+                      {children.map(c => (
+                        <button key={c.id} onClick={() => { selectChild(c); setShowSwitcher(false); }}
+                          className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm transition ${
+                            activeChild?.id === c.id ? "bg-yellow/20 font-bold text-navy" : "text-stone-700 hover:bg-yellow/10"
+                          }`}>
+                          <span>{c.avatar_url ?? "🧒🏾"}</span>
+                          {c.name}
+                          {activeChild?.id === c.id && <span className="ml-auto text-yellow">✓</span>}
+                        </button>
+                      ))}
+                      <div className="border-t border-[#EFE8D8] mt-1 pt-1">
+                        <button onClick={() => { setShowModal(true); setShowSwitcher(false); }}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-xs text-stone-500 hover:bg-stone-50 transition">
+                          ➕ Add child
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* CTA Button */}
+                <Link href="/literacy"
+                  className="inline-flex items-center gap-2 bg-green-800 hover:bg-green-900 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-md transition active:scale-95">
+                  Start learning →
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* Right: Scene Image (55%) */}
+            <div className="w-[55%] relative">
+              <Image
+                src="/brand/hero-scene.jfif"
+                alt="Àmì and Kòkò in village"
+                fill
+                priority
+                sizes="(min-width:1024px) 55vw, 55vw"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+              {/* Gradient overlay on LEFT edge to blend into text panel */}
+              <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-cream-bg via-cream-bg/50 to-transparent" />
+            </div>
+          </div>
+
+          {/* Mobile: Stacked layout (image top, text bottom) */}
+          <div className="md:hidden flex flex-col">
+            {/* Top: Scene Image (aspect-[16/10]) */}
+            <div className="relative w-full aspect-[16/10]">
+              <Image
+                src="/brand/hero-scene.jfif"
+                alt="Àmì and Kòkò in village"
+                fill
+                priority
+                sizes="100vw"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+            </div>
+
+            {/* Bottom: Text Panel */}
+            <div className="bg-gradient-to-br from-cream-bg to-yellow-100 p-4 flex flex-col gap-3">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                {/* Greeting */}
+                <p className="text-navy font-semibold text-sm">
+                  {childrenLoading ? "Loading…" : activeChild ? `Hi, ${activeChild.name}! 👋` : "Welcome! 👋"}
+                </p>
+
+                {/* Main heading */}
+                <h1 className="text-xl font-extrabold text-navy leading-tight">
+                  Ready to learn with Kòkò?
+                </h1>
+
+                {/* Subheading */}
+                <p className="text-navy-body text-xs leading-relaxed">
+                  Explore new letters, sounds,<br />and unlock story shards together!
+                </p>
+
+                {/* Child switcher */}
                 {children.length > 1 && (
                   <button onClick={() => setShowSwitcher(v => !v)}
-                    className="text-orange-600 bg-white/30 hover:bg-white/50 rounded-full px-2 py-0.5 text-xs font-bold transition"
+                    className="text-navy bg-white/60 hover:bg-white/80 rounded-full px-3 py-1 text-xs font-bold transition w-fit"
                     aria-label="Switch child">
                     switch ↕
                   </button>
                 )}
-              </div>
 
-              {isSchoolChild && activeChildWithClass?.class && (
-                <div className="inline-flex items-center gap-1.5 bg-white/25 rounded-full px-2.5 py-1 mb-2">
-                  <span className="text-xs font-bold text-white">
-                    🏫 {CLASS_LABELS[activeChildWithClass.class]}
-                    {activeChildWithClass.term ? ` · Term ${activeChildWithClass.term}` : ""}
-                  </span>
+                {/* Child switcher dropdown */}
+                <AnimatePresence>
+                  {showSwitcher && (
+                    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                      className="absolute top-80 left-4 right-4 z-20 bg-white rounded-2xl shadow-xl ring-1 ring-[#EFE8D8] py-2">
+                      {children.map(c => (
+                        <button key={c.id} onClick={() => { selectChild(c); setShowSwitcher(false); }}
+                          className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm transition ${
+                            activeChild?.id === c.id ? "bg-yellow/20 font-bold text-navy" : "text-stone-700 hover:bg-yellow/10"
+                          }`}>
+                          <span>{c.avatar_url ?? "🧒🏾"}</span>
+                          {c.name}
+                          {activeChild?.id === c.id && <span className="ml-auto text-yellow">✓</span>}
+                        </button>
+                      ))}
+                      <div className="border-t border-[#EFE8D8] mt-1 pt-1">
+                        <button onClick={() => { setShowModal(true); setShowSwitcher(false); }}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-xs text-stone-500 hover:bg-stone-50 transition">
+                          ➕ Add child
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* CTA Button */}
+                <Link href="/literacy"
+                  className="inline-flex items-center gap-2 bg-green-800 hover:bg-green-900 text-white font-bold text-sm px-5 py-2.5 rounded-2xl shadow-md transition active:scale-95 w-fit">
+                  Start learning →
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── LEARNING JOURNEY CARD ─────────────────────────── */}
+        {activeChild && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+            className="mx-3 mt-6">
+            <div className="bg-white rounded-3xl p-5 shadow-sm ring-1 ring-[#EFE8D8]">
+              <div className="flex items-center gap-4">
+                {/* Level badge with image */}
+                <div className="flex-shrink-0 w-16 h-16 relative">
+                  <Image
+                    src="/brand/level-star.jfif"
+                    alt=""
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
                 </div>
-              )}
 
-              <AnimatePresence>
-                {showSwitcher && (
-                  <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                    className="absolute top-20 left-6 z-20 bg-white rounded-2xl shadow-xl ring-1 ring-amber-100 py-2 min-w-[160px]">
-                    {children.map(c => (
-                      <button key={c.id} onClick={() => { selectChild(c); setShowSwitcher(false); }}
-                        className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm transition ${
-                          activeChild?.id === c.id ? "bg-amber-50 font-bold text-amber-700" : "text-stone-700 hover:bg-amber-50"
-                        }`}>
-                        <span>{c.avatar_url ?? "🧒🏾"}</span>
-                        {c.name}
-                        {activeChild?.id === c.id && <span className="ml-auto text-amber-500">✓</span>}
-                      </button>
-                    ))}
-                    <div className="border-t border-stone-100 mt-1 pt-1">
-                      <button onClick={() => { setShowModal(true); setShowSwitcher(false); }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-xs text-stone-500 hover:bg-stone-50 transition">
-                        ➕ Add child
-                      </button>
-                    </div>
-                  </motion.div>
+                {/* Level info + progress bar */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-navy text-sm mb-0.5">Level 1: Sprout</p>
+                  <div className="w-full h-2 rounded-full bg-stone-200 overflow-hidden mb-1">
+                    <div className="h-full bg-gradient-to-r from-yellow to-orange" style={{ width: "45%" }} />
+                  </div>
+                  <p className="text-xs text-stone-500">45% to Level 2</p>
+                </div>
+
+                {/* Streak badge */}
+                {streak > 0 && (
+                  <div className="flex-shrink-0 flex items-center gap-1 rounded-full bg-orange-100 px-3 py-1.5 ring-1 ring-orange-200">
+                    <span>🔥</span>
+                    <span className="text-xs font-bold text-orange-700">{streak}</span>
+                  </div>
                 )}
-              </AnimatePresence>
+              </div>
 
-              <h1 className="text-2xl font-extrabold text-white leading-tight drop-shadow-sm">
-                Ready to learn with Kòkò?
-              </h1>
-              <p className="text-orange-100 text-sm mt-2 leading-relaxed">
-                Kòkò has lost his voice…<br />help him find it!
+              {/* Stats line */}
+              <p className="text-xs text-stone-500 mt-3 pt-3 border-t border-[#EFE8D8]">
+                <span className="font-semibold text-navy">{masteredCount}</span> letters mastered • 
+                <span className="font-semibold text-navy ml-1">{shardsFound}/10</span> story shards
               </p>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="mt-4">
-              <Link href="/literacy"
-                className="inline-flex items-center gap-2 bg-white text-amber-600 font-bold text-sm px-5 py-2.5 rounded-2xl shadow-md hover:bg-amber-50 transition active:scale-95">
-                Start learning →
-              </Link>
-            </motion.div>
-          </div>
-
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-            className="absolute right-0 bottom-0 w-44 h-56 sm:w-52 sm:h-64">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ami-koko.svg" alt="Àmì holding Kòkò the parrot" className="w-full h-full object-contain object-bottom" />
+            </div>
           </motion.div>
-        </div>
+        )}
 
-        {/* Assignments (school children only) */}
-        {isSchoolChild && assignments.length > 0 && (
-          <div className="px-4 mt-6">
-            <h2 className="text-base font-bold text-stone-700 mb-3">📝 This Week&apos;s Assignments</h2>
-            <div className="flex flex-col gap-2">
-              {assignments.map(a => {
-                const done = isCompleted(a.id);
-                return (
-                  <motion.div key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                    className={`flex items-center gap-3 p-3.5 rounded-2xl bg-white shadow-sm ring-1 ${done ? "ring-green-200" : "ring-amber-100"}`}>
-                    <span className="text-2xl">{SUBJECT_EMOJIS[a.subject]}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-bold text-sm truncate ${done ? "text-stone-400 line-through" : "text-stone-800"}`}>{a.title}</p>
-                      <p className="text-xs text-stone-400">
-                        {a.content_keys.join(", ")}
-                        {a.due_date ? ` · Due ${new Date(a.due_date).toLocaleDateString()}` : ""}
-                      </p>
+        {/* ─── LEARNING MODE TILES (3×2 grid on mobile, responsive) ───────────────────────── */}
+        <div className="px-3 mt-6">
+          <h2 className="text-base font-bold text-navy mb-3">Explore & Learn</h2>
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-3 lg:grid-cols-6">
+            {MODES.map((mode, i) => {
+              const iconMap: Record<string, React.ReactNode> = {
+                BookOpen: <BookOpen size={24} />,
+                Calculator: <Calculator size={24} />,
+                Globe: <Globe size={24} />,
+                Puzzle: <Puzzle size={24} />,
+                Music: <Music size={24} />,
+                BookHeart: <BookHeart size={24} />,
+              };
+
+              return (
+                <motion.div key={mode.href}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}>
+                  <Link href={mode.href}
+                    className={`flex flex-col items-center gap-3 p-4 rounded-2xl ${mode.bg} ring-1 ring-[#EFE8D8] hover:shadow-md transition active:scale-95 h-full`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg`}
+                      style={{ backgroundColor: mode.colorHex }}>
+                      {iconMap[mode.icon]}
                     </div>
-                    {done ? (
-                      <span className="text-green-500 font-bold text-sm flex-shrink-0">✅ Done</span>
-                    ) : (
-                      <Link href={`/assignment/${a.id}`}
-                        className="flex-shrink-0 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition">
-                        Start →
-                      </Link>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
+                    <p className="text-xs font-bold text-navy text-center leading-tight">{mode.title}</p>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
-        )}
+        </div>
 
-        {/* Weekly Challenge (school children only) */}
-        {isSchoolChild && (challenge || challengeLoading) && (
-          <div className="px-4 mt-6">
-            <h2 className="text-base font-bold text-stone-700 mb-3">🎯 This Week&apos;s Challenge</h2>
-            <ChallengeCard
-              challenge={challenge}
-              myProgress={myProgress}
-              leaderboard={leaderboard}
-              childId={activeChild?.id ?? null}
-              loading={challengeLoading}
-            />
-          </div>
-        )}
-
-        {/* Kòkò's Daily Challenge */}
-        <div className="px-4 mt-6">
-          {activeChild && (
+        {/* ─── DAILY CHALLENGE ─────────────────────────── */}
+        {activeChild && (
+          <div className="px-3 mt-6">
             <DailyChallengeCard childId={activeChild.id} />
-          )}
-        </div>
-
-        {/* Today's Adventure - Guided Learning Path */}
-        <div className="px-4 mt-6">
-          {activeChild && (
-            <TodaysAdventure childId={activeChild.id} />
-          )}
-        </div>
-
-        {/* 🌟 Featured Story — Unmissable */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="px-4 mt-6"
-        >
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-400 via-amber-300 to-yellow-200 shadow-xl shadow-amber-300 min-h-[220px]">
-            {/* Animated background shapes */}
-            <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white opacity-10" />
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full bg-white opacity-10" />
-            
-            <div className="relative z-10 p-5 flex flex-col h-full">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-1.5 bg-white/30 rounded-full px-3 py-1 mb-2 w-fit">
-                <span className="text-lg">✨</span>
-                <span className="text-xs font-bold text-white">NEW STORY</span>
-              </div>
-
-              {/* Title + Description */}
-              <h3 className="text-lg font-extrabold text-white mb-1 leading-tight drop-shadow-sm">
-                🇳🇬 Nigeria's Independence
-              </h3>
-              <p className="text-sm font-semibold text-amber-50 mb-4 line-clamp-2">
-                Join Àmì on a journey through October 1st, 1960!
-              </p>
-
-              {/* Quick info */}
-              <div className="flex items-center gap-3 mb-4 text-xs text-white/90">
-                <span className="flex items-center gap-1">
-                  <span>📖</span> 29 pages
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <span>🎯</span> Ages 0–11
-                </span>
-              </div>
-
-              {/* CTA Button */}
-              <Link
-                href="/story"
-                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-amber-50 text-amber-600 font-extrabold text-sm px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition active:scale-95 w-fit"
-              >
-                🎬 Start Reading
-              </Link>
-            </div>
-
-            {/* Decorative book emoji */}
-            <div className="absolute bottom-2 right-4 text-4xl opacity-20">📚</div>
           </div>
-        </motion.div>
+        )}
 
-        {/* Song of the Day */}
-        <div className="px-4 mt-6">
-          <h2 className="text-base font-bold text-stone-700 mb-3">🎵 Song of the Day</h2>
-          <div className="bg-white rounded-3xl shadow-sm ring-1 ring-violet-100 p-4 flex flex-col gap-3">
+        {/* ─── TODAY'S ADVENTURE / CONTINUE LEARNING ─────────────────────────── */}
+        {activeChild && (
+          <div className="px-3 mt-6">
+            <h2 className="text-base font-bold text-navy mb-3">Continue Learning</h2>
+            <TodaysAdventure childId={activeChild.id} />
+          </div>
+        )}
+
+        {/* ─── SONG OF THE DAY ─────────────────────────── */}
+        <div className="px-3 mt-6">
+          <h2 className="text-base font-bold text-navy mb-3">🎵 Song of the Day</h2>
+          <div className="bg-white rounded-3xl shadow-sm ring-1 ring-[#EFE8D8] p-4 flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-2xl font-extrabold text-white shadow-sm flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-lg font-extrabold text-white shadow-sm flex-shrink-0">
                 {SOTD_LETTER}
               </div>
               <div className="flex-1">
-                <p className="font-bold text-stone-800 text-sm">Letter {SOTD_LETTER} Song</p>
+                <p className="font-bold text-navy text-sm">Letter {SOTD_LETTER} Song</p>
                 <p className="text-stone-500 text-xs">Free every day — sing along with Kòkò!</p>
               </div>
             </div>
@@ -553,109 +627,38 @@ function ParentHome() {
           </div>
         </div>
 
-        {/* Keep Learning */}
-        <div className="px-4 mt-6">
-          <h2 className="text-base font-bold text-stone-700 mb-3">🌟 Keep Learning</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <Link href="/word-builder"
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-teal-50 to-cyan-50 ring-1 ring-teal-200 hover:shadow-md transition active:scale-95">
-              <span className="text-3xl">🧩</span>
-              <span className="text-xs font-bold text-stone-800 text-center">Word Builder</span>
-              <span className="text-[10px] text-stone-600">Build today's words</span>
-            </Link>
-            <Link href="/literacy"
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 ring-1 ring-amber-200 hover:shadow-md transition active:scale-95">
-              <span className="text-3xl">🔤</span>
-              <span className="text-xs font-bold text-stone-800 text-center">Letter Practice</span>
-              <span className="text-[10px] text-stone-600">Learn your letters</span>
-            </Link>
-            <Link href="/dj-booth"
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 ring-1 ring-sky-200 hover:shadow-md transition active:scale-95">
-              <span className="text-3xl">🎚️</span>
-              <span className="text-xs font-bold text-stone-800 text-center">DJ Booth</span>
-              <span className="text-[10px] text-stone-600">Mix & make music</span>
-            </Link>
-            <Link href="/story"
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50 ring-1 ring-rose-200 hover:shadow-md transition active:scale-95">
-              <span className="text-3xl">📖</span>
-              <span className="text-xs font-bold text-stone-800 text-center">Story Time</span>
-              <span className="text-[10px] text-stone-600">Explore a new story</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Quick stats */}
-        <div className="px-4 mt-6">
-          <div className="bg-white rounded-3xl p-4 shadow-sm ring-1 ring-stone-100 flex items-center justify-around">
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl font-extrabold text-amber-500">{masteredCount}</span>
-              <span className="text-xs text-stone-500">Learnt</span>
-            </div>
-            <div className="w-px h-10 bg-stone-100" />
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl font-extrabold text-green-500">{streak > 0 ? `${streak}🔥` : "0"}</span>
-              <span className="text-xs text-stone-500">Streak</span>
-            </div>
-            <div className="w-px h-10 bg-stone-100" />
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl font-extrabold text-rose-400">{shardsFound}/10</span>
-              <span className="text-xs text-stone-500">Shards</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Streak Display Card */}
-        <div className="px-4 mt-6">
-          {activeChild && (
-            <StreakDisplay />
-          )}
-        </div>
-
-        {/* Achievement Display Card */}
-        <div className="px-4 mt-6">
-          {activeChild && (
-            <AchievementDisplay childId={activeChild.id} />
-          )}
-        </div>
-
-        {/* No child profile banner — parents only */}
+        {/* ─── NO CHILD BANNER ─────────────────────────── */}
         {!childrenLoading && children.length === 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="px-4 mt-4">
-            <div className="bg-white rounded-3xl p-4 shadow-sm ring-1 ring-amber-200 flex items-center gap-3">
-              <span className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-xl flex-shrink-0">👶</span>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="px-3 mt-6">
+            <div className="bg-white rounded-3xl p-4 shadow-sm ring-1 ring-[#EFE8D8] flex items-center gap-3">
+              <span className="w-10 h-10 rounded-2xl bg-yellow/30 flex items-center justify-center text-xl flex-shrink-0">👶</span>
               <div className="flex-1">
-                <p className="font-bold text-stone-800 text-sm">Add a child profile</p>
+                <p className="font-bold text-navy text-sm">Add a child profile</p>
                 <p className="text-stone-500 text-xs">Track letters, streaks and story progress</p>
               </div>
               <button onClick={() => userId && setShowModal(true)}
-                className="flex-shrink-0 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition">
+                className="flex-shrink-0 bg-yellow hover:bg-yellow/90 text-navy text-xs font-bold px-3 py-2 rounded-xl transition">
                 Add
               </button>
             </div>
           </motion.div>
         )}
 
-        <div className="">
-          <YouTubeBannerHome />
-        </div>
-
       </div>
 
       {showSwitcher && <div className="fixed inset-0 z-10" onClick={() => setShowSwitcher(false)} />}
 
-      {/* Streak Milestone Celebration */}
+      {/* Modals & Celebrations */}
       <StreakMilestoneCelebration
         milestoneDay={streakMilestoneDay}
         onClose={() => setStreakMilestoneDay(null)}
       />
 
-      {/* New Streak Started */}
       <NewStreakStarted
         show={showNewStreakStarted}
         onClose={() => setShowNewStreakStarted(false)}
       />
 
-      {/* Achievement Celebration */}
       <AchievementCelebration
         achievements={newAchievements}
         onClose={() => setNewAchievements([])}
@@ -676,7 +679,7 @@ function ParentHome() {
             setShowOnboarding(false);
           }} />
         )}
-      </AnimatePresence> 
+      </AnimatePresence>
     </>
   );
 }
@@ -771,8 +774,9 @@ export default function HomePage() {
     return <StudentHome child={studentChild} schoolName={schoolName} />;
   }
 
-  return( <>
-  <ParentHome />
-  </>
-  )
+  return (
+    <>
+      <ParentHome />
+    </>
+  );
 }
