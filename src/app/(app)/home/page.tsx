@@ -425,7 +425,7 @@ function ParentHome() {
             {/* Right: Scene Image (55%) */}
             <div className="w-[55%] relative">
               <Image
-                src="/brand/hero-scene.jfif"
+                src="/brand/hero-scene.jpg"
                 alt="Àmì and Kòkò in village"
                 fill
                 priority
@@ -445,7 +445,7 @@ function ParentHome() {
             {/* Top: Scene Image (aspect-[16/10]) */}
             <div className="relative w-full aspect-[16/10]">
               <Image
-                src="/brand/hero-scene.jfif"
+                src="/brand/hero-scene.jpg"
                 alt="Àmì and Kòkò in village"
                 fill
                 priority
@@ -528,7 +528,7 @@ function ParentHome() {
                 {/* Level badge with image */}
                 <div className="flex-shrink-0 w-16 h-16 relative">
                   <Image
-                    src="/brand/level-star.jfif"
+                    src="/brand/level-star.jpg"
                     alt=""
                     fill
                     style={{ objectFit: "contain" }}
