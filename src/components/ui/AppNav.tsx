@@ -28,6 +28,16 @@ const MODE_LABELS: Record<string, string> = {
 // Core subjects shown in bottom nav
 const CORE_SUBJECTS = ["/literacy", "/numeracy", "/world"];
 
+// Main nav items (visible as pills on desktop/tablet)
+const MAIN_NAV_ITEMS = [
+  { href: "/home", label: "Home" },
+  { href: "/literacy", label: "Literacy" },
+  { href: "/numeracy", label: "Numeracy" },
+  { href: "/world", label: "My World" },
+  { href: "/dj-booth", label: "DJ Booth" },
+  { href: "/story", label: "Story Mode" },
+];
+
 // Extended subjects (Sprout 2 & 3 only)
 const EXTENDED_SUBJECTS: Array<{ href: string; emoji: string; label: string }> = [
   { href: "/science", emoji: "🔬", label: "Science" },
@@ -62,6 +72,13 @@ export default function AppNav({ profile }: AppNavProps) {
   
   // Show subject dropdown only for Sprout 2/3
   const showSubjectsMenu = (activeChild as any)?.class && ['sprout_2', 'sprout_3'].includes((activeChild as any).class);
+
+  // Check if current route is active
+  function isNavActive(href: string): boolean {
+    if (href === "/home") return pathname === "/home";
+    if (href === "/literacy") return pathname.startsWith("/literacy") || pathname.startsWith("/phonics");
+    return pathname.startsWith(href);
+  }
 
   // Detect student account and load school context
   useEffect(() => {
@@ -151,65 +168,54 @@ export default function AppNav({ profile }: AppNavProps) {
 
   return (
     <>
-      {/* Amber gradient nav */}
-      <nav className="sticky top-0 z-50 shadow-sm"
-        style={{ background: "linear-gradient(135deg, #FEF3C7 0%, #FDE68A 50%, #FEF9C3 100%)", borderBottom: "1px solid #FCD34D" }}>
-        <div className="px-3 sm:px-4 py-2.5 flex items-center justify-between">
+      {/* Top Navigation — Cream background with navy text and pill nav links */}
+      <nav className="sticky top-0 z-50 shadow-sm bg-cream-bg border-b border-[#EFE8D8]">
+        <div className="px-4 py-3 max-w-7xl mx-auto flex items-center justify-between gap-4">
 
-          {/* Left — back + logo */}
-          <div className="flex items-center gap-2">
-            {!isHome && (
-              <button onClick={() => router.back()}
-                className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 transition flex-shrink-0"
-                aria-label="Go back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-            )}
+          {/* Left — Wordmark */}
+          <Link href="/home" className="flex-shrink-0 font-display text-lg font-bold flex items-center gap-1 hover:opacity-80 transition" aria-label="Home">
+            <span className="text-xl">🦜</span>
+            <div className="hidden sm:flex flex-col leading-tight">
+              <span className="text-sm font-extrabold text-coral">Àmì</span>
+              <span className="text-xs text-navy-muted">by Kòkò</span>
+            </div>
+          </Link>
 
-            <Link href="/home" className="flex items-center gap-2 hover:opacity-80 transition" aria-label="Home">
-              <span className="text-2xl" aria-hidden>🦜</span>
-              <div className="hidden sm:flex flex-col leading-none">
-                <span className="font-extrabold text-amber-900 text-sm">Àmì by Kòkò</span>
-                {currentLabel && <span className="text-xs text-amber-700 font-medium">{currentLabel}</span>}
-              </div>
-            </Link>
-
-            {currentLabel && (
-              <span className="text-sm font-bold text-amber-900 sm:hidden">{currentLabel}</span>
-            )}
+          {/* Center — Pill Nav Links (hidden on mobile) */}
+          <div className="hidden lg:flex items-center gap-2 flex-1 justify-center">
+            {MAIN_NAV_ITEMS.map(item => {
+              const active = isNavActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
+                    active
+                      ? "bg-yellow text-navy"
+                      : "text-navy-body hover:bg-yellow/20"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Right — subjects menu (Sprout 2/3) + child avatar + menu */}
-          <div className="flex items-center gap-2">
-            {!isHome && (
-              <Link href="/home"
-                className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 transition"
-                aria-label="Home">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
-              </Link>
-            )}
-
+          {/* Right — Subjects Dropdown (Sprout 2/3) + Avatar Menu */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {/* Subjects dropdown for Sprout 2/3 */}
             {showSubjectsMenu && (
               <div className="relative">
                 <button
                   onClick={() => setSubjectsMenuOpen(v => !v)}
-                  className="flex items-center gap-1 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg px-2 py-1.5 transition text-xs sm:text-sm font-bold whitespace-nowrap"
+                  className="flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-full px-3 py-1.5 transition text-xs sm:text-sm font-bold whitespace-nowrap ring-1 ring-green-200"
                   aria-label="More subjects"
                   aria-expanded={subjectsMenuOpen}
                 >
-                  <span className="text-base sm:text-lg">📚</span>
+                  <span className="text-base">📚</span>
                   <span className="hidden sm:inline">More</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                    className="text-green-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M6 9l6 6 6-6" />
                   </svg>
                 </button>
@@ -231,9 +237,9 @@ export default function AppNav({ profile }: AppNavProps) {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-12 z-50 bg-white rounded-2xl shadow-xl ring-1 ring-green-100 py-2 w-48"
+                        className="absolute right-0 top-12 z-50 bg-white rounded-2xl shadow-xl ring-1 ring-green-200 py-2 w-48"
                       >
-                        <div className="px-4 py-2.5 border-b border-green-50">
+                        <div className="px-4 py-2.5 border-b border-green-100">
                           <p className="font-bold text-green-800 text-sm">Other Subjects</p>
                           <p className="text-xs text-stone-500">Explore more topics</p>
                         </div>
@@ -257,104 +263,108 @@ export default function AppNav({ profile }: AppNavProps) {
               </div>
             )}
 
-            <button
-              onClick={() => setMenuOpen(v => !v)}
-              className="flex items-center gap-1.5 bg-amber-100 hover:bg-amber-200 rounded-xl px-2.5 py-1.5 transition"
-              aria-label="Open menu"
-              aria-expanded={menuOpen}
-            >
-              {/* Child avatar or role icon */}
-              <span className="text-lg leading-none">
-                {isSchoolAdmin ? "🏫" : (childAvatar ?? "👩‍👦")}
-              </span>
-              <span className="text-xs font-bold text-amber-900 hidden sm:block max-w-[120px] truncate">
-                {isSchoolAdmin
-                  ? (profile.full_name.split(" ")[0] || "Admin")
-                  : isStudent
-                  ? (studentContext ?? childName ?? "Student")
-                  : (childName ?? profile.full_name.split(" ")[0])}
-              </span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                className="text-amber-700">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
+            {/* Avatar + Name Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(v => !v)}
+                className="flex items-center gap-2 bg-yellow/20 hover:bg-yellow/30 text-navy rounded-full px-2 sm:px-3 py-1.5 transition ring-1 ring-yellow/40"
+                aria-label="Open menu"
+                aria-expanded={menuOpen}
+              >
+                {/* Child avatar or role icon */}
+                <span className="text-base leading-none flex-shrink-0">
+                  {isSchoolAdmin ? "🏫" : (childAvatar ?? "👩‍👦")}
+                </span>
+                <span className="text-xs font-bold text-navy hidden sm:block max-w-[100px] truncate">
+                  {isSchoolAdmin
+                    ? (profile.full_name.split(" ")[0] || "Admin")
+                    : isStudent
+                    ? (studentContext ?? childName ?? "Student")
+                    : (childName ?? profile.full_name.split(" ")[0])}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  className="text-navy flex-shrink-0">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+
+              {/* Dropdown menu */}
+              <AnimatePresence>
+                {menuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-12 z-50 bg-white rounded-2xl shadow-xl ring-1 ring-[#EFE8D8] py-2 min-w-[200px]"
+                    >
+                      <div className="px-4 py-2.5 border-b border-[#EFE8D8]">
+                        <p className="font-bold text-navy text-sm">
+                          {isStudent ? (childName ?? "Student") : (profile.full_name || "Account")}
+                        </p>
+                        {isStudent ? (
+                          studentContext && <p className="text-xs text-stone-500 mt-0.5">🏫 {studentContext}</p>
+                        ) : (
+                          <>
+                            <p className="text-xs text-stone-500 capitalize">{profile.role.replace("_", " ")}</p>
+                            {childName && !isSchoolAdmin && (
+                              <p className="text-xs text-coral font-semibold mt-0.5">👶 {childName}</p>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {isSchoolAdmin ? (
+                        <Link href="/dashboard/school" onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-[#FFFBEF] transition">
+                          <span>🏫</span> School Dashboard
+                        </Link>
+                      ) : (
+                        <Link href="/dashboard/parent" onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-[#FFFBEF] transition">
+                          <span>📊</span> Dashboard
+                        </Link>
+                      )}
+
+                      <Link href="/settings" onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-[#FFFBEF] transition">
+                        <span>⚙️</span> Settings
+                      </Link>
+
+                      <div className="border-t border-[#EFE8D8] mt-1 pt-1">
+                        {confirmSignOut ? (
+                          <div className="px-4 py-2">
+                            <p className="text-xs text-stone-600 mb-2 font-medium">Sign out?</p>
+                            <div className="flex gap-2">
+                              <button onClick={() => setConfirmSignOut(false)}
+                                className="flex-1 text-xs py-1.5 rounded-lg bg-stone-100 text-stone-600 hover:bg-stone-200 transition">
+                                Cancel
+                              </button>
+                              <button onClick={handleSignOut} disabled={signingOut}
+                                className="flex-1 text-xs py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition disabled:opacity-60">
+                                {signingOut ? "…" : "Sign out"}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button onClick={() => setConfirmSignOut(true)}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
+                            <span>🚪</span> {isStudent ? "Switch student" : "Sign out"}
+                          </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* Dropdown menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-3 sm:right-4 top-14 z-50 bg-white rounded-2xl shadow-xl ring-1 ring-amber-100 py-2 min-w-[190px]"
-            >
-              <div className="px-4 py-2.5 border-b border-amber-50">
-                <p className="font-bold text-amber-900 text-sm">
-                  {isStudent ? (childName ?? "Student") : (profile.full_name || "Account")}
-                </p>
-                {isStudent ? (
-                  studentContext && <p className="text-xs text-stone-500 mt-0.5">🏫 {studentContext}</p>
-                ) : (
-                  <>
-                    <p className="text-xs text-stone-500 capitalize">{profile.role.replace("_", " ")}</p>
-                    {childName && !isSchoolAdmin && (
-                      <p className="text-xs text-amber-600 font-semibold mt-0.5">👶 {childName}</p>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {isSchoolAdmin ? (
-                <Link href="/dashboard/school" onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-amber-50 transition">
-                  <span>🏫</span> School Dashboard
-                </Link>
-              ) : (
-                <Link href="/dashboard/parent" onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-amber-50 transition">
-                  <span>📊</span> Dashboard
-                </Link>
-              )}
-
-              <Link href="/settings" onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-amber-50 transition">
-                <span>⚙️</span> Settings
-              </Link>
-
-              <div className="border-t border-amber-50 mt-1 pt-1">
-                {confirmSignOut ? (
-                  <div className="px-4 py-2">
-                    <p className="text-xs text-stone-600 mb-2 font-medium">Sign out?</p>
-                    <div className="flex gap-2">
-                      <button onClick={() => setConfirmSignOut(false)}
-                        className="flex-1 text-xs py-1.5 rounded-lg bg-stone-100 text-stone-600 hover:bg-stone-200 transition">
-                        Cancel
-                      </button>
-                      <button onClick={handleSignOut} disabled={signingOut}
-                        className="flex-1 text-xs py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition disabled:opacity-60">
-                        {signingOut ? "…" : "Sign out"}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <button onClick={() => setConfirmSignOut(true)}
-                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
-                    <span>🚪</span> {isStudent ? "Switch student" : "Sign out"}
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }

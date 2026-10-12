@@ -1,19 +1,18 @@
 "use client";
-import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import AuthBackButton from "@/components/ui/AuthBackButton";
+import Wordmark from "@/components/ui/Wordmark";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
-    // Eye open
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
       fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
   ) : (
-    // Eye closed
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
       fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
@@ -106,209 +105,222 @@ export default function SignupPage() {
   const passwordMatch = password === confirmPassword;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-amber-50 px-4">
-      <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg">
-        <h1 className="mb-2 text-center text-3xl font-bold text-amber-500">
-          Join Àmì by Kòkò
-        </h1>
-        <p className="mb-6 text-center text-sm text-stone-500">
-          Free to start — English phonics included
-        </p>
-        <WhatsAppGroupButton groupLink="https://chat.whatsapp.com/GvLjEf5AhNU4tjXYTMwm0s?s=cl&p=a&mlu=4&ilr=4" />
-        {/* Google OAuth Button */}
-        <div className="mb-6">
-          <GoogleSignInButton />
-        </div>
-
-        {/* Divider */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-stone-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-2 text-stone-500">or create with email</span>
-          </div>
-        </div>
-
-        <form onSubmit={handleSignup} className="flex flex-col gap-4">
-          {/* Full name */}
-          <div>
-            <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-stone-700">
-              Your name
-            </label>
-            <input
-              id="fullName"
-              type="text"
-              autoComplete="name"
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-              placeholder="Ngozi Adeyemi"
-            />
+    <main className="min-h-screen flex items-center justify-center bg-cream-bg px-4 py-8 relative overflow-hidden" style={{
+      backgroundImage: "linear-gradient(135deg, #FFFBEF 0%, #E6F0FF 100%)",
+    }}>
+      <div className="w-full max-w-md flex items-center justify-center">
+        <div className="w-full bg-white rounded-3xl shadow-sm ring-1 ring-border-warm p-6 md:p-8 max-h-[90vh] overflow-y-auto">
+          {/* Back button */}
+          <div className="mb-6 sticky top-6">
+            <AuthBackButton />
           </div>
 
-          {/* Role selector */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-stone-700">
-              I am signing up as
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {([
-                { value: "parent", label: "👩‍👦 Parent", desc: "For home use" },
-                { value: "school_admin", label: "🏫 School", desc: "For a school" },
-              ] as const).map(opt => (
-                <button key={opt.value} type="button"
-                  onClick={() => setRole(opt.value)}
-                  className={`flex flex-col items-center gap-0.5 py-3 px-2 rounded-2xl border-2 text-sm font-semibold transition ${
-                    role === opt.value
-                      ? "border-amber-400 bg-amber-50 text-amber-700"
-                      : "border-stone-200 text-stone-600 hover:border-amber-200"
-                  }`}>
-                  <span>{opt.label}</span>
-                  <span className="text-xs font-normal text-stone-400">{opt.desc}</span>
+          {/* Wordmark */}
+          <div className="mb-2">
+            <Wordmark size="lg" />
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-2xl md:text-3xl font-bold text-navy text-center font-display mb-1">
+            Create Your Account
+          </h1>
+          <p className="text-sm text-navy-muted text-center mb-6">
+            Join Àmì & Kòkò's learning world!
+          </p>
+
+          <form onSubmit={handleSignup} className="flex flex-col gap-5">
+            {/* Full name */}
+            <div>
+              <label htmlFor="fullName" className="mb-2 block text-sm font-semibold text-navy">
+                Full Name
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                autoComplete="name"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            {/* Role selector — pill segmented */}
+            <div>
+              <label className="mb-3 block text-sm font-semibold text-navy">
+                I am signing up as
+              </label>
+              <div className="flex gap-3">
+                {([
+                  { value: "parent", label: "Parent" },
+                  { value: "school_admin", label: "School" },
+                ] as const).map(opt => (
+                  <button key={opt.value} type="button"
+                    onClick={() => setRole(opt.value)}
+                    className={`flex-1 h-11 rounded-full font-semibold text-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      role === opt.value
+                        ? "bg-green-filled text-white focus:ring-green-filled"
+                        : "bg-white border border-border-warm text-navy hover:border-primary-green focus:ring-primary-green"
+                    }`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* School name — only for school_admin */}
+            {role === "school_admin" && (
+              <div>
+                <label htmlFor="schoolName" className="mb-2 block text-sm font-semibold text-navy">
+                  School Name
+                </label>
+                <input id="schoolName" type="text" required
+                  value={schoolName} onChange={e => setSchoolName(e.target.value)}
+                  className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                  placeholder="e.g. Sunshine Academy"/>
+              </div>
+            )}
+
+            {/* Phone number — only for parent */}
+            {role === "parent" && (
+              <div>
+                <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-navy">
+                  WhatsApp Number <span className="text-navy-muted font-normal">(optional)</span>
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                  placeholder="+234 801 234 5678"
+                />
+              </div>
+            )}
+
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-navy">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-navy">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 pr-12 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green"
+                  placeholder="Create a strong password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-muted hover:text-navy transition focus:outline-none focus:ring-2 focus:ring-primary-green rounded-md p-1"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <EyeIcon open={showPassword} />
                 </button>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* School name — only for school_admin */}
-          {role === "school_admin" && (
+            {/* Confirm password */}
             <div>
-              <label htmlFor="schoolName" className="mb-1 block text-sm font-medium text-stone-700">
-                School name
+              <label htmlFor="confirmPassword" className="mb-2 block text-sm font-semibold text-navy">
+                Confirm Password
               </label>
-              <input id="schoolName" type="text" required={role === "school_admin"}
-                value={schoolName} onChange={e => setSchoolName(e.target.value)}
-                className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                placeholder="e.g. Sunshine Academy"/>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  type={showConfirm ? "text" : "password"}
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`w-full h-12 rounded-[14px] border bg-white px-4 pr-12 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green ${
+                    passwordsTyped
+                      ? passwordMatch
+                        ? "border-green-filled"
+                        : "border-coral"
+                      : "border-border-warm"
+                  }`}
+                  placeholder="Re-enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-muted hover:text-navy transition focus:outline-none focus:ring-2 focus:ring-primary-green rounded-md p-1"
+                  aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                >
+                  <EyeIcon open={showConfirm} />
+                </button>
+              </div>
+              {passwordsTyped && (
+                <p className={`mt-1 text-xs font-medium ${passwordMatch ? "text-green-filled" : "text-coral"}`}>
+                  {passwordMatch ? "✓ Passwords match" : "✗ Passwords do not match"}
+                </p>
+              )}
             </div>
-          )}
 
-          {/* Phone number — only for parent */}
-          {role === "parent" && (
-            <div>
-              <label htmlFor="phone" className="mb-1 block text-sm font-medium text-stone-700">
-                WhatsApp number <span className="text-stone-400 font-normal">(optional)</span>
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                placeholder="+234 801 234 5678"
-              />
-              <p className="mt-1 text-xs text-stone-400">Get updates when your child completes activities</p>
-            </div>
-          )}
-
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-stone-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-              placeholder="parent@example.com"
-            />
-          </div>
-
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-stone-700">
-              Password
-            </label>            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-stone-200 px-4 py-3 pr-12 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                placeholder="At least 8 characters"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-md p-1"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                <EyeIcon open={showPassword} />
-              </button>
-            </div>
-          </div>
-
-          {/* Confirm password */}
-          <div>
-            <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-stone-700">
-              Confirm password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirm ? "text" : "password"}
-                autoComplete="new-password"
-                required
-                minLength={8}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className={`w-full rounded-xl border px-4 py-3 pr-12 text-stone-900 placeholder-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
-                  passwordsTyped
-                    ? passwordMatch
-                      ? "border-green-400"
-                      : "border-red-400"
-                    : "border-stone-200"
-                }`}
-                placeholder="Re-enter your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-md p-1"
-                aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
-              >
-                <EyeIcon open={showConfirm} />
-              </button>
-            </div>
-            {/* Inline match feedback */}
-            {passwordsTyped && (
-              <p className={`mt-1 text-xs ${passwordMatch ? "text-green-600" : "text-red-500"}`}>
-                {passwordMatch ? "✓ Passwords match" : "✗ Passwords do not match"}
+            {error && (
+              <p role="alert" className="text-sm text-coral">
+                {error}
               </p>
             )}
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={loading || (passwordsTyped && !passwordMatch)}
+              className="w-full h-12 rounded-full bg-accent-yellow hover:bg-[#F5B800] text-navy font-bold transition disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-yellow active:scale-95 mt-2"
+            >
+              {loading ? "Creating account…" : "Create Account"}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border-warm"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-3 text-sm text-navy-muted">or</span>
+            </div>
           </div>
 
-          {error && (
-            <p role="alert" className="text-sm text-red-600">
-              {error}
-            </p>
-          )}
+          {/* Google button */}
+          <GoogleSignInButton />
 
-          <button
-            type="submit"
-            disabled={loading || (passwordsTyped && !passwordMatch)}
-            className="mt-2 rounded-2xl bg-amber-500 py-4 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-          >
-            {loading ? "Creating account…" : "Create Free Account"}
-          </button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-stone-500">
-          Already have an account?{" "}
-          <a href="/auth/login" className="font-medium text-amber-600 hover:underline">
-            Sign in
-          </a>
-        </p>
+          {/* Footer link */}
+          <p className="mt-6 text-center text-sm text-navy-muted">
+            Already have an account?{" "}
+            <a href="/auth/login" className="font-bold text-green-filled hover:text-green-hover transition">
+              Log in
+            </a>
+          </p>
+        </div>
       </div>
     </main>
   );
