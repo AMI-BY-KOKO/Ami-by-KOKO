@@ -11,76 +11,87 @@ export default function GamesPage() {
       title: "Kòkò's Letter Hunt",
       thumbnail: '/games/letter-hunt.png',
       available: true,
+      titleColor: 'text-sky-500',
+      titleGradient: 'from-sky-400 to-sky-600',
     },
     {
       id: 'word-adventure',
       title: "Kòkò's Word Adventure",
       thumbnail: '/games/word-adventure.png',
       available: true,
+      titleColor: 'text-purple-500',
+      titleGradient: 'from-purple-400 to-purple-600',
     },
   ];
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-cream-bg px-4 pb-24">
-      <div className="w-full max-w-4xl">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-navy mb-2">🎮 Games</h1>
-          <p className="text-lg text-navy-body">Learn through play with Kòkò!</p>
+    <main className="min-h-screen bg-gradient-to-b from-cream-bg via-yellow-50 to-cream-bg px-4 pb-24">
+      <div className="w-full max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12 mt-6">
+          <div className="inline-flex items-center justify-center gap-3 mb-4">
+            <span className="text-6xl animate-bounce" style={{ animationDelay: '0s' }}>🎮</span>
+            <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 bg-clip-text text-transparent">Games</h1>
+            <span className="text-6xl animate-bounce" style={{ animationDelay: '0.2s' }}>🎲</span>
+          </div>
+          <p className="text-lg md:text-xl text-navy-body font-semibold">Learn through play with Kòkò!</p>
         </div>
 
         {/* Games Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {games.map((game) => (
-            <Link
-              key={game.id}
-              href={`/games/${game.id}`}
-              className="group relative overflow-hidden rounded-3xl shadow-md ring-1 ring-[#EFE8D8] hover:shadow-lg transition-all active:scale-95"
-            >
-              {/* Thumbnail Image */}
-              <Image
-                src={game.thumbnail}
-                alt={game.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                priority
-              />
-
-              {/* Overlay with gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-              {/* Game Title */}
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+            <div key={game.id} className="flex flex-col">
+              {/* Game Title - Above thumbnail */}
+              <div className="mb-4">
+                <h2 className={`text-3xl md:text-4xl font-black bg-gradient-to-r ${game.titleGradient} bg-clip-text text-transparent drop-shadow-sm`}>
                   {game.title}
                 </h2>
               </div>
 
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-white/90 backdrop-blur-sm rounded-full p-6 shadow-xl ring-4 ring-white/50">
-                  <Play size={48} className="text-primary-green fill-primary-green" />
-                </div>
-              </div>
+              {/* Thumbnail with Play Button Overlay */}
+              <Link
+                href={`/games/${game.id}`}
+                className="group relative overflow-hidden rounded-3xl shadow-lg ring-2 ring-[#EFE8D8] hover:shadow-2xl hover:ring-4 transition-all active:scale-95 flex-grow"
+              >
+                {/* Thumbnail Image */}
+                <Image
+                  src={game.thumbnail}
+                  alt={game.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  priority
+                />
 
-              {/* Aspect ratio container */}
-              <div className="aspect-video" />
-            </Link>
+                {/* Dark overlay on hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Play Button Overlay - appears on hover */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="bg-white/95 backdrop-blur-md rounded-full p-6 shadow-2xl ring-4 ring-white/70 animate-pulse">
+                    <Play size={56} className="text-primary-green fill-primary-green" />
+                  </div>
+                </div>
+
+                {/* Aspect ratio container */}
+                <div className="aspect-video w-full" />
+              </Link>
+            </div>
           ))}
         </div>
 
         {/* Coming Soon Teaser */}
-        <div className="mt-12 bg-gradient-to-r from-amber-50 to-orange-50 rounded-3xl p-8 border-2 border-dashed border-amber-200 text-center">
-          <p className="text-stone-700 font-semibold mb-2">More games coming soon! 🚀</p>
-          <p className="text-sm text-stone-500">
-            Kòkò is working on more exciting adventures to make learning even more fun.
+        <div className="mt-16 bg-gradient-to-r from-purple-100 via-pink-100 to-orange-100 rounded-3xl p-8 border-2 border-dashed border-purple-200 text-center shadow-md">
+          <p className="text-2xl font-black text-purple-700 mb-2">✨ More games coming soon! 🚀</p>
+          <p className="text-base text-purple-600 font-semibold">
+            Kòkò is cooking up more exciting adventures to make learning super fun!
           </p>
         </div>
 
         {/* Back Button */}
-        <div className="mt-8 text-center">
+        <div className="mt-10 text-center">
           <Link
             href="/home"
-            className="inline-flex items-center gap-2 text-primary-green hover:text-green-700 font-bold transition"
+            className="inline-flex items-center gap-2 text-lg font-bold text-primary-green hover:text-green-700 transition-all hover:scale-110 active:scale-95"
           >
             ← Back to Home
           </Link>
