@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * Kòkò's Word Builder — Main Game Route
- * /word-builder
+ * Kòkò's Word Adventure — Main Game Route
+ * /games/word-adventure
  *
  * Handles language selection, game flow, and integration with useWordBuilder hook.
  */

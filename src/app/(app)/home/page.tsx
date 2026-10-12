@@ -30,7 +30,7 @@ const MODES = [
   { href: "/literacy",  icon: "BookOpen", title: "Literacy", color: "purple", bg: "bg-purple-50", tint: "#F0E9FF", colorHex: "#8B5CF6" },
   { href: "/numeracy",  icon: "Calculator", title: "Numeracy", color: "orange", bg: "bg-orange-50", tint: "#FFEEDD", colorHex: "#FF8A3D" },
   { href: "/world",     icon: "Globe", title: "My World", color: "blue", bg: "bg-blue-50", tint: "#E6F0FF", colorHex: "#3B82F6" },
-  { href: "/word-builder", icon: "Puzzle", title: "Word Adventure", color: "green", bg: "bg-green-50", tint: "#E6F7EE", colorHex: "#1FA463" },
+  { href: "/games/word-adventure", icon: "Puzzle", title: "Word Adventure", color: "green", bg: "bg-green-50", tint: "#E6F7EE", colorHex: "#1FA463" },
   { href: "/dj-booth",  icon: "Music", title: "DJ Booth", color: "pink", bg: "bg-pink-50", tint: "#FFE6F1", colorHex: "#EC4899" },
   { href: "/story",     icon: "BookHeart", title: "Story Mode", color: "yellow", bg: "bg-yellow-50", tint: "#FFFBEF", colorHex: "#FFC93C" },
 ];

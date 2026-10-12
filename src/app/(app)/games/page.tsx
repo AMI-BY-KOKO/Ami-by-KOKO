@@ -1,63 +1,70 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { Play } from 'lucide-react';
 
 export default function GamesPage() {
   const games = [
     {
       id: 'letter-hunt',
-      title: 'Kòkò\'s Letter Hunt',
-      emoji: '⭐',
-      description: '5 progressive levels to master letters through fun challenges',
+      title: "Kòkò's Letter Hunt",
+      thumbnail: '/games/letter-hunt.png',
       available: true,
-      levels: ['Letter Hunt', 'Sound Safari', 'Picture Hunt', 'Sound Match', 'Super Challenge'],
+    },
+    {
+      id: 'word-adventure',
+      title: "Kòkò's Word Adventure",
+      thumbnail: '/games/word-adventure.png',
+      available: true,
     },
   ];
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-cream-bg px-4 pb-24">
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-4xl">
         <div className="text-center mb-10">
-          <div className="text-8xl mb-4">🎮</div>
-          <h1 className="text-4xl font-bold text-amber-600 mb-2">Games</h1>
-          <p className="text-xl text-stone-600">Learn through play with Kòkò!</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-navy mb-2">🎮 Games</h1>
+          <p className="text-lg text-navy-body">Learn through play with Kòkò!</p>
         </div>
 
         {/* Games Grid */}
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {games.map((game) => (
-            <div
+            <Link
               key={game.id}
-              className="bg-white rounded-3xl p-6 shadow-sm ring-1 ring-stone-100 hover:ring-amber-200 transition"
+              href={`/games/${game.id}`}
+              className="group relative overflow-hidden rounded-3xl shadow-md ring-1 ring-[#EFE8D8] hover:shadow-lg transition-all active:scale-95"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-4xl">{game.emoji}</span>
-                    <h2 className="text-2xl font-bold text-stone-800">{game.title}</h2>
-                  </div>
-                  <p className="text-stone-600 mb-3">{game.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {game.levels.map((level) => (
-                      <span
-                        key={level}
-                        className="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full"
-                      >
-                        {level}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                {game.available && (
-                  <Link
-                    href={`/games/${game.id}`}
-                    className="ml-4 inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-2xl transition shadow-md whitespace-nowrap"
-                  >
-                    Play →
-                  </Link>
-                )}
+              {/* Thumbnail Image */}
+              <Image
+                src={game.thumbnail}
+                alt={game.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                priority
+              />
+
+              {/* Overlay with gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* Game Title */}
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                  {game.title}
+                </h2>
               </div>
-            </div>
+
+              {/* Play Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="bg-white/90 backdrop-blur-sm rounded-full p-6 shadow-xl ring-4 ring-white/50">
+                  <Play size={48} className="text-primary-green fill-primary-green" />
+                </div>
+              </div>
+
+              {/* Aspect ratio container */}
+              <div className="aspect-video" />
+            </Link>
           ))}
         </div>
 
@@ -73,7 +80,7 @@ export default function GamesPage() {
         <div className="mt-8 text-center">
           <Link
             href="/home"
-            className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-bold transition"
+            className="inline-flex items-center gap-2 text-primary-green hover:text-green-700 font-bold transition"
           >
             ← Back to Home
           </Link>
