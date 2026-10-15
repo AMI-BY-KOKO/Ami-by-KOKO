@@ -53,10 +53,15 @@ self.addEventListener("activate", (event) => {
       Promise.all(
         keys
           .filter((k) => k !== CACHE_NAME && k !== AUDIO_CACHE)
-          .map((k) => caches.delete(k))
+          .map((k) => {
+            console.log(`Deleting old cache: ${k}`);
+            return caches.delete(k);
+          })
       )
     )
   );
+  // Also delete audio cache to clear any corrupted partial responses
+  caches.delete(AUDIO_CACHE);
   self.clients.claim();
 });
 
@@ -71,21 +76,10 @@ self.addEventListener("fetch", (event) => {
   if (url.hostname.includes("supabase.co")) return;
   if (url.pathname.startsWith("/api/")) return;
 
-  // Audio files — cache first (they never change)
-  if (url.pathname.startsWith("/audio/")) {
-    event.respondWith(
-      caches.open(AUDIO_CACHE).then(async (cache) => {
-        const cached = await cache.match(request);
-        if (cached) return cached;
-        try {
-          const response = await fetch(request);
-          if (response.ok) cache.put(request, response.clone());
-          return response;
-        } catch {
-          return new Response("", { status: 404 });
-        }
-      })
-    );
+  // Audio files — don't cache (browsers handle streaming/range requests)
+  // Service workers can't cache HTTP 206 partial responses
+  if (url.pathname.startsWith("/audio/") || url.pathname.startsWith("/stories/")) {
+    event.respondWith(fetch(request));
     return;
   }
 

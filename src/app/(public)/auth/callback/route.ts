@@ -2,7 +2,7 @@
  * Supabase auth callback — handles:
  * 1. Email confirmation redirects
  * 2. OAuth redirects (Google, etc.)
- * Checks if parent_profiles exists; if not, redirects to onboarding.
+ * For new Google OAuth users without a role, redirects to quick role picker.
  */
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
@@ -24,20 +24,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/auth/login?error=no_user`);
     }
 
-    // Check if user profile exists
+    // Check if user has a role set (for OAuth users, might not exist yet)
     const { data: profile } = await supabase
       .from("profiles")
-      .select("id, role")
+      .select("role")
       .eq("id", data.user.id)
       .maybeSingle();
 
-    // If no profile, redirect to role selection
-    if (!profile) {
-      return NextResponse.redirect(`${origin}/onboarding/role-selection`);
+    // New OAuth user without role — redirect to quick role picker
+    if (!profile || !(profile as any)?.role) {
+      return NextResponse.redirect(`${origin}/auth/select-role?next=${encodeURIComponent(next)}`);
     }
 
-    // Profile exists, check if they've completed role-specific onboarding
-    // For now, redirect to intended destination (dashboard or home based on role)
+    // Profile exists with role — redirect directly to home
     return NextResponse.redirect(`${origin}${next}`);
   }
 

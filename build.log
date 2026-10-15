@@ -1,0 +1,542 @@
+﻿
+> ami-by-koko@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.2.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ΓÜá The "middleware" file convention is 
+deprecated. Please use "proxy" instead. Learn more: 
+https://nextjs.org/docs/messages/middleware-to-proxy
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Users\User\AppData\Roaming\n ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ΓÜá The "middle. 
+   ..leware-to-proxy:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 69s
+  Running TypeScript ...
+  Finished TypeScript in 36.5s ...
+  Collecting page data using 3 workers ...
+ΓÜá Using edge runtime on a page currently disables static 
+generation for that page
+  Generating static pages using 3 workers (0/75) ...
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /word-builder couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /word-builder couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /dashboard/parent couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/parent couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+  Generating static pages using 3 workers (18/75) 
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /world couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /world couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /zoology couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /zoology couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /dashboard/school/analytics couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/school/analytics couldn't be 
+rendered statically because it used `cookies`. See more info 
+here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /games/letter-hunt couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /games/letter-hunt couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /colours-shapes couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /colours-shapes couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /dashboard/school couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/school couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+  Generating static pages using 3 workers (37/75) 
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /dj-booth couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /dj-booth couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /games couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /games couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /health couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /health couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /home couldn't be rendered statically because it 
+used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /home couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /letter-name couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /letter-name couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /music-arts couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /music-arts couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /literacy couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /literacy couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /numeracy couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /numeracy couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /phonics couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /phonics couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+  Generating static pages using 3 workers (56/75) 
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /practical-life couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /practical-life couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /school-setup couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /school-setup couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /seasonal couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /seasonal couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /science couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /science couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /settings couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /settings couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /social couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /social couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /stories couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /stories couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /story couldn't be rendered statically because 
+it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /story couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[AppLayout] Unhandled error in layout: Error: Dynamic server 
+usage: Route /vocabulary couldn't be rendered statically 
+because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error
+    at n (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_110x7v4._.js:1:13032)
+    at cV (C:\Users\User\Desktop\ami new\Ami-by-KOKO\.next\ser
+ver\chunks\ssr\_110x7v4._.js:37:54144)
+    at h (C:\Users\User\Desktop\ami 
+new\Ami-by-KOKO\.next\server\chunks\ssr\_0nxpu-s._.js:1:12736)
+    at stringify (<anonymous>) {
+  description: "Route /vocabulary couldn't be rendered 
+statically because it used `cookies`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Γ£ô Generating static pages using 3 workers (75/75) in 4.2s
+  Finalizing page optimization ...
+
+Route (app)
+Γöî ╞Æ /
+Γö£ Γùï /_not-found
+Γö£ Γùï /about
+Γö£ ╞Æ /api/certificates/award
+Γö£ ╞Æ /api/debug/realtime-test
+Γö£ ╞Æ /api/debug/subscription-status
+Γö£ ╞Æ /api/debug/webhook-test
+Γö£ ╞Æ /api/notifications/whatsapp
+Γö£ ╞Æ /api/notifications/whatsapp/notify
+Γö£ ╞Æ /api/paystack/webhook
+Γö£ ╞Æ /api/progress
+Γö£ ╞Æ /api/school/assignments
+Γö£ ╞Æ /api/school/create
+Γö£ ╞Æ /api/school/students
+Γö£ ╞Æ /api/school/students/backfill-auth
+Γö£ ╞Æ /api/sessions
+Γö£ ╞Æ /api/super-admin/broadcast
+Γö£ ╞Æ /api/super-admin/broadcast/history
+Γö£ ╞Æ /api/super-admin/content
+Γö£ ╞Æ /api/super-admin/revenue
+Γö£ ╞Æ /api/super-admin/schools
+Γö£ ╞Æ /api/super-admin/stats
+Γö£ ╞Æ /api/super-admin/system-health
+Γö£ ╞Æ /api/super-admin/users
+Γö£ ╞Æ /api/super-admin/users/[action]
+Γö£ ╞Æ /api/super-admin/verify
+Γö£ ╞Æ /api/word-builder/progress
+Γö£ ╞Æ /assignment/[id]
+Γö£ ╞Æ /auth/callback
+Γö£ Γùï /auth/confirm
+Γö£ Γùï /auth/login
+Γö£ Γùï /auth/reset-password
+Γö£ Γùï /auth/signup
+Γö£ Γùï /auth/update-password
+Γö£ Γùï /auth/verify-otp
+Γö£ ╞Æ /colours-shapes
+Γö£ ╞Æ /dashboard/parent
+Γö£ ╞Æ /dashboard/school
+Γö£ ╞Æ /dashboard/school/analytics
+Γö£ ╞Æ /dj-booth
+Γö£ ╞Æ /games
+Γö£ ╞Æ /games/letter-hunt
+Γö£ ╞Æ /health
+Γö£ ╞Æ /home
+Γö£ ╞Æ /letter-name
+Γö£ ╞Æ /literacy
+Γö£ ╞Æ /live-class/[schoolId]
+Γö£ ╞Æ /music-arts
+Γö£ ╞Æ /numeracy
+Γö£ ╞Æ /numeracy/[language]
+Γö£ ╞Æ /numeracy/[language]/[number]
+Γö£ ╞Æ /og-image.png
+Γö£ Γùï /onboarding/parent-profile
+Γö£ Γùï /onboarding/role-selection
+Γö£ Γùï /onboarding/school-profile
+Γö£ ╞Æ /phonics
+Γö£ ╞Æ /phonics/[language]
+Γö£ ╞Æ /phonics/[language]/[letter]
+Γö£ ╞Æ /practical-life
+Γö£ Γùï /privacy
+Γö£ Γùï /robots.txt
+Γö£ ╞Æ /school-setup
+Γö£ ╞Æ /science
+Γö£ ╞Æ /seasonal
+Γö£ ╞Æ /settings
+Γö£ Γùï /sitemap.xml
+Γö£ ╞Æ /social
+Γö£ ╞Æ /stories
+Γö£ ╞Æ /stories/[slug]
+Γö£ ╞Æ /story
+Γö£ Γùï /student-login
+Γö£ Γùï /super-admin
+Γö£ Γùï /super-admin/broadcast
+Γö£ Γùï /super-admin/content
+Γö£ Γùï /super-admin/revenue
+Γö£ Γùï /super-admin/schools
+Γö£ Γùï /super-admin/system
+Γö£ Γùï /super-admin/users
+Γö£ Γùï /terms
+Γö£ ╞Æ /vocabulary
+Γö£ ╞Æ /word-builder
+Γö£ ╞Æ /world
+Γö£ ╞Æ /world/[category]
+Γö£ ╞Æ /world/[category]/[item]
+Γöö ╞Æ /zoology
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+
