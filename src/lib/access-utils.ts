@@ -7,7 +7,7 @@
  * - English letters: A–F only
  * - Yorùbá letters: A, B, D, E, Ẹ, F only (first 6 of 25)
  * - French letters: A–F only
- * - Numbers: 1–3 only
+ * - Numbers: 1–100
  * - World: Body Parts category only
  * - Story: first 3 shards (A, B, C)
  * - DJ Booth: first 3 pads (A, B, C)
@@ -22,9 +22,10 @@ export function isLetterFree(letter: string, language: string = "english"): bool
   return true;
 }
 
-/** Numbers 1–10 are all free — no paywall. */
+/** Numbers 1–100 are free; other values are not valid numeracy content. */
 export function isNumberFree(num: number | string): boolean {
-  return true;
+  const value = Number(num);
+  return Number.isInteger(value) && value >= 1 && value <= 100;
 }
 
 /** All world categories are free — no paywall. */

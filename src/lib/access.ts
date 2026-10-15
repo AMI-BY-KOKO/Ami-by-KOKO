@@ -6,7 +6,7 @@
  *
  * Free tier limits:
  * - Letters: A–F only
- * - Numbers: 1–3 only
+ * - Numbers: 1–100
  * - World: Body Parts category only
  * - Story: first 3 shards (A, B, C)
  * - DJ Booth: first 3 pads (A, B, C)
