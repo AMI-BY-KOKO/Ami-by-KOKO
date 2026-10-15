@@ -92,11 +92,11 @@ export default function TermsPage() {
               </h2>
               <ul className="list-disc list-inside space-y-2">
                 <li>
-                  <strong>Free tier:</strong> Letters A–F, Numbers 1–3, Body Parts, 3 story
+                  <strong>Free tier:</strong> Letters A–F, Numbers 1–100, Body Parts, 3 story
                   shards
                 </li>
                 <li>
-                  <strong>Explorer plan:</strong> full A–Z, numbers 1–10, all categories —
+                  <strong>Explorer plan:</strong> full A–Z, all categories —
                   ₦1,500/month
                 </li>
                 <li>

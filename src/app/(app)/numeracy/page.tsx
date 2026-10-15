@@ -27,7 +27,7 @@ export default function NumeracyPage() {
             start,
             end,
             href: `/numeracy/english?start=${start}&end=${end}`,
-            free: start <= 10,
+            free: true,
           };
 
           return (
