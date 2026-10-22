@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Rocket, Play} from "lucide-react";
 import TryALetter from "@/components/landing/TryALetter";
 import YouTubeBanner from "@/components/YouTubeBanner/YouTubeBanner";
 import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
@@ -10,7 +10,6 @@ import styles from "./landing.module.css";
 import AmiKokoLogo from "@/components/AmiKokoLogo";
 
 const NAV_LINKS = [
-  { href: "#home", label: "Home" },
   { href: "#features", label: "Learn" },
   { href: "#try", label: "Try it" },
   { href: "#testimonials", label: "Parents" },
@@ -91,10 +90,6 @@ const FAQS = [
   {
     q: "Does it work on any phone?",
     a: "Yes. It works on most phones and browsers. Open it in your browser to start.",
-  },
-  {
-    q: "How much time should my child spend on it?",
-    a: "Short, regular sessions work best. Even 10 to 15 minutes a day helps children build habits.",
   },
   {
     q: "Can my child use it without me?",
@@ -185,9 +180,11 @@ export default function LandingPage() {
 
               <div className={styles.heroButtons}>
                 <Link href="/auth/signup" className={styles.primaryButton}>
+                <Rocket size={22} strokeWidth={2.2} aria-hidden="true" />
                   Get Started
                 </Link>
                 <a href="#watch" className={styles.secondaryButton}>
+                  <Play size={20} fill="currentColor" strokeWidth={0} aria-hidden="true" />
                   Watch Video
                 </a>
               </div>
@@ -220,7 +217,7 @@ export default function LandingPage() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {<img
-                    src="/ami-koko.svg"
+                    src="/hero-ami-koko.PNG"
                     alt="Àmì, an African girl, holding Kòkò her talking parrot"
                     className={styles.characterImg}
                   />}
