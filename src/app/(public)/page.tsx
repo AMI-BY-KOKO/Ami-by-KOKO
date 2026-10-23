@@ -8,6 +8,7 @@ import YouTubeBanner from "@/components/YouTubeBanner/YouTubeBanner";
 import WhatsAppGroupButton from "@/components/WhatsAppGroupButton";
 import styles from "./landing.module.css";
 import AmiKokoLogo from "@/components/AmiKokoLogo";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { href: "#features", label: "Learn" },
@@ -154,6 +155,23 @@ export default function LandingPage() {
 
         {/* ── Hero ───────────────────────────────────────── */}
         <section id="home" className={styles.hero}>
+          <Image
+            src="/bg-hero.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className={styles.bgMobile}
+          />
+          <Image
+            src="/bbg-hero.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className={styles.bgDesktop}
+          />
+
           <div className={styles.heroGrid}>
 
             <motion.div
