@@ -171,7 +171,7 @@ export default function TryALetter() {
                     🇬🇧 {selected.english}
                   </span>
                   <span className="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
-                    🌍 {selected.yoruba} ({selected.meaning})
+                    🇳🇬 {selected.yoruba} ({selected.meaning})
                   </span>
                 </div>
               </motion.div>
