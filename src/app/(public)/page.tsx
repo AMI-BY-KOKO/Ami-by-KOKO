@@ -234,11 +234,14 @@ export default function LandingPage() {
                   className={styles.character}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {<img
+                  <Image
                     src="/hero-ami-koko.PNG"
                     alt="Àmì, an African girl, holding Kòkò her talking parrot"
+                    width={849}
+                    height={836}
                     className={styles.characterImg}
-                  />}
+                    priority
+                  />
                 </motion.div>
               </div>
             </motion.div>
