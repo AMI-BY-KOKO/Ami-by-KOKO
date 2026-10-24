@@ -156,7 +156,7 @@ export default function LandingPage() {
         {/* ── Hero ───────────────────────────────────────── */}
         <section id="home" className={styles.hero}>
           <Image
-            src="/bg-hero.png"
+            src="/bg-hero.webp"
             alt=""
             fill
             priority
@@ -164,7 +164,7 @@ export default function LandingPage() {
             className={styles.bgMobile}
           />
           <Image
-            src="/bbg-hero.png"
+            src="/bbg-hero.webp"
             alt=""
             fill
             priority
@@ -235,7 +235,7 @@ export default function LandingPage() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <Image
-                    src="/hero-ami-koko.PNG"
+                    src="/hero-ami-koko.webp"
                     alt="Àmì, an African girl, holding Kòkò her talking parrot"
                     width={849}
                     height={836}
