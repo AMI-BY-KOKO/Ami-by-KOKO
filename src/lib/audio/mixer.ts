@@ -48,10 +48,10 @@ async function loadBuffer(url: string): Promise<AudioBuffer | null> {
 }
 
 /**
- * Try to load audio buffer with fallback to multiple extensions
+ * Try to load audio buffer with fallback to multiple extensions (MP3, MP4, M4A)
  */
 async function loadBufferWithFallback(letter: string): Promise<AudioBuffer | null> {
-  const extensions = [".mp3", ".mp4"];
+  const extensions = [".mp3", ".mp4", ".m4a"];
   
   for (const ext of extensions) {
     const url = `/audio/english/${letter.toLowerCase()}${ext}`;
