@@ -739,5 +739,6 @@ export const LETTER_DATA: Record<string, Record<string, LetterConfig>> = {
 };
 
 export function getClipUrl(language: string, letter: string): string | null {
+  // Return MP3 path by default; client will try MP4 as fallback
   return `/audio/${language}/${letter.toLowerCase()}.mp3`;
 }

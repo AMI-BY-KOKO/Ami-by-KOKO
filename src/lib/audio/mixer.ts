@@ -48,6 +48,21 @@ async function loadBuffer(url: string): Promise<AudioBuffer | null> {
 }
 
 /**
+ * Try to load audio buffer with fallback to multiple extensions
+ */
+async function loadBufferWithFallback(letter: string): Promise<AudioBuffer | null> {
+  const extensions = [".mp3", ".mp4"];
+  
+  for (const ext of extensions) {
+    const url = `/audio/english/${letter.toLowerCase()}${ext}`;
+    const buffer = await loadBuffer(url);
+    if (buffer) return buffer;
+  }
+  
+  return null;
+}
+
+/**
  * Creates a looping synthesised tone for a letter.
  * Uses a soft sine wave with a slight detune for warmth.
  */
@@ -92,9 +107,8 @@ export async function togglePadSound(letter: string): Promise<void> {
     return;
   }
 
-  // Try pre-recorded clip first
-  const url = `/audio/english/${letter.toLowerCase()}.mp3`;
-  const buffer = await loadBuffer(url);
+  // Try pre-recorded clip first (with MP3/MP4 fallback)
+  const buffer = await loadBufferWithFallback(letter);
 
   if (buffer) {
     const ctx = getAudioContext();
