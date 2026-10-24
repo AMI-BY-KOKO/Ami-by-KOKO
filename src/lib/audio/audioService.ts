@@ -93,6 +93,45 @@ class AudioService {
   }
 
   /**
+   * Get clip path with fallback to multiple extensions (MP3 or MP4)
+   */
+  private getClipPath(word: string, extension: string): string {
+    return `${this.config.recordedClipsBasePath}/${this.config.language}/${word.toLowerCase()}${extension}`;
+  }
+
+  /**
+   * Try to load audio with fallback extensions
+   */
+  private async tryLoadAudioWithFallback(
+    word: string
+  ): Promise<{ audio: HTMLAudioElement; path: string } | null> {
+    const extensions = [".mp3", ".mp4"];
+
+    for (const ext of extensions) {
+      const clipPath = this.getClipPath(word, ext);
+      const cachedAudio = this.audioCache.get(clipPath);
+
+      if (cachedAudio) {
+        return { audio: cachedAudio, path: clipPath };
+      }
+
+      // Try to load the clip by making a HEAD request
+      try {
+        const response = await fetch(clipPath, { method: "HEAD" });
+        if (response.ok) {
+          const audio = new Audio(clipPath);
+          this.audioCache.set(clipPath, audio);
+          return { audio, path: clipPath };
+        }
+      } catch {
+        // Continue to next extension
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Play a recorded clip from disk
    */
   private async playRecordedClip(
@@ -100,70 +139,69 @@ class AudioService {
     options: AudioPlayOptions = {}
   ): Promise<AudioSource> {
     return new Promise((resolve, reject) => {
-      // Construct path to recorded clip
-      const clipPath = `${this.config.recordedClipsBasePath}/${this.config.language}/${word.toLowerCase()}.mp3`;
-
-      // Check cache first
-      let audio = this.audioCache.get(clipPath);
-      if (!audio) {
-        audio = new Audio(clipPath);
-        this.audioCache.set(clipPath, audio);
-      }
-
-      // Stop currently playing audio
-      if (this.currentAudio && this.currentAudio !== audio) {
-        this.currentAudio.pause();
-        this.currentAudio.currentTime = 0;
-      }
-
-      // Apply options
-      audio.volume = options.volume ?? this.config.defaultVolume;
-      if (options.rate && audio.playbackRate !== undefined) {
-        audio.playbackRate = options.rate;
-      }
-
-      // Set up event handlers
-      const handleEnded = () => {
-        cleanup();
-        if (options.onComplete) {
-          options.onComplete();
+      this.tryLoadAudioWithFallback(word).then((result) => {
+        if (!result) {
+          reject(new Error(`No audio clip found for "${word}"`));
+          return;
         }
-        resolve("recorded");
-      };
 
-      const handleError = (error: Event) => {
-        cleanup();
-        reject(
-          new Error(
-            `Failed to load audio from ${clipPath}: ${String(error)}`
-          )
-        );
-      };
+        const { audio, path: clipPath } = result;
 
-      const cleanup = () => {
-        audio?.removeEventListener("ended", handleEnded);
-        audio?.removeEventListener("error", handleError);
-      };
+        // Stop currently playing audio
+        if (this.currentAudio && this.currentAudio !== audio) {
+          this.currentAudio.pause();
+          this.currentAudio.currentTime = 0;
+        }
 
-      audio.addEventListener("ended", handleEnded, { once: true });
-      audio.addEventListener("error", handleError, { once: true });
+        // Apply options
+        audio.volume = options.volume ?? this.config.defaultVolume;
+        if (options.rate && audio.playbackRate !== undefined) {
+          audio.playbackRate = options.rate;
+        }
 
-      this.currentAudio = audio;
+        // Set up event handlers
+        const handleEnded = () => {
+          cleanup();
+          if (options.onComplete) {
+            options.onComplete();
+          }
+          resolve("recorded");
+        };
 
-      // Play audio
-      audio
-        .play()
-        .catch((error) => {
+        const handleError = (error: Event) => {
+          cleanup();
+          reject(
+            new Error(
+              `Failed to load audio from ${clipPath}: ${String(error)}`
+            )
+          );
+        };
+
+        const cleanup = () => {
+          audio?.removeEventListener("ended", handleEnded);
+          audio?.removeEventListener("error", handleError);
+        };
+
+        audio.addEventListener("ended", handleEnded, { once: true });
+        audio.addEventListener("error", handleError, { once: true });
+
+        this.currentAudio = audio;
+
+        // Play audio
+        audio.play().catch((error) => {
           cleanup();
           reject(error);
         });
 
-      // Timeout safety (audio should end naturally)
-      setTimeout(() => {
-        if (audio?.paused === false) {
-          // Still playing, let it finish
-        }
-      }, 10000); // 10 second timeout
+        // Timeout safety (audio should end naturally)
+        setTimeout(() => {
+          if (audio?.paused === false) {
+            // Still playing, let it finish
+          }
+        }, 10000); // 10 second timeout
+      }).catch((error) => {
+        reject(error);
+      });
     });
   }
 
@@ -221,13 +259,8 @@ class AudioService {
    * Check if a recorded clip exists (for preloading/caching)
    */
   async checkRecordedClipExists(word: string): Promise<boolean> {
-    try {
-      const clipPath = `${this.config.recordedClipsBasePath}/${this.config.language}/${word.toLowerCase()}.mp3`;
-      const response = await fetch(clipPath, { method: "HEAD" });
-      return response.ok;
-    } catch {
-      return false;
-    }
+    const result = await this.tryLoadAudioWithFallback(word);
+    return result !== null;
   }
 
   /**
@@ -235,13 +268,7 @@ class AudioService {
    */
   async preloadClips(words: string[]): Promise<void> {
     const loadPromises = words.map((word) =>
-      this.checkRecordedClipExists(word).then((exists) => {
-        if (exists) {
-          const clipPath = `${this.config.recordedClipsBasePath}/${this.config.language}/${word.toLowerCase()}.mp3`;
-          const audio = new Audio(clipPath);
-          this.audioCache.set(clipPath, audio);
-        }
-      })
+      this.tryLoadAudioWithFallback(word)
     );
 
     await Promise.all(loadPromises);

@@ -1,11 +1,12 @@
 import { nigeriasIndependenceStory } from "./nigerias-independence";
+import { theNightKokoDisappearedStory } from "./the-night-koko-disappeared";
 import type { Story } from "@/types/stories";
 
 /**
  * All available stories
  * Add new stories here as they are created
  */
-export const STORIES: Story[] = [nigeriasIndependenceStory];
+export const STORIES: Story[] = [nigeriasIndependenceStory, theNightKokoDisappearedStory];
 
 interface ComingSoonStory extends Omit<Story, "pages"> {
   pages?: never;
