@@ -100,12 +100,12 @@ class AudioService {
   }
 
   /**
-   * Try to load audio with fallback extensions
+   * Try to load audio with fallback extensions (MP3, MP4, M4A)
    */
   private async tryLoadAudioWithFallback(
     word: string
   ): Promise<{ audio: HTMLAudioElement; path: string } | null> {
-    const extensions = [".mp3", ".mp4"];
+    const extensions = [".mp3", ".mp4", ".m4a"];
 
     for (const ext of extensions) {
       const clipPath = this.getClipPath(word, ext);
