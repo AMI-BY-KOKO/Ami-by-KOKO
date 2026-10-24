@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { notFound } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ import { CERTIFICATE_CONFIGS } from "@/types";
 import { useChild } from "@/hooks/useChild";
 import { useAccess } from "@/hooks/useAccess";
 import { useProgress } from "@/hooks/useProgress";
+import { getAudioService } from "@/lib/audio/audioService";
 
 const NUMBERS = Object.keys(NUMBER_DATA);
 
@@ -32,6 +33,7 @@ export default function NumberDetailContent({ language, number }: { language: st
   const [showTrace, setShowTrace] = useState(false);
   const [checkState, setCheckState] = useState<CheckState>("idle");
   const [certToShow, setCertToShow] = useState<string | null>(null);
+  const speakingRef = useRef(false);
   const { activeChild } = useChild();
   const { hasPaid } = useAccess(activeChild);
   const { masteredNumbers } = useProgress(activeChild?.id ?? null, "english");
@@ -42,15 +44,30 @@ export default function NumberDetailContent({ language, number }: { language: st
   const nextNum = idx < NUMBERS.length - 1 ? NUMBERS[idx + 1] : null;
   const prevNum = idx > 0 ? NUMBERS[idx - 1] : null;
 
-  function speak() {
-    if (speaking || typeof window === "undefined") return;
+  async function speak() {
+    if (speakingRef.current || typeof window === "undefined") return;
+    speakingRef.current = true;
     setSpeaking(true);
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(`${data.word}. ${data.numeral}`);
-    u.lang = "en-NG"; u.rate = 0.8; u.pitch = 1.2;
-    u.onend = () => setSpeaking(false);
-    u.onerror = () => setSpeaking(false);
-    window.speechSynthesis.speak(u);
+
+    try {
+      const audioService = getAudioService(language as "english" | "french" | "yoruba");
+      await audioService.playWord(number, {
+        volume: 0.8,
+        onComplete: () => {
+          speakingRef.current = false;
+          setSpeaking(false);
+        },
+        onError: (error) => {
+          console.warn("Audio playback error:", error);
+          speakingRef.current = false;
+          setSpeaking(false);
+        },
+      });
+    } catch (error) {
+      console.warn("Failed to play audio:", error);
+      speakingRef.current = false;
+      setSpeaking(false);
+    }
   }
 
   async function handleCorrect() {
