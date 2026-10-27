@@ -51,7 +51,7 @@ function StoryCard({ story, index }: { story: Story | Omit<Story, "pages">; inde
       transition={{ delay: index * 0.1 }}
     >
       <Link
-        href={isAvailable ? `/stories/nigerias-independence` : "#"}
+        href={isAvailable ? `/stories/${story.slug}` : "#"}
         className={isAvailable ? "block" : "pointer-events-none"}
       >
         <div
