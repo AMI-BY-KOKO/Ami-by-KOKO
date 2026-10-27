@@ -125,7 +125,7 @@ export default function SignupPage() {
             Create Your Account
           </h1>
           <p className="text-sm text-navy-muted text-center mb-6">
-            Join Àmì & Kòkò's learning world!
+            Join Àmì by Kòkò's learning world!
           </p>
 
           <form onSubmit={handleSignup} className="flex flex-col gap-5">
