@@ -61,6 +61,8 @@ export default function GamesPage() {
                   className="object-cover group-hover:scale-110 transition-transform duration-300"
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  quality={90}
+                  unoptimized
                 />
 
                 {/* Dark overlay on hover */}
