@@ -1,0 +1,94 @@
+<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF9E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFE8CC;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bookGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFDF8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5EFE0;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="200" fill="url(#bgGrad)"/>
+  
+  <!-- Decorative dots pattern -->
+  <circle cx="30" cy="30" r="2" fill="#FFB81C" opacity="0.3"/>
+  <circle cx="270" cy="40" r="2" fill="#E53935" opacity="0.3"/>
+  <circle cx="50" cy="170" r="2" fill="#1E88E5" opacity="0.3"/>
+  <circle cx="250" cy="160" r="2" fill="#43A047" opacity="0.3"/>
+  
+  <!-- Book spine (left edge) -->
+  <rect x="55" y="35" width="8" height="130" fill="#D93D2F" rx="2"/>
+  
+  <!-- Book pages with shadow -->
+  <g filter="url(#shadow)">
+    <rect x="65" y="30" width="170" height="140" fill="url(#bookGrad)" rx="4"/>
+    
+    <!-- Book border -->
+    <rect x="65" y="30" width="170" height="140" fill="none" stroke="#BDBDBD" stroke-width="1" rx="4"/>
+  </g>
+  
+  <!-- Page lines (left side like a real book) -->
+  <g stroke="#E0E0E0" stroke-width="0.5" opacity="0.5">
+    <line x1="75" y1="50" x2="75" y2="155"/>
+  </g>
+  
+  <!-- Title: "ABC Coloring Book" -->
+  <text x="150" y="55" font-family="Fredoka, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#2A1C00">
+    ABC Coloring
+  </text>
+  <text x="150" y="72" font-family="Fredoka, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#2A1C00">
+    Book
+  </text>
+  
+  <!-- Colorful ABC letters -->
+  <g>
+    <!-- A (Red) -->
+    <circle cx="100" cy="95" r="18" fill="#E53935" opacity="0.9"/>
+    <text x="100" y="105" font-family="Fredoka, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="white">A</text>
+    
+    <!-- B (Blue) -->
+    <circle cx="150" cy="95" r="18" fill="#1E88E5" opacity="0.9"/>
+    <text x="150" y="105" font-family="Fredoka, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="white">B</text>
+    
+    <!-- C (Green) -->
+    <circle cx="200" cy="95" r="18" fill="#43A047" opacity="0.9"/>
+    <text x="200" y="105" font-family="Fredoka, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="white">C</text>
+  </g>
+  
+  <!-- Crayon icons at bottom -->
+  <g>
+    <!-- Red crayon -->
+    <rect x="85" y="125" width="8" height="32" fill="#E53935" rx="1"/>
+    <polygon points="89,125 85,120 93,120" fill="#D43D2F"/>
+    
+    <!-- Yellow crayon -->
+    <rect x="130" y="128" width="8" height="29" fill="#FFB81C" rx="1"/>
+    <polygon points="134,128 130,123 138,123" fill="#FFA81C"/>
+    
+    <!-- Blue crayon -->
+    <rect x="175" y="126" width="8" height="31" fill="#1E88E5" rx="1"/>
+    <polygon points="179,126 175,121 183,121" fill="#1D7FD9"/>
+  </g>
+  
+  <!-- Palette icon -->
+  <g opacity="0.8">
+    <ellipse cx="220" cy="130" rx="15" ry="18" fill="none" stroke="#2A1C00" stroke-width="1.5"/>
+    <circle cx="215" cy="120" r="2" fill="#E53935"/>
+    <circle cx="225" cy="120" r="2" fill="#FFB81C"/>
+    <circle cx="220" cy="130" r="2" fill="#1E88E5"/>
+    <circle cx="215" cy="138" r="2" fill="#43A047"/>
+  </g>
+  
+  <!-- Fun icon - paintbrush -->
+  <g>
+    <line x1="265" y1="135" x2="270" y2="125" stroke="#2A1C00" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="272" cy="122" rx="3" ry="4" fill="#43A047"/>
+  </g>
+</svg>

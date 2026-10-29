@@ -22,6 +22,14 @@ export default function GamesPage() {
       titleColor: 'text-purple-500',
       titleGradient: 'from-purple-400 to-purple-600',
     },
+    {
+      id: 'abc-coloring-book',
+      title: "Kòkò's ABC Coloring Book",
+      thumbnail: '/games/abc-coloring-book.png',
+      available: true,
+      titleColor: 'text-yellow-500',
+      titleGradient: 'from-yellow-400 to-orange-500',
+    },
   ];
 
   return (
