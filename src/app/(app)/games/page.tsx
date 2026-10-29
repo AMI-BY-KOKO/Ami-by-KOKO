@@ -51,7 +51,7 @@ export default function GamesPage() {
               {/* Thumbnail with Play Button Overlay */}
               <Link
                 href={`/games/${game.id}`}
-                className="group relative overflow-hidden rounded-3xl shadow-lg ring-2 ring-[#EFE8D8] hover:shadow-2xl hover:ring-4 transition-all active:scale-95 flex-grow"
+                className="group relative overflow-hidden rounded-3xl shadow-lg ring-2 ring-[#EFE8D8] hover:shadow-2xl hover:ring-4 transition-all active:scale-95 flex-grow w-full aspect-video"
               >
                 {/* Thumbnail Image */}
                 <Image
@@ -60,6 +60,7 @@ export default function GamesPage() {
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-300"
                   priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
 
                 {/* Dark overlay on hover */}
@@ -73,7 +74,7 @@ export default function GamesPage() {
                 </div>
 
                 {/* Aspect ratio container */}
-                <div className="aspect-video w-full" />
+                {/* Handled by aspect-video on Link element */}
               </Link>
             </div>
           ))}
