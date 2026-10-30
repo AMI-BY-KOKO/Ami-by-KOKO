@@ -9,7 +9,6 @@ export default function GamesPage() {
       id: 'letter-hunt',
       title: "Kòkò's Letter Hunt",
       thumbnail: '/games/letter-hunt.webp',
-      thumbnailFallback: '/games/letter-hunt.png',
       available: true,
       titleColor: 'text-sky-500',
       titleGradient: 'from-sky-400 to-sky-600',
@@ -18,7 +17,6 @@ export default function GamesPage() {
       id: 'word-adventure',
       title: "Kòkò's Word Adventure",
       thumbnail: '/games/word-adventure.webp',
-      thumbnailFallback: '/games/word-adventure.png',
       available: true,
       titleColor: 'text-purple-500',
       titleGradient: 'from-purple-400 to-purple-600',
@@ -27,7 +25,6 @@ export default function GamesPage() {
       id: 'abc-coloring-book',
       title: "Kòkò's ABC Coloring Book",
       thumbnail: '/games/abc-coloring-book.webp',
-      thumbnailFallback: '/games/abc-coloring-book.png',
       available: true,
       titleColor: 'text-yellow-500',
       titleGradient: 'from-yellow-400 to-orange-500',
@@ -63,15 +60,12 @@ export default function GamesPage() {
                 href={`/games/${game.id}`}
                 className="group relative overflow-hidden rounded-3xl shadow-lg ring-2 ring-[#EFE8D8] hover:shadow-2xl hover:ring-4 transition-all active:scale-95 flex-grow w-full aspect-video"
               >
-                {/* Thumbnail Image with WebP support and fallback */}
-                <picture className="absolute inset-0">
-                  <source srcSet={game.thumbnail} type="image/webp" />
-                  <img
-                    src={game.thumbnailFallback}
-                    alt={game.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                </picture>
+                {/* Thumbnail Image - WebP */}
+                <img
+                  src={game.thumbnail}
+                  alt={game.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
 
                 {/* Dark overlay on hover */}
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
