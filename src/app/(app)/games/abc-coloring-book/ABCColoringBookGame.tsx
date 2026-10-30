@@ -8,23 +8,39 @@ interface ABCColoringBookGameProps {
 
 export default function ABCColoringBookGame({ childId }: ABCColoringBookGameProps) {
   useEffect(() => {
-    // Full screen mode
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+    // Full screen mode - use dynamic viewport height for mobile
+    const html = document.documentElement;
+    const body = document.body;
+    
+    // Store original values
+    const originalHtmlOverflow = html.style.overflow;
+    const originalBodyOverflow = body.style.overflow;
+    const originalHtmlHeight = html.style.height;
+    
+    html.style.overflow = 'hidden';
+    html.style.height = '100dvh';
+    body.style.overflow = 'hidden';
     
     return () => {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
+      html.style.overflow = originalHtmlOverflow;
+      html.style.height = originalHtmlHeight;
+      body.style.overflow = originalBodyOverflow;
     };
   }, []);
 
   return (
     <iframe
       src="/games/abc-coloring-book.html"
-      className="w-screen h-screen fixed top-0 left-0 border-0"
+      className="fixed inset-0 border-0 w-full h-full"
       title="ABC Coloring Book - Interactive Coloring Game"
       sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-      style={{ width: '100vw', height: '100vh' }}
+      style={{ 
+        width: '100%', 
+        height: '100dvh',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+      }}
     />
   );
 }
