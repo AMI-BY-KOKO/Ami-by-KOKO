@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import AuthBackButton from "@/components/ui/AuthBackButton";
 import Wordmark from "@/components/ui/Wordmark";
+import { useReferralCode } from "@/hooks/useReferralCode";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -25,6 +26,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export default function SignupPage() {
   const supabase = createClient();
+  const { code: referralCode, isLoading: referralLoading } = useReferralCode();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,10 +35,64 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"parent" | "school_admin">("parent");
   const [schoolName, setSchoolName] = useState("");
+  const [referralInput, setReferralInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [referralInfo, setReferralInfo] = useState<{
+    isValid: boolean;
+    profileName?: string;
+    reason?: string;
+  } | null>(null);
+  const [validatingReferral, setValidatingReferral] = useState(false);
+
+  // Auto-fill referral code from URL
+  useEffect(() => {
+    if (referralCode && !referralInput) {
+      setReferralInput(referralCode);
+      validateReferralCode(referralCode);
+    }
+  }, [referralCode]);
+
+  // Validate referral code input
+  async function validateReferralCode(code: string) {
+    if (!code || code.length === 0) {
+      setReferralInfo(null);
+      return;
+    }
+
+    setValidatingReferral(true);
+    try {
+      const response = await fetch("/api/referral/validate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code.toUpperCase().trim() }),
+      });
+
+      const data = await response.json();
+
+      if (data.isValid) {
+        setReferralInfo({
+          isValid: true,
+          profileName: data.profileName,
+        });
+      } else {
+        setReferralInfo({
+          isValid: false,
+          reason: data.reason || "Invalid referral code",
+        });
+      }
+    } catch (err) {
+      console.error("Error validating referral code:", err);
+      setReferralInfo({
+        isValid: false,
+        reason: "Error validating code",
+      });
+    } finally {
+      setValidatingReferral(false);
+    }
+  }
 
   async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -61,9 +117,14 @@ export default function SignupPage() {
       return;
     }
 
-    // Trigger handle_new_user() creates the profile row automatically.
-    // Save phone number if provided
-    if (data.user && phone.trim()) {
+    if (!data.user) {
+      setError("Signup failed: no user returned");
+      setLoading(false);
+      return;
+    }
+
+    // Step 1: Update profile with optional phone
+    if (phone.trim()) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any)
         .from("profiles")
@@ -71,9 +132,8 @@ export default function SignupPage() {
         .eq("id", data.user.id);
     }
 
-    // For school admins, also create the school and link it.
-    if (data.user && role === "school_admin" && schoolName.trim()) {
-      // Create the school record
+    // Step 2: Handle school admin setup
+    if (role === "school_admin" && schoolName.trim()) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: school, error: schoolErr } = await (supabase as any)
         .from("schools")
@@ -82,7 +142,6 @@ export default function SignupPage() {
         .single();
 
       if (!schoolErr && school) {
-        // Link the profile to the school
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase as any)
           .from("profiles")
@@ -91,7 +150,34 @@ export default function SignupPage() {
       }
     }
 
-    // If email confirmation is required, data.session will be null.
+    // Step 3: Attribute referral if code provided
+    if (referralInput && referralInfo?.isValid) {
+      try {
+        const response = await fetch("/api/referral/attribute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            referralCode: referralInput.toUpperCase().trim(),
+            referrerIp: undefined, // Let server get from headers
+            userAgent: navigator.userAgent,
+          }),
+        });
+
+        const attributionResult = await response.json();
+
+        if (!attributionResult.success) {
+          console.warn("Referral attribution failed:", attributionResult.error);
+          // Don't block signup; just log the failure
+        }
+      } catch (err) {
+        console.error("Error during referral attribution:", err);
+        // Don't block signup on referral error
+      }
+    }
+
+    // Step 4: Confirm referral status after email confirmation
+    // This will be called from the email confirmation flow
+    // For now, redirect to confirmation page
     if (!data.session) {
       setLoading(false);
       window.location.href = "/auth/confirm";
@@ -199,6 +285,42 @@ export default function SignupPage() {
                 />
               </div>
             )}
+
+            {/* Referral code input — optional */}
+            <div>
+              <label htmlFor="referralCode" className="mb-2 block text-sm font-semibold text-navy">
+                Referral Code <span className="text-navy-muted font-normal">(optional)</span>
+              </label>
+              <input
+                id="referralCode"
+                type="text"
+                value={referralInput}
+                onChange={(e) => {
+                  const newValue = e.target.value.toUpperCase().trim();
+                  setReferralInput(newValue);
+                  if (newValue.length > 0) {
+                    validateReferralCode(newValue);
+                  } else {
+                    setReferralInfo(null);
+                  }
+                }}
+                disabled={referralLoading || validatingReferral}
+                className="w-full h-12 rounded-[14px] border border-border-warm bg-white px-4 text-navy placeholder-navy-muted focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-primary-green disabled:opacity-60"
+                placeholder="e.g. KOKO24A1"
+                maxLength={8}
+              />
+              {referralInput && referralInfo && (
+                <p className={`mt-2 text-sm font-medium ${
+                  referralInfo.isValid 
+                    ? "text-green-filled" 
+                    : "text-coral"
+                }`}>
+                  {referralInfo.isValid 
+                    ? `✓ Invited by ${referralInfo.profileName || 'referrer'}` 
+                    : `✗ ${referralInfo.reason}`}
+                </p>
+              )}
+            </div>
 
             {/* Email */}
             <div>

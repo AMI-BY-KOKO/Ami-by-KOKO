@@ -23,6 +23,8 @@ export interface Database {
           role: "parent" | "school_admin";
           full_name: string;
           school_id: string | null;
+          show_on_leaderboard: boolean;
+          public_display_name: string | null;
           created_at: string;
         };
         Insert: {
@@ -30,6 +32,8 @@ export interface Database {
           role: "parent" | "school_admin";
           full_name: string;
           school_id?: string | null;
+          show_on_leaderboard?: boolean;
+          public_display_name?: string | null;
           created_at?: string;
         };
         Update: {
@@ -37,6 +41,8 @@ export interface Database {
           role?: "parent" | "school_admin";
           full_name?: string;
           school_id?: string | null;
+          show_on_leaderboard?: boolean;
+          public_display_name?: string | null;
           created_at?: string;
         };
       };
@@ -364,9 +370,227 @@ export interface Database {
           updated_at?: string;
         };
       };
+      referral_codes: {
+        Row: {
+          id: string;
+          profile_id: string;
+          code: string;
+          status: "active" | "paused" | "revoked";
+          generated_at: string;
+          updated_at: string;
+          notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          code: string;
+          status?: "active" | "paused" | "revoked";
+          generated_at?: string;
+          updated_at?: string;
+          notes?: string | null;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          code?: string;
+          status?: "active" | "paused" | "revoked";
+          generated_at?: string;
+          updated_at?: string;
+          notes?: string | null;
+        };
+      };
+      referral_events: {
+        Row: {
+          id: string;
+          referral_code_id: string;
+          referred_profile_id: string;
+          referrer_profile_id: string;
+          attribution_status: "pending" | "confirmed" | "active" | "churned";
+          referred_at: string;
+          confirmed_at: string | null;
+          subscription_activated_at: string | null;
+          referrer_ip_hash: string | null;
+          referred_ip_hash: string | null;
+          user_agent_hash: string | null;
+          fraud_score: number;
+          fraud_flags: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          referral_code_id: string;
+          referred_profile_id: string;
+          referrer_profile_id: string;
+          attribution_status?: "pending" | "confirmed" | "active" | "churned";
+          referred_at?: string;
+          confirmed_at?: string | null;
+          subscription_activated_at?: string | null;
+          referrer_ip_hash?: string | null;
+          referred_ip_hash?: string | null;
+          user_agent_hash?: string | null;
+          fraud_score?: number;
+          fraud_flags?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          referral_code_id?: string;
+          referred_profile_id?: string;
+          referrer_profile_id?: string;
+          attribution_status?: "pending" | "confirmed" | "active" | "churned";
+          referred_at?: string;
+          confirmed_at?: string | null;
+          subscription_activated_at?: string | null;
+          referrer_ip_hash?: string | null;
+          referred_ip_hash?: string | null;
+          user_agent_hash?: string | null;
+          fraud_score?: number;
+          fraud_flags?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      referral_stats: {
+        Row: {
+          id: string;
+          profile_id: string;
+          total_codes_generated: number;
+          total_referrals_attributed: number;
+          confirmed_referrals: number;
+          active_subscriptions: number;
+          churned_referrals: number;
+          last_referral_date: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          total_codes_generated?: number;
+          total_referrals_attributed?: number;
+          confirmed_referrals?: number;
+          active_subscriptions?: number;
+          churned_referrals?: number;
+          last_referral_date?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          total_codes_generated?: number;
+          total_referrals_attributed?: number;
+          confirmed_referrals?: number;
+          active_subscriptions?: number;
+          churned_referrals?: number;
+          last_referral_date?: string | null;
+          updated_at?: string;
+        };
+      };
+      referral_audit_log: {
+        Row: {
+          id: string;
+          event_type:
+            | "code_generated"
+            | "referral_attributed"
+            | "status_confirmed"
+            | "subscription_activated"
+            | "fraud_flagged"
+            | "code_revoked"
+            | "duplicate_attempt"
+            | "self_referral_attempt"
+            | "invalid_code_attempt";
+          referral_event_id: string | null;
+          referral_code_id: string | null;
+          profile_id: string | null;
+          details: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_type:
+            | "code_generated"
+            | "referral_attributed"
+            | "status_confirmed"
+            | "subscription_activated"
+            | "fraud_flagged"
+            | "code_revoked"
+            | "duplicate_attempt"
+            | "self_referral_attempt"
+            | "invalid_code_attempt";
+          referral_event_id?: string | null;
+          referral_code_id?: string | null;
+          profile_id?: string | null;
+          details?: Record<string, unknown>;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          event_type?:
+            | "code_generated"
+            | "referral_attributed"
+            | "status_confirmed"
+            | "subscription_activated"
+            | "fraud_flagged"
+            | "code_revoked"
+            | "duplicate_attempt"
+            | "self_referral_attempt"
+            | "invalid_code_attempt";
+          referral_event_id?: string | null;
+          referral_code_id?: string | null;
+          profile_id?: string | null;
+          details?: Record<string, unknown>;
+          created_at?: string;
+        };
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      generate_referral_code: {
+        Args: {
+          p_profile_id: string;
+        };
+        Returns: Array<{
+          success: boolean;
+          code: string | null;
+          error: string | null;
+        }>;
+      };
+      attribute_referral: {
+        Args: {
+          p_referral_code: string;
+          p_referred_profile_id: string;
+          p_referrer_ip_hash?: string;
+          p_referred_ip_hash?: string;
+          p_user_agent_hash?: string;
+        };
+        Returns: Array<{
+          success: boolean;
+          referral_event_id: string | null;
+          error: string | null;
+          fraud_score: number;
+        }>;
+      };
+      confirm_referral_status: {
+        Args: {
+          p_referred_profile_id: string;
+          p_new_status?: string;
+        };
+        Returns: Array<{
+          success: boolean;
+          error: string | null;
+        }>;
+      };
+      activate_referral_subscription: {
+        Args: {
+          p_referred_profile_id: string;
+        };
+        Returns: Array<{
+          success: boolean;
+          error: string | null;
+        }>;
+      };
+    };
     Enums: Record<string, never>;
   };
 }
