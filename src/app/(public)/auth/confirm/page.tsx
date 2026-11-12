@@ -5,7 +5,37 @@
  * In Supabase dashboard → Authentication → URL Configuration,
  * set Site URL to your domain and add /auth/callback to Redirect URLs.
  */
+"use client";
+
+import { useEffect } from "react";
+
 export default function ConfirmPage() {
+  useEffect(() => {
+    // When user returns from email confirmation link (/auth/callback redirects here),
+    // confirm their referral status if they were referred
+    async function confirmReferral() {
+      try {
+        const response = await fetch("/api/referral/confirm-status", {
+          method: "POST",
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            console.log("Referral status confirmed");
+          }
+        }
+      } catch (err) {
+        console.error("Error confirming referral status:", err);
+        // Don't block the user if referral confirmation fails
+      }
+    }
+
+    // Call with a small delay to ensure auth session is ready
+    const timer = setTimeout(confirmReferral, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-amber-50 px-4">
       <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg text-center">

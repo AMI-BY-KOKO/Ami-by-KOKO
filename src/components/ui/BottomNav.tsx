@@ -6,11 +6,11 @@ import { motion } from "framer-motion";
 import type { UserRole } from "@/types";
 
 const PARENT_NAV = [
-  { href: "/home",             emoji: "🏠", label: "Home"     },
-  { href: "/literacy",         emoji: "🔤", label: "Literacy" },
-  { href: "/numeracy",         emoji: "🔢", label: "Numbers"  },
-  { href: "/games",            emoji: "🎮", label: "Games"    },
-  { href: "/dashboard/parent", emoji: "👤", label: "Me"       },
+  { href: "/home",             emoji: "🏠", label: "Home"      },
+  { href: "/literacy",         emoji: "🔤", label: "Literacy"  },
+  { href: "/numeracy",         emoji: "🔢", label: "Numbers"   },
+  { href: "/games",            emoji: "🎮", label: "Games"     },
+  { href: "/dashboard/parent", emoji: "👤", label: "Me"        },
 ];
 
 const SCHOOL_NAV = [

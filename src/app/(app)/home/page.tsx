@@ -644,6 +644,64 @@ function ParentHome() {
           </motion.div>
         )}
 
+        {/* ─── REFERRAL & LEADERBOARD SECTIONS ─────────────────────────── */}
+        <div>
+          {/* Referral Section */}
+          <div className="px-3 mt-8">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-bold text-navy">🎁 Share Your Code</h2>
+              <Link href="/referrals" className="text-green text-xs font-bold hover:underline">
+                View more →
+              </Link>
+            </div>
+            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-3xl shadow-sm ring-1 ring-amber-100 p-5">
+              <div className="text-center mb-4">
+                <p className="text-xs text-stone-600 mb-2">Your Referral Code</p>
+                <div className="bg-white rounded-2xl px-4 py-3 inline-block shadow-sm">
+                  <p className="text-xl font-extrabold text-green tracking-widest font-mono">-</p>
+                </div>
+              </div>
+              <button onClick={() => navigator.clipboard.writeText('')}
+                className="w-full bg-green hover:bg-green-hover text-white font-bold py-2 px-4 rounded-xl transition text-sm">
+                📋 Copy Code
+              </button>
+            </div>
+          </div>
+
+          {/* Leaderboard Section */}
+          <div className="px-3 mt-8">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-bold text-navy">🏆 Top Referrers</h2>
+              <Link href="/leaderboard" className="text-green text-xs font-bold hover:underline">
+                Full board →
+              </Link>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl shadow-sm ring-1 ring-purple-100 p-5 space-y-3">
+              <div className="flex items-center gap-3 pb-3 border-b border-purple-200">
+                <span className="text-2xl">🥇</span>
+                <div className="flex-1">
+                  <p className="font-bold text-navy text-sm">-</p>
+                  <p className="text-xs text-stone-500">-</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 pb-3 border-b border-purple-200">
+                <span className="text-2xl">🥈</span>
+                <div className="flex-1">
+                  <p className="font-bold text-navy text-sm">-</p>
+                  <p className="text-xs text-stone-500">-</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🥉</span>
+                <div className="flex-1">
+                  <p className="font-bold text-navy text-sm">-</p>
+                  <p className="text-xs text-stone-500">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {showSwitcher && <div className="fixed inset-0 z-10" onClick={() => setShowSwitcher(false)} />}
